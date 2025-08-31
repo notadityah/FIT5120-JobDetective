@@ -1,12 +1,11 @@
 <template>
-  <nav class="navbar navbar-expand-lg custom-navbar">
-    <div class="container-fluid px-4">
-      <!-- Brand Logo -->
+  <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+    <div class="container">
       <router-link class="navbar-brand" to="/">
-        <span class="brand-box">JobDetective</span>
+        <span class="brand-icon">🕵️</span>
+        JobDetective
       </router-link>
 
-      <!-- Toggler Button for Mobile-->
       <button
         class="navbar-toggler"
         type="button"
@@ -19,17 +18,19 @@
         <span class="navbar-toggler-icon"></span>
       </button>
 
-      <!-- Navbar -->
       <div class="collapse navbar-collapse" id="navbarNav">
-        <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
+        <ul class="navbar-nav ms-auto">
           <li class="nav-item">
-            <a class="nav-link" href="#" @click="setActiveLink('report-scam')"> Report Scam </a>
+            <router-link class="nav-link" to="/">Home</router-link>
           </li>
           <li class="nav-item">
-            <a class="nav-link" href="#" @click="setActiveLink('simulation')"> Simulation </a>
+            <router-link class="nav-link" to="/analyze">Analyze Job</router-link>
           </li>
           <li class="nav-item">
-            <a class="nav-link" href="#" @click="setActiveLink('about')"> Contact Us</a>
+            <a class="nav-link" href="#" @click.prevent>Simulation</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="#" @click.prevent>Contact Us</a>
           </li>
         </ul>
       </div>
@@ -37,50 +38,28 @@
   </nav>
 </template>
 
-<script setup></script>
+<script>
+export default {
+  name: 'NavigationBar',
+}
+</script>
 
 <style scoped>
-.custom-navbar {
-  background-color: #b6ccd7;
-  padding: 0.75rem 0;
-  border-bottom: 2px solid #2839a7;
-}
-
-.brand-box {
-  background-color: #2839a7;
-  color: white;
-  padding: 8px 16px;
-  border-radius: 6px;
-  font-weight: 600;
-  font-size: 1rem;
-  text-decoration: none;
-}
-
 .navbar-brand {
-  text-decoration: none;
+  font-weight: bold;
+  font-size: 1.5rem;
+}
+
+.brand-icon {
+  margin-right: 0.5rem;
 }
 
 .nav-link {
-  color: #333;
   font-weight: 500;
-  font-size: 1rem;
-  padding: 0.5rem 1rem;
-  transition: color 0.3s ease;
+  margin: 0 0.5rem;
 }
 
-.btn-login {
-  background-color: #2839a7;
-  color: white;
-  border: none;
-  padding: 8px 20px;
-  border-radius: 20px;
-  font-weight: 500;
-  font-size: 0.95rem;
-  transition: background-color 0.3s ease;
-}
-
-.navbar-toggler {
-  border: none;
-  padding: 4px 8px;
+.nav-link:hover {
+  color: #3c00ff !important;
 }
 </style>
