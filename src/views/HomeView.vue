@@ -359,7 +359,7 @@ export default {
 
   .mockup-screen {
     width: 350px;
-    height: 250px;
+    height: 300px;
     transform: none;
   }
 
