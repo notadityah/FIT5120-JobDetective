@@ -1,9 +1,10 @@
 <script setup>
 import NavigationBar from './components/NavigationBar.vue'
 import { useRoute } from 'vue-router'
+import { computed } from 'vue'
 
 const route = useRoute()
-const showNavBar = route.name !== 'login' // Hide nav bar on login page
+const showNavBar = computed(() => route.name !== 'login') // Make it reactive
 </script>
 
 <template>
