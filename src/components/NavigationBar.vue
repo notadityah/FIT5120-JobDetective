@@ -27,10 +27,10 @@
             <router-link class="nav-link" to="/analyze">Analyze Job</router-link>
           </li>
           <li class="nav-item">
-            <a class="nav-link" href="#" @click.prevent>Simulation</a>
+            <a class="nav-link" href="#" @click.prevent>Scam Detection Simulation</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link" href="#" @click.prevent>Contact Us</a>
+            <a class="nav-link" href="#" @click.prevent>Reported Jobs</a>
           </li>
         </ul>
       </div>

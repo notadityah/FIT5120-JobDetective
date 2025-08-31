@@ -1,6 +1,7 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import HomeView from '../views/HomeView.vue'
 import AnalyzeView from '../views/AnalyzeView.vue'
+import ReportView from '../views/ReportView.vue'
 
 // Configure routes
 const routes = [
@@ -13,6 +14,12 @@ const routes = [
     path: '/analyze',
     name: 'analyze',
     component: AnalyzeView,
+  },
+  {
+    path: '/report/:reportData',
+    name: 'Report',
+    component: ReportView,
+    props: (route) => ({ reportData: JSON.parse(route.params.reportData) }),
   },
 ]
 

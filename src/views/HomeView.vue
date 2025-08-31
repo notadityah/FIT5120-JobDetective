@@ -3,15 +3,18 @@
     <div class="hero-section">
       <div class="hero-content">
         <h1 class="hero-title">
-          The AI tool for
-          <span class="highlight">job scam detection</span>
+          Detect
+          <span class="highlight">Job Scams</span>
+          with ease!
         </h1>
         <p class="hero-subtitle">
-          Protect yourself from fraudulent job postings with our advanced AI detection system.
+          JobDetective uses artificial intelligence to analyze job postings and identify potential
+          scams, helping you make informed decisions.
+          <span class="highlight">Stay safe in your job search</span>
         </p>
         <div class="cta-buttons">
-          <router-link to="/analyze" class="btn-primary">Get Started - it's free</router-link>
-          <button class="btn-secondary">Learn More</button>
+          <router-link to="/analyze" class="btn-primary">Get Started</router-link>
+          <!-- <button class="btn-secondary">Learn More</button> -->
         </div>
       </div>
       <div class="hero-image">
@@ -186,8 +189,8 @@ export default {
 }
 
 .mockup-screen {
-  width: 500px;
-  height: 350px;
+  width: 600px;
+  height: 300px;
   background: #1e293b;
   border-radius: 12px;
   border: 1px solid #334155;
