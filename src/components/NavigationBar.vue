@@ -26,12 +26,12 @@
           <li class="nav-item">
             <router-link class="nav-link" to="/analyze">Analyze Job</router-link>
           </li>
-          <li class="nav-item">
+          <!-- <li class="nav-item">
             <a class="nav-link" href="#" @click.prevent>Scam Detection Simulation</a>
           </li>
           <li class="nav-item">
             <a class="nav-link" href="#" @click.prevent>Reported Jobs</a>
-          </li>
+          </li> -->
         </ul>
       </div>
     </div>
@@ -57,9 +57,46 @@ export default {
 .nav-link {
   font-weight: 500;
   margin: 0 0.5rem;
+  position: relative;
+  transition: color 0.3s ease;
 }
 
 .nav-link:hover {
   color: #3c00ff !important;
+}
+
+/* Active tab underline */
+.nav-link.router-link-active {
+  color: #fff !important;
+}
+
+.nav-link.router-link-active::after {
+  content: '';
+  position: absolute;
+  bottom: -2px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 100%;
+  height: 2px;
+  background-color: #ffffff;
+  border-radius: 1px;
+}
+
+/* Optional: Add hover underline effect for non-active links */
+.nav-link:not(.router-link-active)::after {
+  content: '';
+  position: absolute;
+  bottom: -2px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 0;
+  height: 2px;
+  background-color: #3c00ff;
+  border-radius: 1px;
+  transition: width 0.3s ease;
+}
+
+.nav-link:not(.router-link-active):hover::after {
+  width: 100%;
 }
 </style>

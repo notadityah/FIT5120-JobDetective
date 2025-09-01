@@ -4,7 +4,7 @@ import { useRoute } from 'vue-router'
 import { computed } from 'vue'
 
 const route = useRoute()
-const showNavBar = computed(() => route.name !== 'login') // Make it reactive
+const showNavBar = computed(() => route.name !== 'login')
 </script>
 
 <template>

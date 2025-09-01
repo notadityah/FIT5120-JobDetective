@@ -1,11 +1,220 @@
+<script setup>
+import { ref, onMounted, computed } from 'vue'
+
+// Reactive data
+const scamData = ref(null)
+const loading = ref(true)
+const error = ref(null)
+
+// Cache configuration
+const CACHE_KEY = 'jobdetective_scam_stats'
+const CACHE_EXPIRY_KEY = 'jobdetective_scam_stats_expiry'
+const CACHE_DURATION = 24 * 60 * 60 * 1000 // 24 hours in milliseconds
+
+// Selection controls
+const selectedYear = ref('2025')
+const selectedState = ref('ALL')
+
+// Computed properties for available options
+const availableYears = computed(() => {
+  if (!scamData.value) return []
+  return Object.keys(scamData.value.yearly_totals).sort((a, b) => b - a)
+})
+
+// const availableStates = computed(() => {
+//   if (!scamData.value) return ['ALL']
+//   const states = new Set(['ALL'])
+
+//   Object.values(scamData.value.by_state).forEach((yearData) => {
+//     Object.keys(yearData).forEach((state) => states.add(state))
+//   })
+
+//   return Array.from(states).sort()
+// })
+
+// Computed properties for dynamic statistics
+const selectedYearData = computed(() => {
+  if (!scamData.value || !selectedYear.value) return null
+
+  if (selectedState.value === 'ALL') {
+    return scamData.value.yearly_totals[selectedYear.value] || null
+  } else {
+    const yearData = scamData.value.by_state[selectedYear.value]
+    return yearData?.[selectedState.value] || null
+  }
+})
+
+const formatCurrency = (amount) => {
+  return new Intl.NumberFormat('en-AU', {
+    style: 'currency',
+    currency: 'AUD',
+    minimumFractionDigits: 0,
+    maximumFractionDigits: 0,
+  }).format(amount)
+}
+
+// const formatNumber = (number) => {
+//   return new Intl.NumberFormat('en-AU').format(number)
+// }
+
+// Check if cached data exists and is valid
+const getCachedData = () => {
+  try {
+    const cachedData = localStorage.getItem(CACHE_KEY)
+    const cacheExpiry = localStorage.getItem(CACHE_EXPIRY_KEY)
+
+    if (cachedData && cacheExpiry) {
+      const expiryTime = parseInt(cacheExpiry)
+      const now = Date.now()
+
+      // Check if cache is still valid
+      if (now < expiryTime) {
+        console.log('Using cached scam statistics data')
+        return JSON.parse(cachedData)
+      } else {
+        console.log('Cache expired, will fetch new data')
+        // Clear expired cache
+        localStorage.removeItem(CACHE_KEY)
+        localStorage.removeItem(CACHE_EXPIRY_KEY)
+      }
+    }
+
+    return null
+  } catch (error) {
+    console.error('Error reading cached data:', error)
+    // Clear corrupted cache
+    localStorage.removeItem(CACHE_KEY)
+    localStorage.removeItem(CACHE_EXPIRY_KEY)
+    return null
+  }
+}
+
+// Save data to cache
+const setCacheData = (data) => {
+  try {
+    const expiryTime = Date.now() + CACHE_DURATION
+    localStorage.setItem(CACHE_KEY, JSON.stringify(data))
+    localStorage.setItem(CACHE_EXPIRY_KEY, expiryTime.toString())
+    console.log('Scam statistics cached successfully')
+  } catch (error) {
+    console.error('Error caching data:', error)
+  }
+}
+
+const fetchScamStatistics = async () => {
+  try {
+    loading.value = true
+
+    // First check if we have valid cached data
+    const cachedData = getCachedData()
+    if (cachedData) {
+      scamData.value = cachedData
+      loading.value = false
+      return
+    }
+
+    // If no valid cache, fetch from API
+    console.log('Fetching fresh data from API...')
+    const API_ENDPOINT = import.meta.env.VITE_API_GATEWAY_URL
+    const API_KEY = import.meta.env.VITE_API_KEY
+
+    const fetchOptions = {
+      method: 'GET',
+      mode: 'cors',
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
+      },
+    }
+
+    // Add API key if available
+    if (API_KEY) {
+      fetchOptions.headers['X-API-Key'] = API_KEY
+    }
+
+    console.log('Fetching from:', API_ENDPOINT)
+    const response = await fetch(API_ENDPOINT, fetchOptions)
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`)
+    }
+
+    const data = await response.json()
+    console.log('Received fresh data:', data)
+
+    // Store the data and cache it
+    scamData.value = data
+    setCacheData(data)
+
+    console.log('Parsed scam data:', scamData.value)
+  } catch (err) {
+    console.error('Error fetching scam statistics:', err)
+    error.value = err.message
+  } finally {
+    loading.value = false
+  }
+}
+
+// Optional: Function to clear cache manually
+const clearCache = () => {
+  localStorage.removeItem(CACHE_KEY)
+  localStorage.removeItem(CACHE_EXPIRY_KEY)
+  console.log('Scam statistics cache cleared')
+}
+
+// Make clearCache available globally for debugging
+if (import.meta.env.DEV) {
+  window.clearScamStatsCache = clearCache
+}
+
+onMounted(() => {
+  fetchScamStatistics()
+})
+</script>
+
 <template>
   <div class="home-container">
+    <!-- Stats as main hero section -->
+    <div class="stats-hero-section">
+      <div class="stats-display" v-if="!loading && !error && scamData">
+        <div class="stat-intro-section">Young job seekers aged 18-24 lost a total of</div>
+
+        <div class="stat-amount-section">
+          <span class="stat-amount" v-if="selectedYearData">
+            {{ formatCurrency(selectedYearData.amount_lost) }}
+          </span>
+          <span class="stat-amount" v-else>No data available</span>
+        </div>
+
+        <div class="stat-description-section">
+          in
+          <select v-model="selectedYear" class="year-dropdown">
+            <option v-for="year in availableYears" :key="year" :value="year">
+              {{ year }}
+            </option>
+          </select>
+          due to job and employment scams across Australia.
+        </div>
+      </div>
+
+      <!-- Loading State -->
+      <div class="stats-loading" v-else-if="loading">
+        <div class="loading-text">Loading statistics...</div>
+      </div>
+
+      <!-- Error State -->
+      <div class="stats-error" v-else-if="error">
+        <div class="error-text">Unable to load current statistics</div>
+      </div>
+    </div>
+
+    <!-- Hero content with mockup -->
     <div class="hero-section">
       <div class="hero-content">
         <h1 class="hero-title">
           Detect
           <span class="highlight">Job Scams</span>
-          with ease!
+          with AI-powered analysis
         </h1>
         <p class="hero-subtitle">
           JobDetective uses artificial intelligence to analyze job postings and identify potential
@@ -13,8 +222,7 @@
           <span class="highlight">Stay safe in your job search</span>
         </p>
         <div class="cta-buttons">
-          <router-link to="/analyze" class="btn-primary">Get Started</router-link>
-          <!-- <button class="btn-secondary">Learn More</button> -->
+          <router-link to="/analyze" class="btn-primary">Analyze Job Now</router-link>
         </div>
       </div>
       <div class="hero-image">
@@ -55,6 +263,7 @@
       </div>
     </div>
 
+    <!-- Features section -->
     <div class="features-section">
       <div class="container">
         <h2 class="section-title">How JobDetective Protects You</h2>
@@ -76,7 +285,7 @@
           </div>
           <div class="feature-card">
             <div class="feature-icon">🛡️</div>
-            <h3>Comprehensive Protection</h3>
+            <h3>Complete Protection</h3>
             <p>
               Identifies multiple types of job scams including fake companies, payment fraud, and
               identity theft.
@@ -101,23 +310,134 @@ export default {
   color: white;
 }
 
+/* Stats as main hero section */
+.stats-hero-section {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  padding: 4rem 2rem;
+  min-height: 60vh;
+  align-items: center;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* Hero content with mockup - now secondary */
 .hero-section {
-  min-height: 75vh;
   display: flex;
   align-items: center;
-  padding: 0 2rem;
+  padding: 4rem 2rem;
   max-width: 1400px;
   margin: 0 auto;
+  gap: 4rem;
 }
 
 .hero-content {
   flex: 1;
   max-width: 600px;
-  padding-right: 2rem;
+  text-align: left;
+}
+
+.hero-image {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* Statistics Display Styles */
+.stats-display {
+  max-width: 900px;
+  width: 100%;
+  text-align: center;
+  background: transparent;
+  padding: 0;
+  border: none;
+  border-radius: 0;
+}
+
+.stat-intro-section {
+  font-size: 2.2rem;
+  color: #cbd5e1;
+  margin-bottom: 1.5rem;
+  font-weight: 400;
+}
+
+.stat-amount-section {
+  margin-bottom: 2.5rem;
+}
+
+.stat-amount {
+  display: block;
+  font-size: 9rem;
+  font-weight: 800;
+  color: #ef4444;
+  line-height: 1;
+  letter-spacing: -0.02em;
+}
+
+.stat-description-section {
+  font-size: 2rem;
+  color: #e2e8f0;
+  line-height: 1.5;
+  display: flex;
+  align-items: center;
+  gap: 0;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.year-dropdown,
+.state-dropdown {
+  background: transparent;
+  border: none;
+  border-radius: 0;
+  color: #3b82f6;
+  padding: 0.1rem 0.4rem;
+  font-size: 1.6rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-decoration: none;
+  min-width: auto;
+  width: auto;
+  display: inline;
+}
+
+.year-dropdown:hover,
+.state-dropdown:hover,
+.year-dropdown:focus,
+.state-dropdown:focus {
+  background: transparent;
+  outline: none;
+  color: #60a5fa;
+  text-decoration: none;
+}
+
+.year-dropdown option,
+.state-dropdown option {
+  background: #1e293b;
+  color: #ffffff;
+}
+
+.stats-loading,
+.stats-error {
+  background: linear-gradient(135deg, #374151 0%, #4b5563 100%);
+  padding: 3rem;
+  border-radius: 16px;
+  border: 1px solid #6b7280;
+  text-align: center;
+  max-width: 800px;
+  width: 100%;
+}
+
+.loading-text,
+.error-text {
+  font-size: 1.4rem;
+  color: #d1d5db;
 }
 
 .hero-title {
-  font-size: 4rem;
+  font-size: 3.2rem;
   font-weight: 300;
   line-height: 1.1;
   margin-bottom: 2rem;
@@ -130,7 +450,7 @@ export default {
 }
 
 .hero-subtitle {
-  font-size: 1.3rem;
+  font-size: 1.25rem;
   line-height: 1.6;
   margin-bottom: 3rem;
   opacity: 0.8;
@@ -159,29 +479,6 @@ export default {
   transform: translateY(-2px);
   text-decoration: none;
   color: white;
-}
-
-.btn-secondary {
-  background: transparent;
-  color: white;
-  border: 2px solid #475569;
-  padding: 1rem 2rem;
-  border-radius: 8px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.3s ease;
-}
-
-.btn-secondary:hover {
-  border-color: #3b82f6;
-  color: #3b82f6;
-}
-
-.hero-image {
-  flex: 1;
-  display: flex;
-  justify-content: center;
-  align-items: center;
 }
 
 .mockup-container {
@@ -277,8 +574,9 @@ export default {
 }
 
 .features-section {
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
   padding: 6rem 0;
-  background: #0f172a;
+  background: transparent;
 }
 
 .container {
@@ -342,29 +640,50 @@ export default {
 }
 
 @media (max-width: 768px) {
+  .stats-hero-section {
+    padding: 3rem 1rem;
+    min-height: 50vh;
+  }
+
   .hero-section {
     flex-direction: column;
-    text-align: center;
-    padding: 4rem 1rem;
+    gap: 3rem;
+    padding: 3rem 1rem;
   }
 
   .hero-content {
-    padding-right: 0;
-    margin-bottom: 3rem;
+    text-align: center;
+    max-width: 100%;
   }
 
   .hero-title {
     font-size: 2.5rem;
   }
 
+  .stat-amount {
+    font-size: 4rem;
+  }
+
+  .stat-intro-section {
+    font-size: 1.6rem;
+  }
+
+  .stat-description-section {
+    font-size: 1.4rem;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.8rem;
+  }
+
+  .year-dropdown,
+  .state-dropdown {
+    font-size: 1.2rem;
+  }
+
   .mockup-screen {
     width: 350px;
     height: 300px;
     transform: none;
-  }
-
-  .cta-buttons {
-    justify-content: center;
   }
 }
 </style>
