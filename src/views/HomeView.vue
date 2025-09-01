@@ -1,5 +1,9 @@
 <script setup>
 import { ref, onMounted, computed } from 'vue'
+import LoadingSpinner from '@/components/LoadingSpinner.vue'
+import ErrorDisplay from '@/components/ErrorDisplay.vue'
+import FeatureCard from '@/components/FeatureCard.vue'
+import BaseButton from '@/components/BaseButton.vue'
 
 // Reactive data
 const scamData = ref(null)
@@ -198,14 +202,21 @@ onMounted(() => {
       </div>
 
       <!-- Loading State -->
-      <div class="stats-loading" v-else-if="loading">
-        <div class="loading-text">Loading statistics...</div>
-      </div>
+      <LoadingSpinner
+        v-else-if="loading"
+        variant="stats"
+        message="Loading statistics..."
+        size="large"
+      />
 
       <!-- Error State -->
-      <div class="stats-error" v-else-if="error">
-        <div class="error-text">Unable to load current statistics</div>
-      </div>
+      <ErrorDisplay
+        v-else-if="error"
+        variant="stats"
+        message="Unable to load current statistics"
+        :show-retry="true"
+        @retry="fetchScamStatistics"
+      />
     </div>
 
     <!-- Hero content with mockup -->
@@ -222,7 +233,9 @@ onMounted(() => {
           <span class="highlight">Stay safe in your job search</span>
         </p>
         <div class="cta-buttons">
-          <router-link to="/analyze" class="btn-primary">Analyze Job Now</router-link>
+          <BaseButton variant="primary" size="large" @click="$router.push('/analyze')">
+            Analyze Job Now
+          </BaseButton>
         </div>
       </div>
       <div class="hero-image">
@@ -266,31 +279,23 @@ onMounted(() => {
     <!-- Features section -->
     <div class="features-section">
       <div class="container">
-        <h2 class="section-title">How JobDetective Protects You</h2>
+        <h2 class="section-title">How <span class="highlight">JobDetective</span> Protects You</h2>
         <div class="features-grid">
-          <div class="feature-card">
-            <div class="feature-icon">🔍</div>
-            <h3>AI-Powered Analysis</h3>
-            <p>
-              Advanced machine learning algorithms analyze job postings for common scam patterns and
-              red flags.
-            </p>
-          </div>
-          <div class="feature-card">
-            <div class="feature-icon">⚡</div>
-            <h3>Real-time Detection</h3>
-            <p>
-              Get instant results whether you upload files, paste URLs, or enter text descriptions.
-            </p>
-          </div>
-          <div class="feature-card">
-            <div class="feature-icon">🛡️</div>
-            <h3>Complete Protection</h3>
-            <p>
-              Identifies multiple types of job scams including fake companies, payment fraud, and
-              identity theft.
-            </p>
-          </div>
+          <FeatureCard
+            icon="🔍"
+            title="AI-Powered Analysis"
+            description="Advanced machine learning algorithms analyze job postings for common scam patterns and red flags."
+          />
+          <FeatureCard
+            icon="⚡"
+            title="Real-time Detection"
+            description="Get instant results whether you upload files, paste URLs, or enter text descriptions."
+          />
+          <FeatureCard
+            icon="🛡️"
+            title="Complete Protection"
+            description="Identifies multiple types of job scams including fake companies, payment fraud, and identity theft."
+          />
         </div>
       </div>
     </div>
@@ -421,19 +426,8 @@ export default {
 
 .stats-loading,
 .stats-error {
-  background: linear-gradient(135deg, #374151 0%, #4b5563 100%);
-  padding: 3rem;
-  border-radius: 16px;
-  border: 1px solid #6b7280;
-  text-align: center;
   max-width: 800px;
   width: 100%;
-}
-
-.loading-text,
-.error-text {
-  font-size: 1.4rem;
-  color: #d1d5db;
 }
 
 .hero-title {
@@ -461,24 +455,6 @@ export default {
   display: flex;
   gap: 1rem;
   flex-wrap: wrap;
-}
-
-.btn-primary {
-  background: #3b82f6;
-  color: white;
-  padding: 1rem 2rem;
-  border-radius: 8px;
-  text-decoration: none;
-  font-weight: 600;
-  transition: all 0.3s ease;
-  display: inline-block;
-}
-
-.btn-primary:hover {
-  background: #2563eb;
-  transform: translateY(-2px);
-  text-decoration: none;
-  color: white;
 }
 
 .mockup-container {
@@ -597,36 +573,6 @@ export default {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
   gap: 2rem;
-}
-
-.feature-card {
-  background: #1e293b;
-  padding: 2.5rem;
-  border-radius: 12px;
-  border: 1px solid #334155;
-  text-align: center;
-  transition: all 0.3s ease;
-}
-
-.feature-card:hover {
-  transform: translateY(-5px);
-  border-color: #3b82f6;
-}
-
-.feature-icon {
-  font-size: 3rem;
-  margin-bottom: 1.5rem;
-}
-
-.feature-card h3 {
-  font-size: 1.5rem;
-  margin-bottom: 1rem;
-  color: white;
-}
-
-.feature-card p {
-  color: #94a3b8;
-  line-height: 1.6;
 }
 
 @keyframes pulse {

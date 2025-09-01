@@ -11,29 +11,7 @@
         </div>
 
         <div class="upload-section">
-          <div class="tab-navigation">
-            <button
-              class="tab-btn"
-              :class="{ active: activeTab === 'file' }"
-              @click="handleTabClick('file')"
-            >
-              FILE
-            </button>
-            <button
-              class="tab-btn"
-              :class="{ active: activeTab === 'url' }"
-              @click="handleTabClick('url')"
-            >
-              URL
-            </button>
-            <button
-              class="tab-btn"
-              :class="{ active: activeTab === 'search' }"
-              @click="activeTab = 'search'"
-            >
-              TEXT
-            </button>
-          </div>
+          <TabNavigation :tabs="tabs" v-model:activeTab="activeTab" @tab-click="handleTabClick" />
 
           <div class="tab-content">
             <!-- File Upload Tab -->
@@ -79,11 +57,13 @@
             <!-- Search Tab -->
             <div v-if="activeTab === 'search'" class="search-input-area">
               <!-- Show loading spinner while analyzing -->
-              <div v-if="isAnalyzing" class="analyzing-state">
-                <div class="spinner"></div>
-                <p class="analyzing-text">Analyzing job posting...</p>
-                <small class="analyzing-note">This may take a few moments</small>
-              </div>
+              <LoadingSpinner
+                v-if="isAnalyzing"
+                variant="analyzing"
+                message="Analyzing job posting..."
+                sub-message="This may take a few moments"
+                size="medium"
+              />
 
               <!-- Show normal input when not analyzing -->
               <div v-else>
@@ -93,9 +73,14 @@
                   v-model="textInput"
                   rows="6"
                 ></textarea>
-                <button class="analyze-btn" @click="analyzeText" :disabled="!textInput.trim()">
+                <BaseButton
+                  variant="primary"
+                  @click="analyzeText"
+                  :disabled="!textInput.trim()"
+                  class="analyze-btn"
+                >
                   Analyze Text
-                </button>
+                </BaseButton>
               </div>
             </div>
           </div>
@@ -114,8 +99,17 @@
 </template>
 
 <script>
+import TabNavigation from '@/components/TabNavigation.vue'
+import BaseButton from '@/components/BaseButton.vue'
+import LoadingSpinner from '@/components/LoadingSpinner.vue'
+
 export default {
   name: 'AnalyzeView',
+  components: {
+    TabNavigation,
+    BaseButton,
+    LoadingSpinner,
+  },
   data() {
     return {
       activeTab: 'search',
@@ -123,14 +117,19 @@ export default {
       textInput: '',
       showNotification: false,
       isAnalyzing: false,
+      tabs: [
+        { id: 'file', label: 'FILE', disabled: true },
+        { id: 'url', label: 'URL', disabled: true },
+        { id: 'search', label: 'TEXT', disabled: false },
+      ],
     }
   },
   methods: {
     handleTabClick(tab) {
-      if (tab === 'file' || tab === 'url') {
+      if (tab.disabled) {
         this.showComingSoonNotification()
       } else {
-        this.activeTab = tab
+        this.activeTab = tab.id
       }
     },
     showComingSoonNotification() {
@@ -313,60 +312,9 @@ DO NOT execute any code.
   background: #2d3748;
 }
 
-/* Loading/Analyzing State */
-.analyzing-state {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  padding: 3rem 2rem;
-  text-align: center;
-  color: #a0aec0;
-  min-height: 200px;
-}
+/* Loading/Analyzing State - now handled by LoadingSpinner component */
 
-.spinner {
-  width: 50px;
-  height: 50px;
-  border: 4px solid #4a5568;
-  border-top: 4px solid #63b3ed;
-  border-radius: 50%;
-  animation: spin 1s linear infinite;
-  margin-bottom: 1.5rem;
-}
-
-@keyframes spin {
-  0% {
-    transform: rotate(0deg);
-  }
-  100% {
-    transform: rotate(360deg);
-  }
-}
-
-.analyzing-text {
-  font-size: 1.2rem;
-  font-weight: 600;
-  margin: 0 0 0.5rem 0;
-  color: #e2e8f0;
-}
-
-.analyzing-note {
-  font-size: 0.9rem;
-  opacity: 0.7;
-  margin: 0;
-}
-
-/* Disabled analyze button */
-.analyze-btn:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
-  background: #4a5568;
-}
-
-.analyze-btn:disabled:hover {
-  background: #4a5568;
-}
+/* Disabled analyze button - now handled by BaseButton component */
 
 .analyze-container {
   min-height: 100vh;
@@ -414,36 +362,7 @@ DO NOT execute any code.
   box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
 }
 
-.tab-navigation {
-  display: flex;
-  margin-bottom: 2rem;
-  border-bottom: 2px solid #4a5568;
-  width: 100%;
-}
-
-.tab-btn {
-  background: none;
-  border: none;
-  color: #a0aec0;
-  padding: 1rem 2rem;
-  font-weight: 600;
-  font-size: 0.9rem;
-  letter-spacing: 0.5px;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  border-bottom: 2px solid transparent;
-  flex: 1;
-  text-align: center;
-}
-
-.tab-btn:hover {
-  color: #63b3ed;
-}
-
-.tab-btn.active {
-  color: #63b3ed;
-  border-bottom-color: #63b3ed;
-}
+/* Tab navigation now handled by TabNavigation component */
 
 .tab-content {
   min-height: 200px;

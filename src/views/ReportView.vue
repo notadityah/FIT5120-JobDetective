@@ -3,7 +3,7 @@
     <div class="report-content">
       <!-- Header -->
       <div class="report-header">
-        <button class="back-btn" @click="goBack">← Back to Analysis</button>
+        <BaseButton variant="back" @click="goBack" size="medium"> ← Back to Analysis </BaseButton>
         <h1 class="report-title">Job Analysis Report</h1>
       </div>
 
@@ -26,34 +26,10 @@
               </h2>
               <p class="risk-description">
                 {{ reportData.explanation }}
-                <span class="probability">({{ reportData.riskScore }}% probability)</span>
               </p>
               <p class="algorithm-note">
                 {{ getAlgorithmNote() }}
               </p>
-            </div>
-          </div>
-
-          <!-- Risk Score Circle -->
-          <div class="risk-score-circle">
-            <svg width="200" height="200" viewBox="0 0 200 200">
-              <circle cx="100" cy="100" r="80" fill="none" stroke="#e5e7eb" stroke-width="20" />
-              <circle
-                cx="100"
-                cy="100"
-                r="80"
-                fill="none"
-                :stroke="getRiskColor(reportData.riskLevel)"
-                stroke-width="20"
-                stroke-linecap="round"
-                :stroke-dasharray="circumference"
-                :stroke-dashoffset="strokeDashoffset"
-                transform="rotate(-90 100 100)"
-              />
-            </svg>
-            <div class="score-text">
-              <span class="score-number">{{ reportData.riskScore }}</span>
-              <span class="score-percent">%</span>
             </div>
           </div>
         </div>
@@ -80,9 +56,11 @@
         </div>
 
         <!-- Report Button -->
-        <div class="report-action">
-          <button class="report-scam-btn">Report this job →</button>
-        </div>
+        <!-- <div class="report-action">
+          <BaseButton variant="danger" size="large" @click="reportScam">
+            Report this job
+          </BaseButton>
+        </div> -->
       </div>
 
       <!-- Safety Tips Section -->
@@ -97,8 +75,13 @@
 </template>
 
 <script>
+import BaseButton from '@/components/BaseButton.vue'
+
 export default {
   name: 'ReportView',
+  components: {
+    BaseButton,
+  },
   props: {
     reportData: {
       type: Object,
@@ -106,13 +89,6 @@ export default {
     },
   },
   computed: {
-    circumference() {
-      return 2 * Math.PI * 80 // radius = 80
-    },
-    strokeDashoffset() {
-      const progress = this.reportData.riskScore / 100
-      return this.circumference - progress * this.circumference
-    },
     isNotAJobPosting() {
       return this.reportData.riskLevel === 'n/a'
     },
@@ -179,6 +155,10 @@ export default {
         return '⚠️'
       }
     },
+    reportScam() {
+      // TODO: Implement report functionality
+      alert('Report functionality will be available soon')
+    },
   },
 }
 </script>
@@ -186,8 +166,9 @@ export default {
 <style scoped>
 .report-container {
   min-height: 100vh;
-  background: #f9fafb;
+  background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #334155 100%);
   padding: 2rem 0;
+  color: white;
 }
 
 .report-content {
@@ -220,17 +201,18 @@ export default {
 
 .report-title {
   font-size: 2rem;
-  color: #1f2937;
+  color: white;
   margin: 0;
 }
 
 .not-job-posting-card {
-  background: #fff;
+  background: #1e293b;
   border-radius: 12px;
   padding: 2rem;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.07);
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
   text-align: center;
   margin-bottom: 2rem;
+  border: 1px solid #334155;
 }
 
 .not-job-icon {
@@ -239,29 +221,26 @@ export default {
 }
 
 .not-job-title {
-  color: #1f2937;
+  color: white;
   font-size: 1.5rem;
   margin-bottom: 1rem;
 }
 
 .not-job-explanation {
-  color: #4b5563;
+  color: #cbd5e1;
   font-size: 1.1rem;
 }
 
 .report-card {
-  background: white;
+  background: #1e293b;
   border-radius: 12px;
   padding: 2rem;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
   margin-bottom: 2rem;
+  border: 1px solid #334155;
 }
 
 .risk-section {
-  display: grid;
-  grid-template-columns: 1fr auto;
-  gap: 3rem;
-  align-items: center;
   margin-bottom: 3rem;
 }
 
@@ -295,51 +274,25 @@ export default {
 
 .risk-description {
   font-size: 1.1rem;
-  color: #4b5563;
+  color: #cbd5e1;
   margin-bottom: 1rem;
   line-height: 1.6;
 }
 
 .probability {
   font-weight: 600;
-  color: #1f2937;
+  color: white;
 }
 
 .algorithm-note {
-  color: #6b7280;
+  color: #9ca3af;
   font-size: 0.95rem;
   line-height: 1.5;
   margin: 0;
 }
 
-.risk-score-circle {
-  position: relative;
-  width: 200px;
-  height: 200px;
-}
-
-.score-text {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  text-align: center;
-}
-
-.score-number {
-  font-size: 3rem;
-  font-weight: bold;
-  color: #1f2937;
-  line-height: 1;
-}
-
-.score-percent {
-  font-size: 1.5rem;
-  color: #6b7280;
-}
-
 .reasons-section {
-  border-top: 1px solid #e5e7eb;
+  border-top: 1px solid #374151;
   padding-top: 2rem;
 }
 
@@ -348,16 +301,16 @@ export default {
   align-items: center;
   gap: 0.5rem;
   font-size: 1.3rem;
-  color: #1f2937;
+  color: white;
   margin-bottom: 1.5rem;
 }
 
 .info-icon {
-  color: #6b7280;
+  color: #9ca3af;
 }
 
 .red-flags-list {
-  background: #f3f4f6;
+  background: #374151;
   border-radius: 8px;
   padding: 1.5rem;
 }
@@ -379,13 +332,13 @@ export default {
 
 .flag-title {
   font-weight: 600;
-  color: #1f2937;
+  color: white;
   margin: 0 0 0.5rem 0;
   font-size: 1.1rem;
 }
 
 .flag-description {
-  color: #4b5563;
+  color: #cbd5e1;
   margin: 0;
   line-height: 1.5;
   font-style: italic;
@@ -412,14 +365,15 @@ export default {
 }
 
 .safety-tips-card {
-  background: white;
+  background: #1e293b;
   border-radius: 12px;
   padding: 2rem;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+  border: 1px solid #334155;
 }
 
 .safety-tips-card h3 {
-  color: #1f2937;
+  color: white;
   margin-bottom: 1rem;
 }
 
@@ -430,11 +384,12 @@ export default {
 }
 
 .tips-list li {
-  background: #f0fdf4;
+  background: #064e3b;
   border-left: 4px solid #10b981;
   padding: 1rem;
   margin-bottom: 0.75rem;
   border-radius: 0 6px 6px 0;
+  color: #d1fae5;
 }
 
 .tips-list li:last-child {
@@ -443,7 +398,20 @@ export default {
 
 @media (max-width: 768px) {
   .risk-section {
-    grid-template-columns: 1fr;
+    text-align: center;
+  }
+
+  .risk-info {
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+  }
+
+  .risk-icon {
+    margin-top: 0;
+  }
+
+  .risk-text {
     text-align: center;
   }
 
