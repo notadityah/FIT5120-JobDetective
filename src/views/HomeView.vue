@@ -809,12 +809,24 @@ body {
   .hero-title {
     font-size: 2rem;
   }
+
+  .cta-buttons {
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+  }
+
+  .mockup-container {
+    height: auto;
+  }
+
+  .mockup-screen {
+    height: auto;
+  }
   .hero-subtitle {
     font-size: 1.1rem;
   }
-  .mockup-screen {
-    height: 250px;
-  }
+
   .features-grid {
     gap: 1.5rem;
   }
