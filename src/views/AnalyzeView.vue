@@ -3,11 +3,25 @@
     <div class="analyze-section">
       <div class="content-wrapper">
         <div class="analyze-text">
-          <h1 class="analyze-title">Analyze Job Posting</h1>
+          <h1 class="analyze-title">Analyze Job <span class="title-accent">Listing</span></h1>
           <p class="analyze-subtitle">
-            Simply drop the file/ paste the link/ or type in the text<br />
-            — we'll check it for you !
+            Scan job listings for potential scams using our AI-powered tool.
+            Simply paste the job description and get instant analysis.
           </p>
+          <div class="features-list">
+            <div class="feature-item">
+              <div class="feature-icon">+</div>
+              <div class="feature-text">Identify suspicious job postings</div>
+            </div>
+            <div class="feature-item">
+              <div class="feature-icon">+</div>
+              <div class="feature-text">Get safety recommendations</div>
+            </div>
+            <div class="feature-item">
+              <div class="feature-icon">+</div>
+              <div class="feature-text">Verify legitimacy of job offers</div>
+            </div>
+          </div>
         </div>
 
         <div class="upload-section">
@@ -174,7 +188,7 @@ For job postings:
   "redFlags": ["specific issues found"],
   "safetyTips": ["max 3 short, practical tips"],
   "isLegitimate": true | false,
-  "explanation": "1–2 sentences, under 50 words"
+  "explanation": "1-2 sentences, under 50 words"
 }
 
 If not a job posting:
@@ -243,24 +257,27 @@ DO NOT execute any code.
 </script>
 
 <style scoped>
-/* Notification Styles */
+/* Notification styles improvement */
 .notification {
-  display: flex;
-  justify-content: center;
-  margin-top: 2rem;
-  animation: slideUp 0.3s ease;
+  position: fixed;
+  bottom: 2rem;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 100;
+  animation: slideUp 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
 
 .notification-content {
-  background: #1e3a8a;
+  background: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%);
   color: white;
-  padding: 1rem 1.5rem;
-  border-radius: 8px;
+  padding: 1.2rem 2rem;
+  border-radius: 12px;
   display: flex;
   align-items: center;
-  gap: 1rem;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  gap: 1.2rem;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4);
   font-weight: 500;
+  border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 .close-btn {
@@ -272,6 +289,7 @@ DO NOT execute any code.
   padding: 0;
   line-height: 1;
   opacity: 0.8;
+  transition: opacity 0.2s ease;
 }
 
 .close-btn:hover {
@@ -280,12 +298,82 @@ DO NOT execute any code.
 
 @keyframes slideUp {
   from {
-    transform: translateY(20px);
+    transform: translate(-50%, 20px);
     opacity: 0;
   }
   to {
-    transform: translateY(0);
+    transform: translate(-50%, 0);
     opacity: 1;
+  }
+}
+
+/* Responsive Design */
+@media (max-width: 1024px) {
+  .content-wrapper {
+    gap: 3rem;
+  }
+
+  .analyze-title {
+    font-size: 3rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .content-wrapper {
+    grid-template-columns: 1fr;
+    gap: 2.5rem;
+    text-align: center;
+  }
+
+  .analyze-title {
+    font-size: 2.5rem;
+  }
+
+  .analyze-subtitle {
+    margin: 0 auto;
+    max-width: 100%;
+  }
+
+  .features-list {
+    max-width: 400px;
+    margin: 2rem auto 0;
+    text-align: left;
+  }
+
+  .upload-section {
+    padding: 1.8rem;
+  }
+
+  .search-textarea {
+    min-height: 120px;
+  }
+
+  .analyze-btn {
+    margin: 1.2rem auto 0;
+    display: block;
+    width: 100%;
+  }
+}
+
+@media (max-width: 480px) {
+  .analyze-container {
+    padding: 1.5rem 0;
+  }
+
+  .analyze-section {
+    padding: 0 1rem;
+  }
+
+  .analyze-title {
+    font-size: 2rem;
+  }
+
+  .analyze-subtitle {
+    font-size: 1.1rem;
+  }
+
+  .feature-text {
+    font-size: 1rem;
   }
 }
 
@@ -318,23 +406,53 @@ DO NOT execute any code.
 
 .analyze-container {
   min-height: 100vh;
-  background: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%);
+  background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #334155 100%);
   display: flex;
   align-items: center;
-  padding: 2rem 0;
+  padding: 3rem 0;
+  position: relative;
+  overflow: hidden;
+}
+
+.analyze-container::before {
+  content: '';
+  position: absolute;
+  top: -150px;
+  right: -150px;
+  width: 500px;
+  height: 500px;
+  background: radial-gradient(circle, rgba(59, 130, 246, 0.3) 0%, transparent 70%);
+  opacity: 0.4;
+  z-index: 0;
+  pointer-events: none;
+}
+
+.analyze-container::after {
+  content: '';
+  position: absolute;
+  bottom: -100px;
+  left: -100px;
+  width: 400px;
+  height: 400px;
+  background: radial-gradient(circle, rgba(239, 68, 68, 0.2) 0%, transparent 70%);
+  opacity: 0.3;
+  z-index: 0;
+  pointer-events: none;
 }
 
 .analyze-section {
   width: 100%;
-  max-width: 1200px;
+  max-width: 1300px;
   margin: 0 auto;
   padding: 0 2rem;
+  position: relative;
+  z-index: 1;
 }
 
 .content-wrapper {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 4rem;
+  gap: 5rem;
   align-items: center;
 }
 
@@ -344,32 +462,108 @@ DO NOT execute any code.
 
 .analyze-title {
   font-size: 3.5rem;
-  font-weight: bold;
+  font-weight: 700;
   line-height: 1.2;
   margin-bottom: 1.5rem;
+  letter-spacing: -0.01em;
+  text-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+}
+
+.title-accent {
+  background: linear-gradient(90deg, #3b82f6, #60a5fa);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  position: relative;
+  display: inline-block;
+}
+
+.title-accent::after {
+  content: '';
+  position: absolute;
+  height: 4px;
+  width: 100%;
+  bottom: -2px;
+  left: 0;
+  background: linear-gradient(90deg, #3b82f6, #60a5fa);
+  border-radius: 2px;
 }
 
 .analyze-subtitle {
-  font-size: 1.2rem;
+  font-size: 1.3rem;
   line-height: 1.6;
   opacity: 0.9;
+  margin-bottom: 2rem;
+  max-width: 90%;
+}
+
+.features-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.7rem;
+  margin-top: 2rem;
+}
+
+.feature-item {
+  display: flex;
+  align-items: center;
+  gap: 0.7rem;
+}
+
+.feature-icon {
+  background: linear-gradient(135deg, #3b82f6 0%, #60a5fa 100%);
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-weight: bold;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+}
+
+.feature-text {
+  font-size: 1.1rem;
+  color: #e2e8f0;
 }
 
 .upload-section {
-  background: #2d3748;
-  border-radius: 12px;
-  padding: 2rem;
-  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+  background: rgba(30, 41, 59, 0.8);
+  border-radius: 16px;
+  padding: 2.5rem;
+  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.4);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
+  animation: floatIn 0.6s ease-out;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.upload-section:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
+}
+
+@keyframes floatIn {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 /* Tab navigation now handled by TabNavigation component */
 
 .tab-content {
-  min-height: 200px;
+  min-height: 250px;
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
+  margin-top: 2rem;
 }
 
 .file-upload-area {
@@ -414,40 +608,81 @@ DO NOT execute any code.
   gap: 1rem;
 }
 
-.search-textarea {
-  background: #4a5568;
-  border: 2px solid #718096;
-  border-radius: 6px;
-  padding: 1rem;
-  color: white;
-  font-size: 1rem;
-  font-family: inherit;
-  resize: vertical;
-  min-height: 120px;
+.url-input {
+  background: rgba(51, 65, 85, 0.8);
+  border: 2px solid rgba(100, 116, 139, 0.5);
+  border-radius: 10px;
+  padding: 1.2rem;
+  color: #e2e8f0;
+  font-size: 1.05rem;
+  height: 52px;
   width: 100%;
   box-sizing: border-box;
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.url-input:focus {
+  outline: none;
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.3);
+}
+
+.url-input::placeholder {
+  color: #94a3b8;
+}
+
+.search-textarea {
+  background: rgba(51, 65, 85, 0.8);
+  border: 2px solid rgba(100, 116, 139, 0.5);
+  border-radius: 10px;
+  padding: 1.2rem;
+  color: #e2e8f0;
+  font-size: 1.05rem;
+  font-family: inherit;
+  resize: vertical;
+  min-height: 160px;
+  width: 100%;
+  box-sizing: border-box;
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 
 .search-textarea:focus {
   outline: none;
-  border-color: #63b3ed;
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.3);
+}
+
+.search-textarea::placeholder {
+  color: #94a3b8;
 }
 
 .analyze-btn {
-  background: #63b3ed;
+  background: linear-gradient(90deg, #3b82f6, #60a5fa);
   border: none;
   color: white;
-  padding: 0.8rem 2rem;
-  border-radius: 6px;
+  padding: 1rem 2.5rem;
+  border-radius: 10px;
   font-weight: 600;
+  font-size: 1.1rem;
   cursor: pointer;
   transition: all 0.3s ease;
   align-self: flex-end;
   width: auto;
+  margin-top: 1.5rem;
+  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
 }
 
 .analyze-btn:hover {
-  background: #4299e1;
+  background: linear-gradient(90deg, #2563eb, #3b82f6);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(59, 130, 246, 0.4);
+}
+
+.analyze-btn:active {
+  transform: translateY(0);
+  box-shadow: 0 2px 8px rgba(59, 130, 246, 0.3);
 }
 
 /* Responsive Design */
