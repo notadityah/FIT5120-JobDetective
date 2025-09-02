@@ -191,8 +191,7 @@ onMounted(() => {
         </div>
 
         <div class="stat-description-section">
-          in 2025
-          due to job and employment scams across Australia.
+          in 2025 due to job and employment scams across Australia
         </div>
       </div>
 
@@ -309,13 +308,13 @@ export default {
   background: linear-gradient(135deg, #0f172a 0%, #1e293b 60%, #334155 100%);
   color: white;
   position: relative;
-  overflow-x: hidden;
+  overflow-x: hidden; /* Uncomment this line */
 }
 
 .home-container::before {
   content: '';
   position: absolute;
-  top: -120px;
+  top: 120px;
   left: 50%;
   transform: translateX(-50%);
   width: 900px;
@@ -329,7 +328,7 @@ export default {
 .home-container::after {
   content: '';
   position: absolute;
-  bottom: -150px;
+  bottom: 0; /* Changed from -150px to 0 */
   right: -150px;
   width: 600px;
   height: 600px;
@@ -337,6 +336,13 @@ export default {
   opacity: 0.15;
   z-index: 0;
   pointer-events: none;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+  overflow-x: hidden;
 }
 
 /* Stats as main hero section */
@@ -348,8 +354,8 @@ export default {
   min-height: 60vh;
   align-items: center;
   border-bottom: 1px solid rgba(255, 255, 255, 0.08);
-  background: linear-gradient(120deg, rgba(59,130,246,0.08) 0%, rgba(30,41,59,0.7) 100%);
-  box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.10);
+  background: transparent;
+  /* box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.1); */
   position: relative;
   z-index: 1;
   overflow: hidden;
@@ -381,7 +387,7 @@ export default {
   z-index: -1;
 }
 
-/* Hero content with mockup - now secondary */
+/* Hero content with mockup */
 .hero-section {
   display: flex;
   align-items: center;
@@ -390,6 +396,7 @@ export default {
   margin: 0 auto;
   gap: 5rem;
   position: relative;
+  background: transparent;
 }
 
 .hero-content {
@@ -414,29 +421,12 @@ export default {
   max-width: 900px;
   width: 100%;
   text-align: center;
-  background: rgba(30,41,59,0.7);
+  background: transparent;
   padding: 2.5rem 2rem 2rem 2rem;
   border-radius: 24px;
-  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.2);
-  border: 1.5px solid rgba(59,130,246,0.15);
   backdrop-filter: blur(10px);
   position: relative;
   z-index: 2;
-  transition: transform 0.4s ease, box-shadow 0.4s ease;
-  animation: float 6s ease-in-out infinite;
-}
-
-@keyframes float {
-  0%, 100% {
-    transform: translateY(0);
-  }
-  50% {
-    transform: translateY(-15px);
-  }
-}
-
-.stats-display:hover {
-  box-shadow: 0 25px 60px rgba(59, 130, 246, 0.2);
 }
 
 .stat-intro-section {
@@ -457,7 +447,7 @@ export default {
   font-size: 9rem;
   font-weight: 800;
   color: transparent;
-  background: linear-gradient(90deg, #ef4444, #f87171);
+  background: linear-gradient(90deg, #ef4444, #ef4444);
   -webkit-background-clip: text;
   background-clip: text;
   line-height: 1;
@@ -467,13 +457,14 @@ export default {
 }
 
 @keyframes pulse {
-  0%, 100% {
+  0%,
+  100% {
     opacity: 1;
     transform: scale(1);
   }
   50% {
-    opacity: 0.9;
-    transform: scale(1.03);
+    opacity: 1;
+    transform: scale(1.02);
   }
 }
 
@@ -487,42 +478,6 @@ export default {
   flex-wrap: wrap;
   justify-content: center;
   text-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-}
-
-.year-dropdown,
-.state-dropdown {
-  background: rgba(59, 130, 246, 0.1);
-  border: none;
-  border-radius: 8px;
-  color: #60a5fa;
-  padding: 0.2rem 0.6rem;
-  margin: 0 0.3rem;
-  font-size: 1.6rem;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  text-decoration: none;
-  min-width: auto;
-  width: auto;
-  display: inline;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-}
-
-.year-dropdown:hover,
-.state-dropdown:hover,
-.year-dropdown:focus,
-.state-dropdown:focus {
-  background: rgba(59, 130, 246, 0.2);
-  outline: none;
-  color: #93c5fd;
-  text-decoration: none;
-  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.2);
-}
-
-.year-dropdown option,
-.state-dropdown option {
-  background: #1e293b;
-  color: #ffffff;
 }
 
 .stats-loading,
@@ -601,24 +556,29 @@ export default {
   background: #1e293b;
   border-radius: 16px;
   border: 1px solid rgba(59, 130, 246, 0.2);
-  box-shadow: 0 30px 60px rgba(0, 0, 0, 0.3),
-              0 8px 25px rgba(59, 130, 246, 0.15),
-              inset 0 1px 1px rgba(255, 255, 255, 0.1);
+  box-shadow:
+    0 30px 60px rgba(0, 0, 0, 0.3),
+    0 8px 25px rgba(59, 130, 246, 0.15),
+    inset 0 1px 1px rgba(255, 255, 255, 0.1);
   transform: rotateY(-8deg) rotateX(5deg);
   overflow: hidden;
-  transition: transform 0.5s ease, box-shadow 0.5s ease;
+  transition:
+    transform 0.5s ease,
+    box-shadow 0.5s ease;
   animation: float2 8s ease-in-out infinite;
 }
 
 .mockup-container:hover .mockup-screen {
   transform: rotateY(-5deg) rotateX(3deg) scale(1.02);
-  box-shadow: 0 40px 70px rgba(0, 0, 0, 0.4),
-              0 10px 30px rgba(59, 130, 246, 0.2),
-              inset 0 1px 1px rgba(255, 255, 255, 0.15);
+  box-shadow:
+    0 40px 70px rgba(0, 0, 0, 0.4),
+    0 10px 30px rgba(59, 130, 246, 0.2),
+    inset 0 1px 1px rgba(255, 255, 255, 0.15);
 }
 
 @keyframes float2 {
-  0%, 100% {
+  0%,
+  100% {
     transform: rotateY(-8deg) rotateX(5deg) translateZ(0);
   }
   50% {
@@ -687,7 +647,9 @@ export default {
   backdrop-filter: blur(5px);
   border: 1px solid rgba(59, 130, 246, 0.1);
   transform: translateY(0);
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  transition:
+    transform 0.3s ease,
+    box-shadow 0.3s ease;
 }
 
 .analysis-card:hover {
@@ -730,7 +692,9 @@ export default {
   padding: 0.7rem 1rem;
   border-radius: 8px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-  transition: transform 0.3s ease, background 0.3s ease;
+  transition:
+    transform 0.3s ease,
+    background 0.3s ease;
 }
 
 .detail-item:hover {
@@ -781,18 +745,7 @@ export default {
   gap: 2.5rem;
 }
 
-@keyframes pulse {
-  0%,
-  100% {
-    opacity: 1;
-    box-shadow: 0 0 10px rgba(239, 68, 68, 0.5);
-  }
-  50% {
-    opacity: 0.6;
-    box-shadow: 0 0 15px rgba(239, 68, 68, 0.3);
-  }
-}
-
+/* Mobile Styles */
 @media (max-width: 768px) {
   .stats-hero-section {
     padding: 3rem 1rem;
@@ -813,25 +766,17 @@ export default {
   .hero-title {
     font-size: 2.5rem;
   }
-
   .stat-amount {
     font-size: 5rem;
   }
-
   .stat-intro-section {
     font-size: 1.6rem;
   }
-
   .stat-description-section {
     font-size: 1.4rem;
     flex-direction: column;
     align-items: center;
     gap: 0.8rem;
-  }
-
-  .year-dropdown,
-  .state-dropdown {
-    font-size: 1.2rem;
   }
 
   .mockup-screen {
@@ -845,7 +790,6 @@ export default {
   .features-section {
     padding: 5rem 0;
   }
-
   .section-title {
     font-size: 2.2rem;
     margin-bottom: 3rem;
@@ -856,27 +800,21 @@ export default {
   .stat-amount {
     font-size: 3.5rem;
   }
-
   .stat-intro-section {
     font-size: 1.3rem;
   }
-
   .stat-description-section {
     font-size: 1.2rem;
   }
-
   .hero-title {
     font-size: 2rem;
   }
-
   .hero-subtitle {
     font-size: 1.1rem;
   }
-
   .mockup-screen {
     height: 250px;
   }
-
   .features-grid {
     gap: 1.5rem;
   }
