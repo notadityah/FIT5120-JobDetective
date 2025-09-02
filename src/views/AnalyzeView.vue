@@ -3,7 +3,7 @@
     <div class="analyze-section">
       <div class="content-wrapper">
         <div class="analyze-text">
-          <h1 class="analyze-title">Analyze Job <span class="title-accent">Listing</span></h1>
+          <h1 class="analyze-title"><span class="title-accent">Analyze</span> Job Listing</h1>
           <p class="analyze-subtitle">
             Scan job listings for potential scams using our AI-powered tool.
             Simply paste the job description and get instant analysis.
@@ -28,7 +28,7 @@
           <TabNavigation :tabs="tabs" v-model:activeTab="activeTab" @tab-click="handleTabClick" />
 
           <div class="tab-content">
-            <!-- File Upload Tab -->
+            File Upload Tab
             <div v-if="activeTab === 'file'" class="file-upload-area">
               <div class="upload-icon">
                 <svg

@@ -20,10 +20,10 @@ const selectedYear = ref('2025')
 const selectedState = ref('ALL')
 
 // Computed properties for available options
-const availableYears = computed(() => {
-  if (!scamData.value) return []
-  return Object.keys(scamData.value.yearly_totals).sort((a, b) => b - a)
-})
+// const availableYears = computed(() => {
+//   if (!scamData.value) return []
+//   return Object.keys(scamData.value.yearly_totals).sort((a, b) => b - a)
+// })
 
 // const availableStates = computed(() => {
 //   if (!scamData.value) return ['ALL']
@@ -191,12 +191,7 @@ onMounted(() => {
         </div>
 
         <div class="stat-description-section">
-          in
-          <select v-model="selectedYear" class="year-dropdown">
-            <option v-for="year in availableYears" :key="year" :value="year">
-              {{ year }}
-            </option>
-          </select>
+          in 2025
           due to job and employment scams across Australia.
         </div>
       </div>
@@ -602,7 +597,7 @@ export default {
 
 .mockup-screen {
   width: 600px;
-  height: 300px;
+  height: auto;
   background: #1e293b;
   border-radius: 16px;
   border: 1px solid rgba(59, 130, 246, 0.2);
