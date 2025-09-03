@@ -26,7 +26,8 @@
           <li class="nav-item">
             <router-link class="nav-link" to="/analyze">Analyze Job</router-link>
           </li>
-          <!-- <li class="nav-item">
+          <!-- Future features - commented out for now
+          <li class="nav-item">
             <a class="nav-link" href="#" @click.prevent>Scam Detection Simulation</a>
           </li>
           <li class="nav-item">

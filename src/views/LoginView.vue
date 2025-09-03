@@ -21,10 +21,12 @@ import { useRouter } from 'vue-router'
 const password = ref('')
 const error = ref('')
 const router = useRouter()
-const PASSWORD = import.meta.env.VITE_PASSWORD
+const PASSWORD = import.meta.env.VITE_PASSWORD // Get password from environment
 
+// Validate password and handle authentication
 function checkPassword() {
   if (password.value === PASSWORD) {
+    // Set authentication flag and redirect to home
     localStorage.setItem('authenticated', 'true')
     error.value = ''
     router.replace({ name: 'home' })

@@ -89,14 +89,17 @@ export default {
     },
   },
   computed: {
+    // Check if input was not a job posting
     isNotAJobPosting() {
       return this.reportData.riskLevel === 'n/a'
     },
   },
   methods: {
+    // Navigate back to previous page
     goBack() {
       this.$router.go(-1)
     },
+    // Get user-friendly risk level titles
     getRiskTitle(riskLevel) {
       const titles = {
         high: 'High Risk: This job ad is likely a scam',
@@ -105,6 +108,7 @@ export default {
       }
       return titles[riskLevel] || 'Unknown Risk Level'
     },
+    // Get color codes for risk levels
     getRiskColor(riskLevel) {
       const colors = {
         high: '#dc2626',
@@ -113,6 +117,7 @@ export default {
       }
       return colors[riskLevel] || '#6b7280'
     },
+    // Extract main title from red flag descriptions
     extractFlagTitle(flag) {
       // Extract title from flag description (first sentence or before colon)
       const colonIndex = flag.indexOf(':')
