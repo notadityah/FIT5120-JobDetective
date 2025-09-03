@@ -10,12 +10,12 @@ const scamData = ref(null)
 const loading = ref(true)
 const error = ref(null)
 
-// Cache configuration
+// Cache configuration - data refreshes daily
 const CACHE_KEY = 'jobdetective_scam_stats'
 const CACHE_EXPIRY_KEY = 'jobdetective_scam_stats_expiry'
 const CACHE_DURATION = 24 * 60 * 60 * 1000 // 24 hours in milliseconds
 
-// Selection controls
+// Selection controls for data filtering
 const selectedYear = ref('2025')
 const selectedState = ref('ALL')
 
@@ -36,7 +36,7 @@ const selectedState = ref('ALL')
 //   return Array.from(states).sort()
 // })
 
-// Computed properties for dynamic statistics
+// Get filtered data based on selections
 const selectedYearData = computed(() => {
   if (!scamData.value || !selectedYear.value) return null
 
@@ -48,6 +48,7 @@ const selectedYearData = computed(() => {
   }
 })
 
+// Format currency values for display
 const formatCurrency = (amount) => {
   return new Intl.NumberFormat('en-AU', {
     style: 'currency',
@@ -93,7 +94,7 @@ const getCachedData = () => {
   }
 }
 
-// Save data to cache
+// Save data to cache with expiry timestamp
 const setCacheData = (data) => {
   try {
     const expiryTime = Date.now() + CACHE_DURATION

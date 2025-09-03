@@ -6,7 +6,8 @@
       variant="tab"
       :active="activeTab === tab.id"
       @click="handleTabClick(tab)"
-      :disabled="tab.disabled"
+      :disabled="!tab.disabled ? false : undefined"
+      :class="{ 'disabled-clickable': tab.disabled }"
     >
       {{ tab.label }}
     </BaseButton>
@@ -31,10 +32,13 @@ defineProps({
 const emit = defineEmits(['tab-click', 'update:activeTab'])
 
 const handleTabClick = (tab) => {
-  if (tab.disabled) return
-
-  emit('update:activeTab', tab.id)
+  // Always emit click event (needed for disabled tab notifications)
   emit('tab-click', tab)
+
+  // Only change active tab if not disabled
+  if (!tab.disabled) {
+    emit('update:activeTab', tab.id)
+  }
 }
 </script>
 
@@ -49,6 +53,12 @@ const handleTabClick = (tab) => {
 /* Override BaseButton styles for tab layout */
 .tab-navigation :deep(.base-btn) {
   border-radius: 0;
+}
+
+/* Make disabled tabs still clickable for notifications */
+.tab-navigation :deep(.disabled-clickable.base-btn) {
+  pointer-events: auto !important;
+  cursor: pointer !important;
 }
 
 /* Responsive adjustments */

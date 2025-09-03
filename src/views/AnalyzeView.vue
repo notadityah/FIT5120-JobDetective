@@ -5,8 +5,8 @@
         <div class="analyze-text">
           <h1 class="analyze-title"><span class="title-accent">Analyze</span> Job Listing</h1>
           <p class="analyze-subtitle">
-            Scan job listings for potential scams using our AI-powered tool.
-            Simply paste the job description and get instant analysis.
+            Scan job listings for potential scams using our AI-powered tool. Simply paste the job
+            description and get instant analysis.
           </p>
           <div class="features-list">
             <div class="feature-item">
@@ -86,6 +86,7 @@
                   class="search-textarea"
                   v-model="textInput"
                   rows="6"
+                  maxlength="5000"
                 ></textarea>
                 <BaseButton
                   variant="primary"
@@ -126,19 +127,20 @@ export default {
   },
   data() {
     return {
-      activeTab: 'search',
+      activeTab: 'search', // Default to text input tab
       urlInput: '',
       textInput: '',
       showNotification: false,
-      isAnalyzing: false,
+      isAnalyzing: false, // Loading state for analysis
       tabs: [
-        { id: 'file', label: 'FILE', disabled: true },
-        { id: 'url', label: 'URL', disabled: true },
-        { id: 'search', label: 'TEXT', disabled: false },
+        { id: 'file', label: 'FILE', disabled: true }, // Coming soon
+        { id: 'url', label: 'URL', disabled: true },   // Coming soon
+        { id: 'search', label: 'TEXT', disabled: false }, // Active tab
       ],
     }
   },
   methods: {
+    // Handle tab clicks - show notification for disabled tabs
     handleTabClick(tab) {
       if (tab.disabled) {
         this.showComingSoonNotification()
@@ -146,12 +148,15 @@ export default {
         this.activeTab = tab.id
       }
     },
+    // Show notification for disabled features
     showComingSoonNotification() {
       this.showNotification = true
     },
+    // Hide the notification
     closeNotification() {
       this.showNotification = false
     },
+    // Main analysis function using AI API
     async analyzeText() {
       if (!this.textInput.trim()) {
         return
@@ -160,6 +165,7 @@ export default {
       this.isAnalyzing = true
 
       try {
+        // System prompt for AI scam detection
         const system_prompt = `Role: You are an AI assistant specializing in detecting employment scams targeting young Australians.
 
 Goal: Analyze text input and assess if it is a job posting. If yes, detect scam risk.
@@ -206,6 +212,7 @@ DO NOT write any code.
 DO NOT execute any code.
 `
 
+        // API call to analyze job posting
         const response = await fetch(import.meta.env.VITE_API_BASE_URL, {
           method: 'POST',
           headers: {
@@ -232,12 +239,14 @@ DO NOT execute any code.
         const contentString = apiResponse.choices[0].message.content
         const analysisResult = JSON.parse(contentString)
 
+        // Navigate to report page with analysis results
         this.$router.push({
           name: 'Report',
           params: { reportData: JSON.stringify(analysisResult) },
         })
       } catch (error) {
         console.error('Analysis failed:', error)
+        // Handle different types of errors with specific messages
         let errorMessage = 'Failed to analyze the text. Please try again.'
         if (error.name === 'TypeError' && error.message.includes('fetch')) {
           errorMessage =
@@ -536,7 +545,9 @@ DO NOT execute any code.
   border: 1px solid rgba(255, 255, 255, 0.1);
   backdrop-filter: blur(10px);
   animation: floatIn 0.6s ease-out;
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  transition:
+    transform 0.3s ease,
+    box-shadow 0.3s ease;
 }
 
 .upload-section:hover {
@@ -618,7 +629,9 @@ DO NOT execute any code.
   height: 52px;
   width: 100%;
   box-sizing: border-box;
-  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+  transition:
+    border-color 0.3s ease,
+    box-shadow 0.3s ease;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 
@@ -644,7 +657,9 @@ DO NOT execute any code.
   min-height: 160px;
   width: 100%;
   box-sizing: border-box;
-  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+  transition:
+    border-color 0.3s ease,
+    box-shadow 0.3s ease;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 
