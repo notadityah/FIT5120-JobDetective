@@ -229,7 +229,7 @@ onMounted(() => {
           <span class="highlight">Stay safe in your job search</span>
         </p>
         <div class="cta-buttons">
-          <BaseButton variant="primary" size="large" @click="$router.push('/analyze')">
+          <BaseButton variant="primary" size="large" @click="$router.push('/analyse')">
             Analyse Job Now
           </BaseButton>
         </div>

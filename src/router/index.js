@@ -17,8 +17,8 @@ const routes = [
     component: HomeView,
   },
   {
-    path: '/analyze',
-    name: 'analyze',
+    path: '/analyse',
+    name: 'analyse',
     component: AnalyzeView,
   },
   {
@@ -38,11 +38,11 @@ const router = createRouter({
 // Global navigation guard for authentication
 router.beforeEach((to, from, next) => {
   const isAuthenticated = localStorage.getItem('authenticated') === 'true'
-  
+
   // Redirect to login if not authenticated (except for login page)
   if (to.name !== 'login' && !isAuthenticated) {
     next({ name: 'login' })
-  // Redirect to home if already authenticated and trying to access login
+    // Redirect to home if already authenticated and trying to access login
   } else if (to.name === 'login' && isAuthenticated) {
     next({ name: 'home' })
   } else {

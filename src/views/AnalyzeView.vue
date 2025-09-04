@@ -74,7 +74,7 @@
               <LoadingSpinner
                 v-if="isAnalyzing"
                 variant="analyzing"
-                message="Analyzing job posting..."
+                message="Analysing job posting..."
                 sub-message="This may take a few moments"
                 size="medium"
               />
