@@ -182,8 +182,9 @@ onMounted(() => {
     <!-- Stats as main hero section -->
     <div class="stats-hero-section">
       <div class="stats-display" v-if="!loading && !error && scamData">
-        <div class="stat-intro-section">Young job seekers aged 18-24 lost a total of</div>
-
+        <div class="stat-intro-section">
+          In 2025, young job seekers across Australia aged 18-24 lost a total of
+        </div>
         <div class="stat-amount-section">
           <span class="stat-amount" v-if="selectedYearData">
             {{ formatCurrency(selectedYearData.amount_lost) }}
@@ -192,7 +193,7 @@ onMounted(() => {
         </div>
 
         <div class="stat-description-section">
-          in 2025 due to job and employment scams across Australia
+          to job and employment scams in 348 reported cases.
         </div>
       </div>
 
@@ -223,13 +224,13 @@ onMounted(() => {
           with AI-powered analysis
         </h1>
         <p class="hero-subtitle">
-          JobDetective uses artificial intelligence to analyze job postings and identify potential
+          JobDetective uses artificial intelligence to analyse job postings and identify potential
           scams, helping you make informed decisions.
           <span class="highlight">Stay safe in your job search</span>
         </p>
         <div class="cta-buttons">
           <BaseButton variant="primary" size="large" @click="$router.push('/analyze')">
-            Analyze Job Now
+            Analyse Job Now
           </BaseButton>
         </div>
       </div>
@@ -279,7 +280,7 @@ onMounted(() => {
           <FeatureCard
             icon="🔍"
             title="AI-Powered Analysis"
-            description="Advanced machine learning algorithms analyze job postings for common scam patterns and red flags."
+            description="Advanced machine learning algorithms analyse job postings for common scam patterns and red flags."
           />
           <FeatureCard
             icon="⚡"

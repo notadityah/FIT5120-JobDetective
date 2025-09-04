@@ -24,7 +24,7 @@
             <router-link class="nav-link" to="/">Home</router-link>
           </li>
           <li class="nav-item">
-            <router-link class="nav-link" to="/analyze">Analyze Job</router-link>
+            <router-link class="nav-link" to="/analyze">Analyse Job</router-link>
           </li>
           <!-- Future features - commented out for now
           <li class="nav-item">
