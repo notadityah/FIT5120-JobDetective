@@ -94,7 +94,7 @@
                   :disabled="!textInput.trim()"
                   class="analyze-btn"
                 >
-                  Analyze Text
+                  Analyse Text
                 </BaseButton>
               </div>
             </div>
