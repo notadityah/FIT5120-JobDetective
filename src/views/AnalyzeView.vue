@@ -3,7 +3,7 @@
     <div class="analyze-section">
       <div class="content-wrapper">
         <div class="analyze-text">
-          <h1 class="analyze-title"><span class="title-accent">Analyze</span> Job Listing</h1>
+          <h1 class="analyze-title"><span class="title-accent">Analyse</span> Job Listing</h1>
           <p class="analyze-subtitle">
             Scan job listings for potential scams using our AI-powered tool. Simply paste the job
             description and get instant analysis.
@@ -134,7 +134,7 @@ export default {
       isAnalyzing: false, // Loading state for analysis
       tabs: [
         { id: 'file', label: 'FILE', disabled: true }, // Coming soon
-        { id: 'url', label: 'URL', disabled: true },   // Coming soon
+        { id: 'url', label: 'URL', disabled: true }, // Coming soon
         { id: 'search', label: 'TEXT', disabled: false }, // Active tab
       ],
     }
