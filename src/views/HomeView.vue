@@ -15,37 +15,16 @@ const CACHE_KEY = 'jobdetective_scam_stats'
 const CACHE_EXPIRY_KEY = 'jobdetective_scam_stats_expiry'
 const CACHE_DURATION = 24 * 60 * 60 * 1000 // 24 hours in milliseconds
 
-// Selection controls for data filtering
-const selectedYear = ref('2025')
-const selectedState = ref('ALL')
+// Remove the selection controls since we only have totals now
+// const selectedYear = ref('2025')
+// const selectedState = ref('ALL')
 
-// Computed properties for available options
-// const availableYears = computed(() => {
-//   if (!scamData.value) return []
-//   return Object.keys(scamData.value.yearly_totals).sort((a, b) => b - a)
-// })
+// Computed properties for available options - removed since not needed
+// ...existing code...
 
-// const availableStates = computed(() => {
-//   if (!scamData.value) return ['ALL']
-//   const states = new Set(['ALL'])
-
-//   Object.values(scamData.value.by_state).forEach((yearData) => {
-//     Object.keys(yearData).forEach((state) => states.add(state))
-//   })
-
-//   return Array.from(states).sort()
-// })
-
-// Get filtered data based on selections
-const selectedYearData = computed(() => {
-  if (!scamData.value || !selectedYear.value) return null
-
-  if (selectedState.value === 'ALL') {
-    return scamData.value.yearly_totals[selectedYear.value] || null
-  } else {
-    const yearData = scamData.value.by_state[selectedYear.value]
-    return yearData?.[selectedState.value] || null
-  }
+// Get data - simplified since we only have total data
+const totalData = computed(() => {
+  return scamData.value || null
 })
 
 // Format currency values for display
@@ -58,9 +37,10 @@ const formatCurrency = (amount) => {
   }).format(amount)
 }
 
-// const formatNumber = (number) => {
-//   return new Intl.NumberFormat('en-AU').format(number)
-// }
+// Format number for reports count
+const formatNumber = (number) => {
+  return new Intl.NumberFormat('en-AU').format(number)
+}
 
 // Check if cached data exists and is valid
 const getCachedData = () => {
@@ -186,14 +166,15 @@ onMounted(() => {
           In 2025, young job seekers across Australia aged 18-24 lost a total of
         </div>
         <div class="stat-amount-section">
-          <span class="stat-amount" v-if="selectedYearData">
-            {{ formatCurrency(selectedYearData.amount_lost) }}
+          <span class="stat-amount" v-if="totalData">
+            {{ formatCurrency(totalData.total_amount_lost) }}
           </span>
           <span class="stat-amount" v-else>No data available</span>
         </div>
 
         <div class="stat-description-section">
-          to job and employment scams in 348 reported cases.
+          to job and employment scams in
+          {{ totalData ? formatNumber(totalData.total_reports) : '0' }} reported cases.
         </div>
       </div>
 
