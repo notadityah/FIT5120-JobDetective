@@ -10,18 +10,6 @@ const scamData = ref(null)
 const loading = ref(true)
 const error = ref(null)
 
-// Cache configuration - data refreshes daily
-const CACHE_KEY = 'jobdetective_scam_stats'
-const CACHE_EXPIRY_KEY = 'jobdetective_scam_stats_expiry'
-const CACHE_DURATION = 24 * 60 * 60 * 1000 // 24 hours in milliseconds
-
-// Remove the selection controls since we only have totals now
-// const selectedYear = ref('2025')
-// const selectedState = ref('ALL')
-
-// Computed properties for available options - removed since not needed
-// ...existing code...
-
 // Get data - simplified since we only have total data
 const totalData = computed(() => {
   return scamData.value || null
@@ -42,64 +30,12 @@ const formatNumber = (number) => {
   return new Intl.NumberFormat('en-AU').format(number)
 }
 
-// Check if cached data exists and is valid
-const getCachedData = () => {
-  try {
-    const cachedData = localStorage.getItem(CACHE_KEY)
-    const cacheExpiry = localStorage.getItem(CACHE_EXPIRY_KEY)
-
-    if (cachedData && cacheExpiry) {
-      const expiryTime = parseInt(cacheExpiry)
-      const now = Date.now()
-
-      // Check if cache is still valid
-      if (now < expiryTime) {
-        console.log('Using cached scam statistics data')
-        return JSON.parse(cachedData)
-      } else {
-        console.log('Cache expired, will fetch new data')
-        // Clear expired cache
-        localStorage.removeItem(CACHE_KEY)
-        localStorage.removeItem(CACHE_EXPIRY_KEY)
-      }
-    }
-
-    return null
-  } catch (error) {
-    console.error('Error reading cached data:', error)
-    // Clear corrupted cache
-    localStorage.removeItem(CACHE_KEY)
-    localStorage.removeItem(CACHE_EXPIRY_KEY)
-    return null
-  }
-}
-
-// Save data to cache with expiry timestamp
-const setCacheData = (data) => {
-  try {
-    const expiryTime = Date.now() + CACHE_DURATION
-    localStorage.setItem(CACHE_KEY, JSON.stringify(data))
-    localStorage.setItem(CACHE_EXPIRY_KEY, expiryTime.toString())
-    console.log('Scam statistics cached successfully')
-  } catch (error) {
-    console.error('Error caching data:', error)
-  }
-}
-
 const fetchScamStatistics = async () => {
   try {
     loading.value = true
+    error.value = null
 
-    // First check if we have valid cached data
-    const cachedData = getCachedData()
-    if (cachedData) {
-      scamData.value = cachedData
-      loading.value = false
-      return
-    }
-
-    // If no valid cache, fetch from API
-    console.log('Fetching fresh data from API...')
+    console.log('Fetching data from API...')
     const API_ENDPOINT = import.meta.env.VITE_API_GATEWAY_URL
     const API_KEY = import.meta.env.VITE_API_KEY
 
@@ -125,31 +61,15 @@ const fetchScamStatistics = async () => {
     }
 
     const data = await response.json()
-    console.log('Received fresh data:', data)
+    console.log('Received data:', data)
 
-    // Store the data and cache it
     scamData.value = data
-    setCacheData(data)
-
-    console.log('Parsed scam data:', scamData.value)
   } catch (err) {
     console.error('Error fetching scam statistics:', err)
     error.value = err.message
   } finally {
     loading.value = false
   }
-}
-
-// Optional: Function to clear cache manually
-const clearCache = () => {
-  localStorage.removeItem(CACHE_KEY)
-  localStorage.removeItem(CACHE_EXPIRY_KEY)
-  console.log('Scam statistics cache cleared')
-}
-
-// Make clearCache available globally for debugging
-if (import.meta.env.DEV) {
-  window.clearScamStatsCache = clearCache
 }
 
 onMounted(() => {
