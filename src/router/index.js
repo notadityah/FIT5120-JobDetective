@@ -2,6 +2,7 @@ import { createRouter, createWebHistory } from 'vue-router'
 import HomeView from '../views/HomeView.vue'
 import AnalyzeView from '../views/AnalyzeView.vue'
 import ReportView from '../views/ReportView.vue'
+import HubView from '../views/HubView.vue'
 
 // Configure application routes
 const routes = [
@@ -21,6 +22,11 @@ const routes = [
     component: ReportView,
     // Parse JSON report data from URL parameter
     props: (route) => ({ reportData: JSON.parse(route.params.reportData) }),
+  },
+  {
+    path: '/hub',
+    name: 'hub',
+    component: HubView,
   },
 ]
 

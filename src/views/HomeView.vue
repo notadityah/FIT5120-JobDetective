@@ -1,121 +1,5 @@
-<script setup>
-import { ref, onMounted, computed } from 'vue'
-import LoadingSpinner from '@/components/LoadingSpinner.vue'
-import ErrorDisplay from '@/components/ErrorDisplay.vue'
-import FeatureCard from '@/components/FeatureCard.vue'
-import BaseButton from '@/components/BaseButton.vue'
-
-// Reactive data
-const scamData = ref(null)
-const loading = ref(true)
-const error = ref(null)
-
-// Get data - simplified since we only have total data
-const totalData = computed(() => {
-  return scamData.value || null
-})
-
-// Format currency values for display
-const formatCurrency = (amount) => {
-  return new Intl.NumberFormat('en-AU', {
-    style: 'currency',
-    currency: 'AUD',
-    minimumFractionDigits: 0,
-    maximumFractionDigits: 0,
-  }).format(amount)
-}
-
-// Format number for reports count
-const formatNumber = (number) => {
-  return new Intl.NumberFormat('en-AU').format(number)
-}
-
-const fetchScamStatistics = async () => {
-  try {
-    loading.value = true
-    error.value = null
-
-    console.log('Fetching data from API...')
-    const API_ENDPOINT = import.meta.env.VITE_API_GATEWAY_URL
-    const API_KEY = import.meta.env.VITE_API_KEY
-
-    const fetchOptions = {
-      method: 'GET',
-      mode: 'cors',
-      headers: {
-        Accept: 'application/json',
-        'Content-Type': 'application/json',
-      },
-    }
-
-    // Add API key if available
-    if (API_KEY) {
-      fetchOptions.headers['X-API-Key'] = API_KEY
-    }
-
-    console.log('Fetching from:', API_ENDPOINT)
-    const response = await fetch(API_ENDPOINT, fetchOptions)
-
-    if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`)
-    }
-
-    const data = await response.json()
-    console.log('Received data:', data)
-
-    scamData.value = data
-  } catch (err) {
-    console.error('Error fetching scam statistics:', err)
-    error.value = err.message
-  } finally {
-    loading.value = false
-  }
-}
-
-onMounted(() => {
-  fetchScamStatistics()
-})
-</script>
-
 <template>
   <div class="home-container">
-    <!-- Stats as main hero section -->
-    <div class="stats-hero-section">
-      <div class="stats-display" v-if="!loading && !error && scamData">
-        <div class="stat-intro-section">
-          In 2025, young job seekers across Australia aged 18-24 lost a total of
-        </div>
-        <div class="stat-amount-section">
-          <span class="stat-amount" v-if="totalData">
-            {{ formatCurrency(totalData.total_amount_lost) }}
-          </span>
-          <span class="stat-amount" v-else>No data available</span>
-        </div>
-
-        <div class="stat-description-section">
-          to job and employment scams in
-          {{ totalData ? formatNumber(totalData.total_reports) : '0' }} reported cases.
-        </div>
-      </div>
-
-      <!-- Loading State -->
-      <LoadingSpinner
-        v-else-if="loading"
-        variant="stats"
-        message="Loading statistics..."
-        size="large"
-      />
-
-      <!-- Error State -->
-      <ErrorDisplay
-        v-else-if="error"
-        variant="stats"
-        message="Unable to load current statistics"
-        :show-retry="true"
-        @retry="fetchScamStatistics"
-      />
-    </div>
-
     <!-- Hero content with mockup -->
     <div class="hero-section">
       <div class="hero-content">
@@ -199,6 +83,11 @@ onMounted(() => {
   </div>
 </template>
 
+<script setup>
+import FeatureCard from '@/components/FeatureCard.vue'
+import BaseButton from '@/components/BaseButton.vue'
+</script>
+
 <script>
 export default {
   name: 'HomeView',
@@ -211,7 +100,7 @@ export default {
   background: linear-gradient(135deg, #0f172a 0%, #1e293b 60%, #334155 100%);
   color: white;
   position: relative;
-  overflow-x: hidden; /* Uncomment this line */
+  overflow-x: hidden;
 }
 
 .home-container::before {
@@ -231,7 +120,7 @@ export default {
 .home-container::after {
   content: '';
   position: absolute;
-  bottom: 0; /* Changed from -150px to 0 */
+  bottom: 0;
   right: -150px;
   width: 600px;
   height: 600px;
@@ -239,55 +128,6 @@ export default {
   opacity: 0.15;
   z-index: 0;
   pointer-events: none;
-}
-
-html,
-body {
-  margin: 0;
-  padding: 0;
-  overflow-x: hidden;
-}
-
-/* Stats as main hero section */
-.stats-hero-section {
-  width: 100%;
-  display: flex;
-  justify-content: center;
-  padding: 5rem 2rem 4rem 2rem;
-  min-height: 60vh;
-  align-items: center;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
-  background: transparent;
-  /* box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.1); */
-  position: relative;
-  z-index: 1;
-  overflow: hidden;
-}
-
-.stats-hero-section::before {
-  content: '';
-  position: absolute;
-  width: 300px;
-  height: 300px;
-  background: rgba(59, 130, 246, 0.03);
-  border-radius: 50%;
-  top: -150px;
-  left: -50px;
-  filter: blur(40px);
-  z-index: -1;
-}
-
-.stats-hero-section::after {
-  content: '';
-  position: absolute;
-  width: 250px;
-  height: 250px;
-  background: rgba(239, 68, 68, 0.03);
-  border-radius: 50%;
-  bottom: -100px;
-  right: -100px;
-  filter: blur(30px);
-  z-index: -1;
 }
 
 /* Hero content with mockup */
@@ -300,6 +140,7 @@ body {
   gap: 5rem;
   position: relative;
   background: transparent;
+  min-height: 80vh;
 }
 
 .hero-content {
@@ -319,76 +160,6 @@ body {
   z-index: 1;
 }
 
-/* Statistics Display Styles */
-.stats-display {
-  max-width: 900px;
-  width: 100%;
-  text-align: center;
-  background: transparent;
-  padding: 2.5rem 2rem 2rem 2rem;
-  border-radius: 24px;
-  backdrop-filter: blur(10px);
-  position: relative;
-  z-index: 2;
-}
-
-.stat-intro-section {
-  font-size: 2.2rem;
-  color: #cbd5e1;
-  margin-bottom: 1.5rem;
-  font-weight: 400;
-  text-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
-}
-
-.stat-amount-section {
-  margin-bottom: 2.5rem;
-  position: relative;
-}
-
-.stat-amount {
-  display: block;
-  font-size: 9rem;
-  font-weight: 800;
-  color: transparent;
-  background: linear-gradient(90deg, #ef4444, #ef4444);
-  -webkit-background-clip: text;
-  background-clip: text;
-  line-height: 1;
-  letter-spacing: -0.02em;
-  text-shadow: 0 4px 20px rgba(239, 68, 68, 0.3);
-  animation: pulse 3s ease-in-out infinite;
-}
-
-@keyframes pulse {
-  0%,
-  100% {
-    opacity: 1;
-    transform: scale(1);
-  }
-  50% {
-    opacity: 1;
-    transform: scale(1.02);
-  }
-}
-
-.stat-description-section {
-  font-size: 2rem;
-  color: #e2e8f0;
-  line-height: 1.5;
-  display: flex;
-  align-items: center;
-  gap: 0;
-  flex-wrap: wrap;
-  justify-content: center;
-  text-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-}
-
-.stats-loading,
-.stats-error {
-  max-width: 800px;
-  width: 100%;
-}
-
 .hero-title {
   font-size: 3.5rem;
   font-weight: 300;
@@ -401,24 +172,11 @@ body {
 
 .highlight {
   background: linear-gradient(90deg, #3b82f6, #60a5fa);
-  -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
   font-weight: 500;
   position: relative;
   display: inline-block;
-}
-
-.highlight::after {
-  content: '';
-  position: absolute;
-  width: 100%;
-  height: 3px;
-  bottom: -3px;
-  left: 0;
-  background: linear-gradient(90deg, #3b82f6, #60a5fa);
-  border-radius: 2px;
-  opacity: 0.6;
 }
 
 .hero-subtitle {
@@ -650,15 +408,11 @@ body {
 
 /* Mobile Styles */
 @media (max-width: 768px) {
-  .stats-hero-section {
-    padding: 3rem 1rem;
-    min-height: 50vh;
-  }
-
   .hero-section {
     flex-direction: column;
     gap: 3.5rem;
     padding: 3.5rem 1.5rem;
+    min-height: 70vh;
   }
 
   .hero-content {
@@ -668,18 +422,6 @@ body {
 
   .hero-title {
     font-size: 2.5rem;
-  }
-  .stat-amount {
-    font-size: 5rem;
-  }
-  .stat-intro-section {
-    font-size: 1.6rem;
-  }
-  .stat-description-section {
-    font-size: 1.4rem;
-    flex-direction: column;
-    align-items: center;
-    gap: 0.8rem;
   }
 
   .mockup-screen {
@@ -700,15 +442,6 @@ body {
 }
 
 @media (max-width: 480px) {
-  .stat-amount {
-    font-size: 3.5rem;
-  }
-  .stat-intro-section {
-    font-size: 1.3rem;
-  }
-  .stat-description-section {
-    font-size: 1.2rem;
-  }
   .hero-title {
     font-size: 2rem;
   }

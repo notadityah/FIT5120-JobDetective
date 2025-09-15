@@ -1,160 +1,328 @@
 <template>
-  <div class="feature-card" :class="cardClasses">
-    <div class="feature-icon">{{ icon }}</div>
-    <h3 class="feature-title">{{ title }}</h3>
-    <p class="feature-description">{{ description }}</p>
-    <slot name="actions"></slot>
+  <div class="feature-card" :class="cardType">
+    <!-- Icon or Number -->
+    <div v-if="icon || number" class="card-header">
+      <div v-if="number" class="step-number" :class="{ 'main-step': isMainStep }">
+        {{ number }}
+      </div>
+      <div v-else-if="icon" class="card-icon">{{ icon }}</div>
+    </div>
+
+    <!-- Title and Category -->
+    <div class="card-title-section">
+      <h3 class="card-title">{{ title }}</h3>
+      <span v-if="category" class="card-category">{{ category }}</span>
+    </div>
+
+    <!-- Description -->
+    <p v-if="description" class="card-description">{{ description }}</p>
+
+    <!-- Features/Details List -->
+    <div v-if="features && features.length" class="card-features">
+      <div v-for="feature in features" :key="feature" class="feature-item">
+        <span v-if="cardType === 'step'" class="check-icon">✓</span>
+        <span>{{ feature }}</span>
+      </div>
+    </div>
+
+    <!-- Red Flags (for scam cards) -->
+    <div v-if="redFlags && redFlags.length" class="red-flags">
+      <h4 class="red-flags-title">🚩 Red Flags:</h4>
+      <ul class="red-flags-list">
+        <li v-for="flag in redFlags" :key="flag">{{ flag }}</li>
+      </ul>
+    </div>
+
+    <!-- News Meta (for news cards) -->
+    <div v-if="cardType === 'news'" class="news-meta">
+      <span class="news-source">{{ source }}</span>
+      <span class="news-date">{{ date }}</span>
+    </div>
+
+    <!-- CTA Button -->
+    <button v-if="cta" class="card-cta" @click="$emit('card-action', $event)">
+      {{ cta }}
+    </button>
   </div>
 </template>
 
-<script setup>
-import { computed } from 'vue'
-
-const props = defineProps({
-  icon: { type: String, required: true },
-  title: { type: String, required: true },
-  description: { type: String, required: true },
-  variant: {
-    type: String,
-    default: 'default',
-    validator: (value) => ['default', 'highlight'].includes(value),
+<script>
+export default {
+  name: 'FeatureCard',
+  props: {
+    cardType: {
+      type: String,
+      default: 'feature',
+      validator: (value) => ['feature', 'step', 'scam', 'news'].includes(value),
+    },
+    title: {
+      type: String,
+      required: true,
+    },
+    description: {
+      type: String,
+      default: '',
+    },
+    features: {
+      type: Array,
+      default: () => [],
+    },
+    icon: {
+      type: String,
+      default: '',
+    },
+    number: {
+      type: Number,
+      default: null,
+    },
+    isMainStep: {
+      type: Boolean,
+      default: false,
+    },
+    category: {
+      type: String,
+      default: '',
+    },
+    redFlags: {
+      type: Array,
+      default: () => [],
+    },
+    source: {
+      type: String,
+      default: '',
+    },
+    date: {
+      type: String,
+      default: '',
+    },
+    cta: {
+      type: String,
+      default: '',
+    },
   },
-  hoverable: { type: Boolean, default: true },
-})
-
-const cardClasses = computed(() => [
-  'feature-card',
-  `card-${props.variant}`,
-  {
-    'card-hoverable': props.hoverable,
-  },
-])
+  emits: ['card-action'],
+}
 </script>
 
 <style scoped>
+/* Base card styles - all cards use the scam card blue gradient design */
 .feature-card {
-  background: rgba(30, 41, 59, 0.7);
-  padding: 2.5rem;
-  border-radius: 16px;
-  border: 1px solid rgba(59, 130, 246, 0.15);
-  text-align: center;
+  background: linear-gradient(145deg, #2563eb 0%, #1d4ed8 100%);
+  border-radius: 12px;
+  padding: 2rem;
+  border: 1px solid #3b82f6;
+  box-shadow: 0 8px 25px rgba(37, 99, 235, 0.15);
   transition: all 0.3s ease;
-  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
-  backdrop-filter: blur(10px);
   position: relative;
-  overflow: hidden;
-  height: 100%;
-}
-
-.feature-card::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 4px;
-  background: linear-gradient(90deg, #3b82f6, #60a5fa);
-  opacity: 0;
-  transition: opacity 0.3s ease;
-}
-
-.card-hoverable:hover {
-  transform: translateY(-8px);
-  border-color: rgba(59, 130, 246, 0.3);
-  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
-  background: rgba(30, 41, 59, 0.85);
-}
-
-.card-hoverable:hover::before {
-  opacity: 1;
-}
-
-.card-highlight {
-  border-color: rgba(59, 130, 246, 0.3);
-  background: linear-gradient(135deg, rgba(30, 41, 59, 0.9) 0%, rgba(51, 65, 85, 0.9) 100%);
-  box-shadow: 0 15px 35px rgba(59, 130, 246, 0.2);
-}
-
-.feature-icon {
-  font-size: 3rem;
-  margin-bottom: 1.5rem;
-  display: block;
-  background: linear-gradient(135deg, #3b82f6 0%, #60a5fa 100%);
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
-  transition: transform 0.3s ease;
-}
-
-.card-hoverable:hover .feature-icon {
-  transform: scale(1.1);
-}
-
-.feature-title {
-  font-size: 1.5rem;
-  margin-bottom: 1rem;
   color: white;
+}
+
+.feature-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 15px 35px rgba(37, 99, 235, 0.25);
+  border-color: #60a5fa;
+}
+
+/* Specific styling for scam cards */
+.feature-card.scam {
+  border-left: 4px solid #dddddd;
+}
+
+/* Specific styling for news cards */
+.feature-card.news {
+  background: linear-gradient(145deg, #1e40af 0%, #1d4ed8 100%);
+  box-shadow: 0 8px 25px rgba(30, 64, 175, 0.15);
+}
+
+.feature-card.news:hover {
+  box-shadow: 0 15px 35px rgba(30, 64, 175, 0.25);
+}
+
+/* Step cards keep the main step highlighting */
+.feature-card.step.main-step {
+  background: linear-gradient(145deg, #2563eb 0%, #1d4ed8 100%);
+  border-color: #3b82f6;
+}
+
+/* Header Elements */
+.card-header {
+  margin-bottom: 1rem;
+  display: flex;
+  justify-content: center;
+}
+
+.step-number {
+  background: rgba(255, 255, 255, 0.2);
+  color: white;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 1.2rem;
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+.step-number.main-step {
+  background: rgba(255, 255, 255, 0.9);
+  color: #2563eb;
+}
+
+.card-icon {
+  font-size: 2.5rem;
+  text-align: center;
+  margin-bottom: 1rem;
+}
+
+/* Title Section */
+.card-title-section {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 1rem;
+  gap: 1rem;
+}
+
+.card-title {
+  font-size: 1.2rem;
   font-weight: 600;
-  position: relative;
-  display: inline-block;
-}
-
-.feature-title::after {
-  content: '';
-  position: absolute;
-  bottom: -5px;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 0;
-  height: 2px;
-  background: linear-gradient(90deg, #3b82f6, #60a5fa);
-  transition: width 0.3s ease;
-  border-radius: 2px;
-}
-
-.card-hoverable:hover .feature-title::after {
-  width: 50px;
-}
-
-.feature-description {
-  color: #cbd5e1;
-  line-height: 1.7;
   margin: 0;
-  transition: color 0.3s ease;
+  color: white;
+  flex: 1;
+  text-align: center;
 }
 
-.card-hoverable:hover .feature-description {
+.card-category {
+  background: rgba(255, 255, 255, 0.2);
+  color: #f1f5f9;
+  padding: 0.25rem 0.75rem;
+  border-radius: 12px;
+  font-size: 0.8rem;
+  white-space: nowrap;
+  backdrop-filter: blur(10px);
+}
+
+/* Description */
+.card-description {
   color: #e2e8f0;
+  margin: 0 0 1.5rem 0;
+  line-height: 1.6;
+  text-align: center;
 }
 
-/* Responsive adjustments */
+/* Features */
+.card-features {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  margin-bottom: 1rem;
+}
+
+.feature-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+  font-size: 0.95rem;
+  color: #e2e8f0;
+  line-height: 1.5;
+}
+
+.check-icon {
+  background: #10b981;
+  color: white;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.8rem;
+  font-weight: bold;
+  flex-shrink: 0;
+  margin-top: 0.1rem;
+}
+
+/* Red Flags */
+.red-flags {
+  margin-bottom: 1rem;
+}
+
+.red-flags-title {
+  color: #fecaca;
+  font-size: 1rem;
+  font-weight: 600;
+  margin: 0 0 0.75rem 0;
+}
+
+.red-flags-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.red-flags-list li {
+  color: #f1f5f9;
+  font-size: 0.9rem;
+  margin-bottom: 0.5rem;
+  padding-left: 1rem;
+  position: relative;
+}
+
+.red-flags-list li:before {
+  content: '•';
+  color: #fecaca;
+  position: absolute;
+  left: 0;
+}
+
+/* News Meta */
+.news-meta {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 1rem;
+  color: #cbd5e1;
+  font-size: 0.9rem;
+}
+
+/* CTA Button */
+.card-cta {
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  color: white;
+  padding: 0.5rem 1rem;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-weight: 500;
+  backdrop-filter: blur(10px);
+  width: 100%;
+}
+
+.card-cta:hover {
+  background: rgba(255, 255, 255, 0.2);
+  border-color: rgba(255, 255, 255, 0.5);
+  transform: translateY(-1px);
+}
+
+/* Mobile Responsive */
 @media (max-width: 768px) {
-  .feature-card {
-    padding: 2rem;
+  .card-title-section {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.5rem;
   }
 
-  .feature-icon {
-    font-size: 2.5rem;
-    margin-bottom: 1rem;
-  }
-
-  .feature-title {
-    font-size: 1.3rem;
-  }
-
-  .feature-description {
-    font-size: 0.9rem;
+  .card-title {
+    text-align: left;
   }
 }
 
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-    transform: translateY(20px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
+@media (max-width: 480px) {
+  .feature-card {
+    padding: 1.5rem;
   }
 }
 </style>

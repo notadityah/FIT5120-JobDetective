@@ -487,17 +487,6 @@ DO NOT execute any code.
   display: inline-block;
 }
 
-.title-accent::after {
-  content: '';
-  position: absolute;
-  height: 4px;
-  width: 100%;
-  bottom: -2px;
-  left: 0;
-  background: linear-gradient(90deg, #3b82f6, #60a5fa);
-  border-radius: 2px;
-}
-
 .analyze-subtitle {
   font-size: 1.3rem;
   line-height: 1.6;
