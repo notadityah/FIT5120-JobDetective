@@ -1,70 +1,101 @@
 <template>
   <div class="tab-navigation">
-    <BaseButton
+    <button
       v-for="tab in tabs"
       :key="tab.id"
-      variant="tab"
-      :active="activeTab === tab.id"
-      @click="handleTabClick(tab)"
-      :disabled="!tab.disabled ? false : undefined"
-      :class="{ 'disabled-clickable': tab.disabled }"
+      class="tab-button"
+      :class="{ active: activeTab === tab.id }"
+      @click="$emit('tab-change', tab.id)"
     >
       {{ tab.label }}
-    </BaseButton>
+    </button>
+    <div class="tab-underline" :style="underlineStyle"></div>
   </div>
 </template>
 
-<script setup>
-import BaseButton from './BaseButton.vue'
-
-defineProps({
-  tabs: {
-    type: Array,
-    required: true,
-    validator: (tabs) => tabs.every((tab) => tab.id && tab.label),
+<script>
+export default {
+  name: 'TabNavigation',
+  props: {
+    tabs: {
+      type: Array,
+      required: true,
+    },
+    activeTab: {
+      type: String,
+      required: true,
+    },
   },
-  activeTab: {
-    type: String,
-    required: true,
+  emits: ['tab-change'],
+  computed: {
+    activeTabIndex() {
+      return this.tabs.findIndex((tab) => tab.id === this.activeTab)
+    },
+    underlineStyle() {
+      const tabWidth = 100 / this.tabs.length
+      const left = this.activeTabIndex * tabWidth
+      return {
+        width: `${tabWidth}%`,
+        left: `${left}%`,
+      }
+    },
   },
-})
-
-const emit = defineEmits(['tab-click', 'update:activeTab'])
-
-const handleTabClick = (tab) => {
-  // Always emit click event (needed for disabled tab notifications)
-  emit('tab-click', tab)
-
-  // Only change active tab if not disabled
-  if (!tab.disabled) {
-    emit('update:activeTab', tab.id)
-  }
 }
 </script>
 
 <style scoped>
 .tab-navigation {
+  position: relative;
   display: flex;
-  margin-bottom: 2rem;
-  border-bottom: 2px solid #4a5568;
   width: 100%;
+  border-bottom: 2px solid rgba(71, 85, 105, 0.5);
+  margin: 2rem 0;
 }
 
-/* Override BaseButton styles for tab layout */
-.tab-navigation :deep(.base-btn) {
-  border-radius: 0;
+.tab-button {
+  flex: 1;
+  background: transparent;
+  border: none;
+  color: #94a3b8;
+  padding: 1rem 1rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-weight: 500;
+  font-size: 1rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  position: relative;
 }
 
-/* Make disabled tabs still clickable for notifications */
-.tab-navigation :deep(.disabled-clickable.base-btn) {
-  pointer-events: auto !important;
-  cursor: pointer !important;
+.tab-button:hover {
+  color: #e2e8f0;
 }
 
-/* Responsive adjustments */
+.tab-button.active {
+  color: #60a5fa;
+}
+
+.tab-underline {
+  position: absolute;
+  bottom: -2px;
+  height: 2px;
+  background: linear-gradient(90deg, #3b82f6 0%, #60a5fa 100%);
+  transition: all 0.3s ease;
+  border-radius: 1px;
+}
+
 @media (max-width: 768px) {
-  .tab-navigation {
-    margin-bottom: 1.5rem;
+  .tab-button {
+    padding: 0.75rem 1rem;
+    font-size: 0.9rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .tab-button {
+    padding: 0.5rem 0.5rem;
+    font-size: 0.8rem;
+    letter-spacing: 0.25px;
   }
 }
 </style>

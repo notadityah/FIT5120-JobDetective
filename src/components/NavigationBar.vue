@@ -26,13 +26,12 @@
           <li class="nav-item">
             <router-link class="nav-link" to="/analyse">Analyse Job</router-link>
           </li>
-          <!-- Future features - commented out for now
-          <li class="nav-item">
+          <!-- <li class="nav-item">
             <a class="nav-link" href="#" @click.prevent>Scam Detection Simulation</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" href="#" @click.prevent>Reported Jobs</a>
           </li> -->
+          <li class="nav-item">
+            <router-link class="nav-link" to="/hub">Scam Awareness Hub</router-link>
+          </li>
         </ul>
       </div>
     </div>
@@ -61,11 +60,6 @@ export default {
   font-size: 1.5rem;
   display: flex;
   align-items: center;
-  background: linear-gradient(90deg, #ffffff, #e2e8f0);
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
-  text-shadow: 0 2px 10px rgba(255, 255, 255, 0.1);
 }
 
 .brand-icon {
@@ -136,9 +130,5 @@ export default {
 .navbar-toggler:focus {
   box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.3);
   outline: none;
-}
-
-.navbar-toggler-icon {
-  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3e%3cpath stroke='rgba%28255, 255, 255, 0.8%29' stroke-linecap='round' stroke-miterlimit='10' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/%3e%3c/svg%3e") !important;
 }
 </style>
