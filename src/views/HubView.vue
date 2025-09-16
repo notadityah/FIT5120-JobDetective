@@ -12,20 +12,85 @@
       </div>
     </div>
 
-    <!-- Before You Apply Section -->
+    <!-- Before You Apply Section - Dynamic Checklist -->
     <div v-if="activeTab === 'before'" class="content-section">
-      <SectionHeader title="" />
-
-      <div class="steps-grid">
-        <FeatureCard
+      <div
+        class="checklist-grid"
+        :class="{
+          'has-expanded-1': expandedCard === 1,
+          'has-expanded-2': expandedCard === 2,
+          'has-expanded-3': expandedCard === 3,
+          'has-expanded-4': expandedCard === 4,
+        }"
+      >
+        <div
           v-for="step in steps"
           :key="step.number"
-          card-type="step"
-          :number="step.number"
-          :title="step.title"
-          :features="step.details"
-          :is-main-step="step.isMain"
-        />
+          class="checklist-card"
+          :class="{
+            expanded: expandedCard === step.number,
+            completed: getStepProgressPercentage(step.number) === 100,
+          }"
+        >
+          <!-- Card Header - Clickable for expansion -->
+          <div class="checklist-header" @click="toggleCard(step.number)">
+            <div class="step-number">{{ step.number }}</div>
+            <h3 class="step-title">{{ step.title }}</h3>
+            <div class="expand-icon" v-if="expandedCard !== step.number">
+              <i class="fas fa-chevron-down"></i>
+            </div>
+            <div class="expand-icon" v-else>
+              <i class="fas fa-chevron-up"></i>
+            </div>
+          </div>
+
+          <!-- Progress Indicator -->
+          <div class="card-progress">
+            <div class="progress-bar">
+              <div
+                class="progress-fill"
+                :style="{ width: getStepProgressPercentage(step.number) + '%' }"
+              ></div>
+            </div>
+          </div>
+
+          <!-- Card Content (Expandable) -->
+          <transition name="expand">
+            <div v-if="expandedCard === step.number" class="checklist-content">
+              <div class="todo-list">
+                <div
+                  v-for="(item, index) in step.details"
+                  :key="index"
+                  class="todo-item"
+                  :class="{ completed: completedItems[`${step.number}-${index}`] }"
+                >
+                  <label class="todo-checkbox" @click.stop>
+                    <input
+                      type="checkbox"
+                      v-model="completedItems[`${step.number}-${index}`]"
+                      @change="updateProgress"
+                    />
+                    <span class="checkmark"></span>
+                    <div class="todo-content">
+                      <span class="todo-text">{{ item.text }}</span>
+                      <div v-if="item.links && item.links.length > 0" class="todo-links">
+                        <span
+                          v-for="(link, linkIndex) in item.links"
+                          :key="linkIndex"
+                          class="todo-link"
+                          @click="handleLinkClick(link.url, $event)"
+                        >
+                          {{ link.text }}
+                          <i class="fas fa-external-link-alt"></i>
+                        </span>
+                      </div>
+                    </div>
+                  </label>
+                </div>
+              </div>
+            </div>
+          </transition>
+        </div>
       </div>
     </div>
 
@@ -113,7 +178,7 @@
 </template>
 
 <script>
-import { ref, onMounted, computed } from 'vue' // Add 'ref' back to imports
+import { ref, onMounted, computed, watch } from 'vue'
 import TabNavigation from '@/components/TabNavigation.vue'
 import FilterTabs from '@/components/FilterTabs.vue'
 import SectionHeader from '@/components/SectionHeader.vue'
@@ -141,12 +206,204 @@ export default {
     const loading = ref(true)
     const error = ref(null)
 
+    // New reactive data for checklist functionality
+    const expandedCard = ref(1) // Changed from null to 1
+    const completedItems = ref({})
+
     // Cache configuration
     const CACHE_KEY = 'jobdetective_scam_stats'
     const CACHE_EXPIRY_KEY = 'jobdetective_scam_stats_expiry'
     const CACHE_DURATION = 24 * 60 * 60 * 1000 // 24 hours
 
-    // Computed properties
+    // Checklist cache configuration
+    const CHECKLIST_CACHE_KEY = 'jobdetective_checklist_progress'
+
+    // Load completed items from localStorage on mount
+    const loadProgress = () => {
+      try {
+        const saved = localStorage.getItem(CHECKLIST_CACHE_KEY)
+        if (saved) {
+          completedItems.value = JSON.parse(saved)
+        }
+      } catch (error) {
+        console.error('Error loading checklist progress:', error)
+      }
+    }
+
+    // Save progress to localStorage
+    const saveProgress = () => {
+      try {
+        localStorage.setItem(CHECKLIST_CACHE_KEY, JSON.stringify(completedItems.value))
+      } catch (error) {
+        console.error('Error saving checklist progress:', error)
+      }
+    }
+
+    // Watch for changes in completed items and save
+    watch(completedItems, saveProgress, { deep: true })
+
+    // Toggle card expansion
+    const toggleCard = (cardNumber) => {
+      expandedCard.value = expandedCard.value === cardNumber ? null : cardNumber
+    }
+
+    // Steps data with external links
+    const steps = [
+      {
+        number: 1,
+        title: 'Research the Employer',
+        details: [
+          {
+            text: "Look up the company's website and career page",
+            links: [],
+          },
+          {
+            text: 'Check for online presence on LinkedIn, Seek, or industry directories',
+            links: [
+              { text: 'LinkedIn', url: 'https://www.linkedin.com/jobs' },
+              { text: 'Seek', url: 'https://www.seek.com.au' },
+            ],
+          },
+          {
+            text: 'Read company reviews on trusted sites',
+            links: [
+              { text: 'Trustpilot', url: 'https://au.trustpilot.com/' },
+              { text: 'Glassdoor', url: 'https://www.glassdoor.com.au' },
+            ],
+          },
+        ],
+      },
+      {
+        number: 2,
+        title: 'Check Contact Details',
+        details: [
+          {
+            text: 'Verify a legitimate phone number is provided',
+            links: [],
+          },
+          {
+            text: 'Ensure email address uses a company domain (not Gmail/Yahoo)',
+            links: [],
+          },
+          {
+            text: 'Be cautious if communication only happens through messaging apps',
+            links: [],
+          },
+        ],
+      },
+      {
+        number: 3,
+        title: 'Validate the Offer',
+        details: [
+          {
+            text: 'Compare the salary with industry standards for similar roles',
+            links: [
+              {
+                text: 'RobertHalf Salary Guide',
+                url: 'https://www.roberthalf.com/au/en/insights/salary-guide/calculator',
+              },
+              {
+                text: 'PayScale',
+                url: 'https://www.payscale.com/research/AU/Country=Australia/Salary',
+              },
+            ],
+          },
+          {
+            text: 'Be wary of offers that sound "too good to be true"',
+            links: [],
+          },
+          {
+            text: 'Ensure the job description is detailed and professional',
+            links: [],
+          },
+        ],
+      },
+      {
+        number: 4,
+        title: 'Protect Your Application',
+        details: [
+          {
+            text: 'Never provide sensitive information (bank details, full ID, or upfront payments).',
+            links: [],
+          },
+          {
+            text: 'Apply through secure, reputable job portals when possible',
+            links: [
+              { text: 'Seek', url: 'https://www.seek.com.au' },
+              { text: 'Indeed', url: 'https://au.indeed.com' },
+              { text: 'LinkedIn Jobs', url: 'https://www.linkedin.com/jobs' },
+            ],
+          },
+          {
+            text: 'If in doubt, use Job Detective’s Analyse Job or report suspicious ads to Scamwatch.',
+            links: [
+              { text: 'Analyse Job', url: '/analyse' },
+              { text: 'Scamwatch', url: 'https://www.scamwatch.gov.au/report-a-scam' },
+            ],
+          },
+        ],
+      },
+    ]
+
+    // Update progress functions to work with new data structure
+    const getStepProgress = (stepNumber) => {
+      const stepItems = steps.find((step) => step.number === stepNumber)?.details || []
+      let completed = 0
+      stepItems.forEach((_, index) => {
+        if (completedItems.value[`${stepNumber}-${index}`]) {
+          completed++
+        }
+      })
+      return completed
+    }
+
+    const getStepProgressPercentage = (stepNumber) => {
+      const stepItems = steps.find((step) => step.number === stepNumber)?.details || []
+      const completed = getStepProgress(stepNumber)
+      return stepItems.length > 0 ? (completed / stepItems.length) * 100 : 0
+    }
+
+    // Add the missing updateProgress function
+    const updateProgress = () => {
+      // This function is called when checkboxes are changed
+      // The watch on completedItems already handles saving to localStorage
+      console.log('Progress updated')
+    }
+
+    // Handle link clicks
+    const handleLinkClick = (url, event) => {
+      event.stopPropagation() // Prevent checkbox toggle
+      if (url.startsWith('/')) {
+        // Internal route
+        window.location.href = url
+      } else {
+        // External link
+        window.open(url, '_blank', 'noopener,noreferrer')
+      }
+    }
+
+    // Computed properties for overall progress
+    const totalItems = computed(() => {
+      return steps.reduce((total, step) => total + step.details.length, 0)
+    })
+
+    const totalCompletedItems = computed(() => {
+      let completed = 0
+      steps.forEach((step) => {
+        step.details.forEach((_, index) => {
+          if (completedItems.value[`${step.number}-${index}`]) {
+            completed++
+          }
+        })
+      })
+      return completed
+    })
+
+    const overallProgressPercentage = computed(() => {
+      return totalItems.value > 0 ? (totalCompletedItems.value / totalItems.value) * 100 : 0
+    })
+
+    // Computed properties for statistics
     const totalData = computed(() => {
       return scamData.value || null
     })
@@ -165,7 +422,7 @@ export default {
       return new Intl.NumberFormat('en-AU').format(number)
     }
 
-    // Cache management functions
+    // Cache management functions for statistics
     const getCachedData = () => {
       try {
         const cachedData = localStorage.getItem(CACHE_KEY)
@@ -271,9 +528,11 @@ export default {
 
     onMounted(() => {
       fetchScamStatistics()
+      loadProgress()
     })
 
     return {
+      // Statistics
       scamData,
       loading,
       error,
@@ -281,6 +540,18 @@ export default {
       formatCurrency,
       formatNumber,
       fetchScamStatistics,
+      // Checklist
+      steps,
+      expandedCard,
+      completedItems,
+      toggleCard,
+      getStepProgress,
+      getStepProgressPercentage,
+      updateProgress, // Added this missing function
+      totalItems,
+      totalCompletedItems,
+      overallProgressPercentage,
+      handleLinkClick,
     }
   },
   data() {
@@ -292,47 +563,6 @@ export default {
         { id: 'reported', label: 'Recently Reported Scams' },
         { id: 'statistics', label: 'Australian Scam Statistics' },
         { id: 'news', label: 'Recent Scam News' },
-      ],
-      steps: [
-        {
-          number: 1,
-          title: 'Research the Employer',
-          isMain: true,
-          details: [
-            'Look up the company’s website and career page.',
-            'Check for online presence on LinkedIn, Glassdoor, or industry directories.',
-            'Read company reviews on trusted sites like Glassdoor or Indeed.',
-          ],
-        },
-        {
-          number: 2,
-          title: 'Check Contact Details',
-          isMain: false,
-          details: [
-            'Verify a legitimate phone number, email with a company domain, and a physical address.',
-            'Be cautious if communication only happens through messaging apps or if direct contact is avoided.',
-          ],
-        },
-        {
-          number: 3,
-          title: 'Validate the Offer',
-          isMain: false,
-          details: [
-            'Compare the role’s salary, hours, and requirements with industry standards.',
-            'Be wary of offers that sound “too good to be true” or include urgent pressure tactics.',
-            'Ensure the job description is detailed, consistent, and relevant to the role advertised.',
-          ],
-        },
-        {
-          number: 4,
-          title: 'Protect Your Application',
-          isMain: false,
-          details: [
-            'Never provide sensitive information (bank details, full ID, or upfront payments).',
-            'Apply through secure, reputable job portals if possible (e.g., Seek, LinkedIn, Indeed).',
-            'If in doubt, use Job Detective’s Analyse Job or report suspicious ads to Scamwatch.',
-          ],
-        },
       ],
       scamFilters: [
         { id: 'all', label: 'All' },
@@ -455,6 +685,284 @@ export default {
   padding: 2rem 2rem;
 }
 
+/* Checklist Grid Layout */
+.checklist-grid {
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr 1fr;
+  gap: 1.5rem;
+  margin-top: 2rem;
+  transition: grid-template-columns 0.3s ease;
+}
+
+/* When card 1 is expanded */
+.checklist-grid.has-expanded-1 {
+  grid-template-columns: 2fr 1fr 1fr 1fr;
+}
+
+/* When card 2 is expanded */
+.checklist-grid.has-expanded-2 {
+  grid-template-columns: 1fr 2fr 1fr 1fr;
+}
+
+/* When card 3 is expanded */
+.checklist-grid.has-expanded-3 {
+  grid-template-columns: 1fr 1fr 2fr 1fr;
+}
+
+/* When card 4 is expanded */
+.checklist-grid.has-expanded-4 {
+  grid-template-columns: 1fr 1fr 1fr 2fr;
+}
+
+.checklist-card {
+  background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+  border-radius: 20px;
+  padding: 1.5rem;
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  height: 480px;
+  min-height: 480px;
+  max-height: 480px;
+}
+
+.checklist-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 20px 40px rgba(59, 130, 246, 0.3);
+}
+
+.checklist-card.expanded {
+  background: linear-gradient(135deg, #2563eb 0%, #1e40af 100%);
+}
+
+.checklist-card.completed {
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+}
+
+.checklist-card.completed:hover {
+  box-shadow: 0 20px 40px rgba(16, 185, 129, 0.3);
+}
+
+.checklist-header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  margin-bottom: 1rem;
+  cursor: pointer;
+  position: relative;
+  padding: 0.5rem;
+  border-radius: 10px;
+  transition: background-color 0.2s ease;
+}
+
+.checklist-header:hover {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.step-number {
+  width: 50px;
+  height: 50px;
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 1.5rem;
+  color: white;
+  margin-bottom: 1rem;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+}
+
+.step-title {
+  font-size: 1.3rem;
+  font-weight: 600;
+  color: white;
+  margin: 0;
+  line-height: 1.3;
+  text-align: center;
+}
+
+.expand-icon {
+  position: absolute;
+  top: 0.5rem;
+  right: 0.5rem;
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 0.9rem;
+  transition: all 0.3s ease;
+}
+
+.card-progress {
+  margin-top: auto;
+  margin-bottom: 1rem;
+}
+
+.progress-bar {
+  height: 4px;
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 2px;
+  overflow: hidden;
+}
+
+.progress-fill {
+  height: 100%;
+  background: rgba(255, 255, 255, 0.8);
+  border-radius: 2px;
+  transition: width 0.3s ease;
+}
+
+.checklist-content {
+  margin-top: 1rem;
+  padding-top: 1rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.2);
+  flex: 1;
+  overflow-y: auto;
+  max-height: calc(480px - 140px);
+}
+
+.todo-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.todo-item {
+  transition: all 0.2s ease;
+}
+
+.todo-item.completed {
+  opacity: 0.8;
+}
+
+.todo-checkbox {
+  display: flex;
+  align-items: flex-start;
+  cursor: pointer;
+  font-size: 0.9rem;
+  line-height: 1.4;
+  gap: 0.75rem;
+  color: white;
+  padding: 0.25rem;
+  border-radius: 4px;
+  transition: background-color 0.2s ease;
+}
+
+.todo-checkbox:hover {
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.todo-checkbox input[type='checkbox'] {
+  display: none;
+}
+
+.checkmark {
+  width: 18px;
+  height: 18px;
+  border: 2px solid rgba(255, 255, 255, 0.6);
+  border-radius: 3px;
+  position: relative;
+  transition: all 0.2s ease;
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+
+.todo-checkbox:hover .checkmark {
+  border-color: white;
+}
+
+.todo-checkbox input[type='checkbox']:checked + .checkmark {
+  background: white;
+  border-color: white;
+}
+
+.todo-checkbox input[type='checkbox']:checked + .checkmark::after {
+  content: '✓';
+  position: absolute;
+  color: #3b82f6;
+  font-size: 12px;
+  font-weight: bold;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.todo-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.todo-text {
+  color: rgba(255, 255, 255, 0.95);
+}
+
+.todo-item.completed .todo-text {
+  text-decoration: line-through;
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.todo-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  margin-top: 0.25rem;
+}
+
+.todo-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  color: #1e293b;
+  font-size: 0.8rem;
+  text-decoration: none;
+  cursor: pointer;
+  padding: 0.25rem 0.5rem;
+  border-radius: 4px;
+  background: rgba(255, 255, 255, 0.9);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  transition: all 0.2s ease;
+  font-weight: 600;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.todo-link:hover {
+  background: #fbbf24;
+  border-color: #f59e0b;
+  color: #1e293b;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.todo-link i {
+  font-size: 0.7rem;
+  opacity: 0.8;
+}
+
+.todo-item.completed .todo-link {
+  opacity: 0.6;
+  pointer-events: none;
+}
+
+/* Expand transition */
+.expand-enter-active,
+.expand-leave-active {
+  transition: opacity 0.3s ease;
+}
+
+.expand-enter-from,
+.expand-leave-to {
+  opacity: 0;
+}
+
+.expand-enter-to,
+.expand-leave-from {
+  opacity: 1;
+}
+
 /* Stats Hero Section */
 .stats-hero-section {
   width: 100%;
@@ -561,12 +1069,6 @@ export default {
 }
 
 /* Grid Layouts */
-.steps-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr 1fr 1fr;
-  gap: 2rem;
-}
-
 .scams-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
@@ -599,9 +1101,23 @@ export default {
 }
 
 /* Mobile Responsiveness */
-@media (max-width: 1024px) {
-  .steps-grid {
-    grid-template-columns: 1fr 1fr;
+@media (max-width: 1200px) {
+  .checklist-grid,
+  .checklist-grid.has-expanded-1,
+  .checklist-grid.has-expanded-2,
+  .checklist-grid.has-expanded-3,
+  .checklist-grid.has-expanded-4 {
+    grid-template-columns: 1fr 1fr 1fr 1fr;
+  }
+
+  .checklist-card {
+    height: 240px;
+    min-height: 240px;
+    max-height: 240px;
+  }
+
+  .checklist-content {
+    max-height: calc(240px - 140px);
   }
 
   .scams-grid {
@@ -612,10 +1128,6 @@ export default {
 @media (max-width: 768px) {
   .hero-title {
     font-size: 2.5rem;
-  }
-
-  .steps-grid {
-    grid-template-columns: 1fr;
   }
 
   .content-section {
@@ -644,6 +1156,66 @@ export default {
     flex-direction: column;
     align-items: center;
     gap: 0.8rem;
+  }
+
+  .checklist-grid,
+  .checklist-grid.has-expanded-1,
+  .checklist-grid.has-expanded-2,
+  .checklist-grid.has-expanded-3,
+  .checklist-grid.has-expanded-4 {
+    grid-template-columns: 1fr 1fr 1fr 1fr;
+  }
+
+  .checklist-card {
+    height: 220px;
+    min-height: 220px;
+    max-height: 220px;
+    padding: 1.5rem;
+  }
+
+  .checklist-content {
+    max-height: calc(220px - 130px);
+  }
+
+  .step-title {
+    font-size: 1.1rem;
+  }
+
+  .step-number {
+    width: 40px;
+    height: 40px;
+    font-size: 1.2rem;
+  }
+}
+
+@media (max-width: 580px) {
+  .checklist-grid,
+  .checklist-grid.has-expanded-1,
+  .checklist-grid.has-expanded-2,
+  .checklist-grid.has-expanded-3,
+  .checklist-grid.has-expanded-4 {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .checklist-card {
+    height: 240px;
+    min-height: 240px;
+    max-height: 240px;
+    padding: 1rem;
+  }
+
+  .checklist-content {
+    max-height: calc(240px - 140px);
+  }
+
+  .step-number {
+    width: 35px;
+    height: 35px;
+    font-size: 1rem;
+  }
+
+  .step-title {
+    font-size: 1rem;
   }
 }
 </style>

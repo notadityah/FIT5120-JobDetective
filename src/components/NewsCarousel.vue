@@ -13,8 +13,7 @@
 
     <div class="news-carousel-container">
       <div v-if="loading" class="text-center py-4">
-        <LoadingSpinner />
-        <p class="mt-2">Loading latest news...</p>
+        <LoadingSpinner message="Loading news articles..." size="large" />
       </div>
 
       <div v-else-if="error" class="alert alert-danger" role="alert">
