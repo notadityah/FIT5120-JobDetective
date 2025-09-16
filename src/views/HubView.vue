@@ -14,7 +14,7 @@
 
     <!-- Before You Apply Section -->
     <div v-if="activeTab === 'before'" class="content-section">
-      <SectionHeader title="Before You Apply" />
+      <SectionHeader title="" />
 
       <div class="steps-grid">
         <FeatureCard
@@ -31,7 +31,7 @@
 
     <!-- Recently Reported Scams Section -->
     <div v-if="activeTab === 'reported'" class="content-section">
-      <SectionHeader title="Recently Reported Scams" />
+      <SectionHeader title="" />
 
       <FilterTabs
         :filters="scamFilters"
@@ -54,7 +54,7 @@
 
     <!-- Scam Statistics Section -->
     <div v-if="activeTab === 'statistics'" class="content-section">
-      <SectionHeader title="Australian Scam Statistics" />
+      <SectionHeader title="" />
 
       <!-- Stats Hero Section -->
       <div class="stats-hero-section">
@@ -96,24 +96,7 @@
 
     <!-- Recent Scam News Section -->
     <div v-if="activeTab === 'news'" class="content-section">
-      <SectionHeader
-        title="Recent Scam News"
-        subtitle="Stay informed about the latest tactics used by scammers. Here are some recent headlines and common job-related scams to watch out for."
-      />
-
-      <div class="news-grid">
-        <FeatureCard
-          v-for="article in newsArticles"
-          :key="article.id"
-          card-type="news"
-          :title="article.title"
-          :description="article.excerpt"
-          :source="article.source"
-          :date="article.date"
-          :cta="article.cta"
-          @card-action="handleNewsClick(article)"
-        />
-      </div>
+      <NewsCarousel />
     </div>
 
     <!-- CTA Section -->
@@ -130,7 +113,7 @@
 </template>
 
 <script>
-import { ref, onMounted, computed } from 'vue'
+import { ref, onMounted, computed } from 'vue' // Add 'ref' back to imports
 import TabNavigation from '@/components/TabNavigation.vue'
 import FilterTabs from '@/components/FilterTabs.vue'
 import SectionHeader from '@/components/SectionHeader.vue'
@@ -138,6 +121,7 @@ import FeatureCard from '@/components/FeatureCard.vue'
 import BaseButton from '@/components/BaseButton.vue'
 import LoadingSpinner from '@/components/LoadingSpinner.vue'
 import ErrorDisplay from '@/components/ErrorDisplay.vue'
+import NewsCarousel from '../components/NewsCarousel.vue'
 
 export default {
   name: 'HubView',
@@ -149,6 +133,7 @@ export default {
     BaseButton,
     LoadingSpinner,
     ErrorDisplay,
+    NewsCarousel,
   },
   setup() {
     // Reactive data for statistics
@@ -311,17 +296,43 @@ export default {
       steps: [
         {
           number: 1,
-          title: 'Research Employer',
+          title: 'Research the Employer',
           isMain: true,
           details: [
-            'Check for a professional website & social media presence.',
-            'Read company reviews on trusted sites.',
-            "Verify the company's registration and address.",
+            'Look up the company’s website and career page.',
+            'Check for online presence on LinkedIn, Glassdoor, or industry directories.',
+            'Read company reviews on trusted sites like Glassdoor or Indeed.',
           ],
         },
-        { number: 2, title: 'Check Contact Details' },
-        { number: 3, title: 'Validate Offer' },
-        { number: 4, title: 'Verify Payment Requests' },
+        {
+          number: 2,
+          title: 'Check Contact Details',
+          isMain: false,
+          details: [
+            'Verify a legitimate phone number, email with a company domain, and a physical address.',
+            'Be cautious if communication only happens through messaging apps or if direct contact is avoided.',
+          ],
+        },
+        {
+          number: 3,
+          title: 'Validate the Offer',
+          isMain: false,
+          details: [
+            'Compare the role’s salary, hours, and requirements with industry standards.',
+            'Be wary of offers that sound “too good to be true” or include urgent pressure tactics.',
+            'Ensure the job description is detailed, consistent, and relevant to the role advertised.',
+          ],
+        },
+        {
+          number: 4,
+          title: 'Protect Your Application',
+          isMain: false,
+          details: [
+            'Never provide sensitive information (bank details, full ID, or upfront payments).',
+            'Apply through secure, reputable job portals if possible (e.g., Seek, LinkedIn, Indeed).',
+            'If in doubt, use Job Detective’s Analyse Job or report suspicious ads to Scamwatch.',
+          ],
+        },
       ],
       scamFilters: [
         { id: 'all', label: 'All' },
@@ -387,35 +398,6 @@ export default {
           type: 'education',
         },
       ],
-      newsArticles: [
-        {
-          id: 1,
-          source: 'News Report',
-          date: 'Oct 28, 2024',
-          title: 'Phantom Jobs Rise on the Rise on Professional Networks',
-          excerpt:
-            'Scammers are posting fake job listings on popular career platforms to harvest personal data. These listings often impersonate real companies but lead to fraudulent application forms designed to steal your information.',
-          cta: 'Read More →',
-        },
-        {
-          id: 2,
-          source: 'Scam Alert',
-          date: 'Oct 19, 2024',
-          title: 'The "Pay for Equipment" Con',
-          excerpt:
-            'A freelance scammer home-work scam involves faking recruitment requiring you to purchase expensive equipment or software from a "designated vendor." The work is fake, and the scammer pockets the money.',
-          cta: 'Learn the Signs →',
-        },
-        {
-          id: 3,
-          source: 'Community Warning',
-          date: 'Oct 3, 2024',
-          title: 'Interview Scams via Messaging Apps',
-          excerpt:
-            'Beware of job offers that conduct the entire interview process over text or messaging apps instead of legitimate company email. Conduct professional interviews, usually via video call or in person. The scam aims to avoid professional screening methods.',
-          cta: 'See Examples →',
-        },
-      ],
     }
   },
   computed: {
@@ -424,11 +406,6 @@ export default {
         return this.recentScams
       }
       return this.recentScams.filter((scam) => scam.type === this.activeFilter)
-    },
-  },
-  methods: {
-    handleNewsClick(article) {
-      console.log('News article clicked:', article)
     },
   },
 }
@@ -478,7 +455,7 @@ export default {
   padding: 2rem 2rem;
 }
 
-/* Stats Hero Section - Moved from HomeView */
+/* Stats Hero Section */
 .stats-hero-section {
   width: 100%;
   display: flex;
@@ -586,19 +563,13 @@ export default {
 /* Grid Layouts */
 .steps-grid {
   display: grid;
-  grid-template-columns: 2fr 1fr 1fr 1fr;
+  grid-template-columns: 1fr 1fr 1fr 1fr;
   gap: 2rem;
 }
 
 .scams-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
-  gap: 2rem;
-}
-
-.news-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
   gap: 2rem;
 }
 
@@ -647,10 +618,6 @@ export default {
     grid-template-columns: 1fr;
   }
 
-  .news-grid {
-    grid-template-columns: 1fr;
-  }
-
   .content-section {
     padding: 2rem 1rem;
   }
@@ -677,24 +644,6 @@ export default {
     flex-direction: column;
     align-items: center;
     gap: 0.8rem;
-  }
-}
-
-@media (max-width: 480px) {
-  .hero-section {
-    padding: 2rem 1rem;
-  }
-
-  .stat-amount {
-    font-size: 3.5rem;
-  }
-
-  .stat-intro-section {
-    font-size: 1.3rem;
-  }
-
-  .stat-description-section {
-    font-size: 1.2rem;
   }
 }
 </style>
