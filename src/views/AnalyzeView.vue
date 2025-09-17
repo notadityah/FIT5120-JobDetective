@@ -256,7 +256,7 @@ export default {
             params: { reportData: JSON.stringify(result.analysis) },
           })
         } else {
-          throw new Error(result.analysis?.error || 'Unable to analyze the provided URL')
+          throw new Error(result.analysis?.error || 'Unable to analyse the provided URL')
         }
       } catch (error) {
         console.error('URL analysis failed:', error)
@@ -277,7 +277,7 @@ export default {
         } else {
           this.urlErrorMessage =
             error.message ||
-            'Unable to analyze this URL. Please try copying the job description to the TEXT tab instead.'
+            'Unable to analyse this URL. Please try copying the job description to the TEXT tab instead.'
         }
 
         this.showUrlErrorModal = true
@@ -326,13 +326,13 @@ export default {
           })
         } else {
           // Handle analysis errors
-          throw new Error(result.analysis?.error || 'Unable to analyze the provided text')
+          throw new Error(result.analysis?.error || 'Unable to analyse the provided text')
         }
       } catch (error) {
         console.error('Text analysis failed:', error)
 
         // Handle different types of errors with specific messages
-        let errorMessage = 'Failed to analyze the text. Please try again.'
+        let errorMessage = 'Failed to analyse the text. Please try again.'
         if (error.name === 'TypeError' && error.message.includes('fetch')) {
           errorMessage =
             'Unable to connect to the analysis service. Please check your internet connection.'
@@ -341,7 +341,7 @@ export default {
         } else if (error.message.includes('Invalid JSON') || error instanceof SyntaxError) {
           errorMessage = 'Received invalid response format. Please try again.'
         } else {
-          errorMessage = error.message || 'Unable to analyze the text. Please try again.'
+          errorMessage = error.message || 'Unable to analyse the text. Please try again.'
         }
 
         // Show error modal instead of alert
