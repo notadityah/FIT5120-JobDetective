@@ -278,11 +278,7 @@ export default {
         title: 'Check Contact Details',
         details: [
           {
-            text: 'Verify a legitimate phone number is provided',
-            links: [],
-          },
-          {
-            text: 'Ensure email address uses a company domain (not Gmail/Yahoo)',
+            text: 'Verify a legitimate phone number, email with a company domain, and a physical address.',
             links: [],
           },
           {
@@ -309,11 +305,11 @@ export default {
             ],
           },
           {
-            text: 'Be wary of offers that sound "too good to be true"',
+            text: 'Be wary of offers that sound "too good to be true" or include urgent pressure tactics',
             links: [],
           },
           {
-            text: 'Ensure the job description is detailed and professional',
+            text: 'Ensure the job description is detailed, consistent, and relevant to the role advertised.',
             links: [],
           },
         ],
