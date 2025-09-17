@@ -25,10 +25,9 @@
         </div>
 
         <div class="upload-section">
-          <TabNavigation :tabs="tabs" v-model:activeTab="activeTab" @tab-click="handleTabClick" />
+          <TabNavigation :tabs="tabs" :activeTab="activeTab" @tab-change="handleTabClick" />
 
           <div class="tab-content">
-            File Upload Tab
             <div v-if="activeTab === 'file'" class="file-upload-area">
               <div class="upload-icon">
                 <svg
@@ -58,14 +57,33 @@
 
             <!-- URL Tab -->
             <div v-if="activeTab === 'url'" class="url-input-area">
-              <input
-                type="url"
-                placeholder="Paste job listing URL here..."
-                class="url-input disabled"
-                v-model="urlInput"
-                disabled
+              <!-- Show loading spinner while analyzing URL -->
+              <LoadingSpinner
+                v-if="isAnalyzingUrl"
+                variant="analyzing"
+                message="Analysing job URL..."
+                sub-message="Extracting and analyzing job content"
+                size="medium"
               />
-              <button class="analyze-btn disabled">Analyze URL</button>
+
+              <!-- Show normal input when not analyzing -->
+              <div v-else>
+                <input
+                  type="url"
+                  placeholder="Paste job listing URL here..."
+                  class="url-input"
+                  v-model="urlInput"
+                  @keypress.enter="analyzeUrl"
+                />
+                <BaseButton
+                  variant="primary"
+                  @click="analyzeUrl"
+                  :disabled="!isValidUrl(urlInput)"
+                  class="analyze-btn"
+                >
+                  Analyse URL
+                </BaseButton>
+              </div>
             </div>
 
             <!-- Search Tab -->
@@ -109,6 +127,20 @@
           <button class="close-btn" @click="closeNotification">&times;</button>
         </div>
       </div>
+
+      <!-- URL Error Modal -->
+      <div v-if="showUrlErrorModal" class="modal-overlay" @click="closeUrlErrorModal">
+        <div class="url-error-modal" @click.stop>
+          <div class="modal-content">
+            <h2 class="modal-title">URL Analysis Error</h2>
+            <p class="modal-message">{{ urlErrorMessage }}</p>
+            <div class="modal-actions">
+              <BaseButton variant="secondary" @click="closeUrlErrorModal">Close</BaseButton>
+              <BaseButton variant="primary" @click="switchToTextTab">Use TEXT Input</BaseButton>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 </template>
@@ -131,21 +163,25 @@ export default {
       urlInput: '',
       textInput: '',
       showNotification: false,
-      isAnalyzing: false, // Loading state for analysis
+      isAnalyzing: false, // Loading state for text analysis
+      isAnalyzingUrl: false, // Loading state for URL analysis
+      showUrlErrorModal: false,
+      urlErrorMessage: '',
       tabs: [
         { id: 'file', label: 'FILE', disabled: true }, // Coming soon
-        { id: 'url', label: 'URL', disabled: true }, // Coming soon
+        { id: 'url', label: 'URL', disabled: false }, // Now active
         { id: 'search', label: 'TEXT', disabled: false }, // Active tab
       ],
     }
   },
   methods: {
     // Handle tab clicks - show notification for disabled tabs
-    handleTabClick(tab) {
-      if (tab.disabled) {
+    handleTabClick(tabId) {
+      const tab = this.tabs.find((t) => t.id === tabId)
+      if (tab && tab.disabled) {
         this.showComingSoonNotification()
       } else {
-        this.activeTab = tab.id
+        this.activeTab = tabId
       }
     },
     // Show notification for disabled features
@@ -156,7 +192,100 @@ export default {
     closeNotification() {
       this.showNotification = false
     },
-    // Main analysis function using AI API
+    // Validate URL format and ensure it's HTTP/HTTPS
+    isValidUrl(string) {
+      if (!string || !string.trim()) {
+        return false
+      }
+
+      try {
+        const url = new URL(string.trim())
+        // Must be HTTP or HTTPS protocol
+        return url.protocol === 'http:' || url.protocol === 'https:'
+      } catch (error) {
+        // This catch will trigger for truly malformed URLs
+        console.log('Invalid URL format:', error.message)
+        return false
+      }
+    },
+    // Close URL error modal
+    closeUrlErrorModal() {
+      this.showUrlErrorModal = false
+      this.urlErrorMessage = ''
+    },
+    // Switch to text tab when URL fails
+    switchToTextTab() {
+      this.activeTab = 'search'
+      this.closeUrlErrorModal()
+    },
+    // URL analysis function
+    async analyzeUrl() {
+      if (!this.isValidUrl(this.urlInput)) {
+        this.urlErrorMessage = 'Please enter a valid URL (e.g., https://example.com/job-posting)'
+        this.showUrlErrorModal = true
+        return
+      }
+
+      this.isAnalyzingUrl = true
+
+      try {
+        const response = await fetch(import.meta.env.VITE_ANALYSE_URL_API_GATEWAY, {
+          method: 'POST',
+          mode: 'cors',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            jobUrl: this.urlInput.trim(),
+          }),
+        })
+
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`)
+        }
+
+        const result = await response.json()
+
+        if (result.error) {
+          throw new Error(result.error)
+        }
+
+        if (result.analysis && !result.analysis.error) {
+          this.$router.push({
+            name: 'Report',
+            params: { reportData: JSON.stringify(result.analysis) },
+          })
+        } else {
+          throw new Error(result.analysis?.error || 'Unable to analyze the provided URL')
+        }
+      } catch (error) {
+        console.error('URL analysis failed:', error)
+
+        // Set appropriate error message based on error type
+        if (error.message.includes('robots.txt')) {
+          this.urlErrorMessage =
+            'This website does not allow automated analysis. Please copy the job description manually and use the TEXT input method.'
+        } else if (error.message.includes('timeout') || error.message.includes('network')) {
+          this.urlErrorMessage =
+            'Unable to access the URL. Please check your internet connection or try copying the job content to the TEXT tab.'
+        } else if (error.message.includes('404') || error.message.includes('not found')) {
+          this.urlErrorMessage =
+            'The job posting could not be found. The URL may be expired or incorrect.'
+        } else if (error.message.includes('403') || error.message.includes('forbidden')) {
+          this.urlErrorMessage =
+            'Access to this job posting is restricted. Please copy the content manually and use the TEXT input.'
+        } else {
+          this.urlErrorMessage =
+            error.message ||
+            'Unable to analyze this URL. Please try copying the job description to the TEXT tab instead.'
+        }
+
+        this.showUrlErrorModal = true
+      } finally {
+        this.isAnalyzingUrl = false
+      }
+    },
+    // Updated text analysis function using AWS Lambda
     async analyzeText() {
       if (!this.textInput.trim()) {
         return
@@ -165,69 +294,15 @@ export default {
       this.isAnalyzing = true
 
       try {
-        // System prompt for AI scam detection
-        const system_prompt = `Role: You are an AI assistant specializing in detecting employment scams targeting young Australians.
-
-Goal: Analyze text input and assess if it is a job posting. If yes, detect scam risk.
-If not a job posting, return a standard safe response.
-
-Instructions:
-- First, decide if the input is a job ad.
-- If it is a job ad: check for these red flags:
-  1. Requests for upfront payment or financial info
-  2. Unrealistic pay promises
-  3. Vague or unclear requirements
-  4. Urgent or pressured timelines
-  5. Poor grammar/spelling
-  6. Fake or unverifiable company details
-  7. Minimal-requirement work-from-home schemes
-- Always return JSON in the exact schema below.
-- Do not include explanations or text outside the JSON.
-- Keep lists short and specific.
-
-Output Format (strict JSON only):
-
-For job postings:
-{
-  "riskLevel": "low" | "medium" | "high",
-  "riskScore": 0-100,
-  "redFlags": ["specific issues found"],
-  "safetyTips": ["max 3 short, practical tips"],
-  "isLegitimate": true | false,
-  "explanation": "1-2 sentences, under 50 words"
-}
-
-If not a job posting:
-{
-  "riskLevel": "n/a",
-  "riskScore": 0,
-  "redFlags": [],
-  "safetyTips": [],
-  "isLegitimate": null,
-  "explanation": "The provided text does not appear to be a job posting."
-}
-
-DO NOT include explanations or text outside the JSON.
-DO NOT write any code.
-DO NOT execute any code.
-`
-
-        // API call to analyze job posting
-        const response = await fetch(import.meta.env.VITE_API_BASE_URL, {
+        // Call AWS Lambda function for text analysis
+        const response = await fetch(import.meta.env.VITE_ANALYSE_TEXT_API_GATEWAY, {
           method: 'POST',
+          mode: 'cors',
           headers: {
             'Content-Type': 'application/json',
-            Authorization: `Bearer ${import.meta.env.VITE_AGENT_API_KEY}`,
           },
           body: JSON.stringify({
-            messages: [
-              { role: 'system', content: system_prompt },
-              {
-                role: 'user',
-                content: `Check this job posting for scams: ${this.textInput.trim()}`,
-              },
-            ],
-            stream: false,
+            jobText: this.textInput.trim(),
           }),
         })
 
@@ -235,17 +310,27 @@ DO NOT execute any code.
           throw new Error(`HTTP error! status: ${response.status}`)
         }
 
-        const apiResponse = await response.json()
-        const contentString = apiResponse.choices[0].message.content
-        const analysisResult = JSON.parse(contentString)
+        const result = await response.json()
 
-        // Navigate to report page with analysis results
-        this.$router.push({
-          name: 'Report',
-          params: { reportData: JSON.stringify(analysisResult) },
-        })
+        // Check if there was an error in the Lambda response
+        if (result.error) {
+          throw new Error(result.error)
+        }
+
+        // Check if analysis was successful
+        if (result.analysis && !result.analysis.error) {
+          // Navigate to report page with analysis results
+          this.$router.push({
+            name: 'Report',
+            params: { reportData: JSON.stringify(result.analysis) },
+          })
+        } else {
+          // Handle analysis errors
+          throw new Error(result.analysis?.error || 'Unable to analyze the provided text')
+        }
       } catch (error) {
-        console.error('Analysis failed:', error)
+        console.error('Text analysis failed:', error)
+
         // Handle different types of errors with specific messages
         let errorMessage = 'Failed to analyze the text. Please try again.'
         if (error.name === 'TypeError' && error.message.includes('fetch')) {
@@ -253,10 +338,15 @@ DO NOT execute any code.
             'Unable to connect to the analysis service. Please check your internet connection.'
         } else if (error.message.includes('HTTP error')) {
           errorMessage = `Server error: ${error.message}. Please try again later.`
-        } else if (error instanceof SyntaxError) {
+        } else if (error.message.includes('Invalid JSON') || error instanceof SyntaxError) {
           errorMessage = 'Received invalid response format. Please try again.'
+        } else {
+          errorMessage = error.message || 'Unable to analyze the text. Please try again.'
         }
-        alert(errorMessage)
+
+        // Show error modal instead of alert
+        this.urlErrorMessage = errorMessage
+        this.showUrlErrorModal = true
       } finally {
         this.isAnalyzing = false
       }
@@ -316,6 +406,67 @@ DO NOT execute any code.
   }
 }
 
+/* URL Error Modal Styles */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  backdrop-filter: blur(5px);
+}
+
+.url-error-modal {
+  /* Remove fixed positioning when using overlay */
+  position: relative;
+  width: 90%;
+  max-width: 400px;
+  background: rgba(30, 41, 59, 0.95);
+  border-radius: 12px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(8px);
+  animation: fadeIn 0.4s ease-out;
+}
+
+.modal-content {
+  padding: 2rem;
+  color: white;
+}
+
+.modal-title {
+  font-size: 1.5rem;
+  margin-bottom: 1rem;
+}
+
+.modal-message {
+  font-size: 1.1rem;
+  line-height: 1.4;
+  margin-bottom: 2rem;
+}
+
+.modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 1rem;
+}
+
+/* Add this CSS */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1);
+  }
+}
+
 /* Responsive Design */
 @media (max-width: 1024px) {
   .content-wrapper {
@@ -361,6 +512,18 @@ DO NOT execute any code.
     margin: 1.2rem auto 0;
     display: block;
     width: 100%;
+  }
+
+  .modal-content {
+    padding: 1.5rem;
+  }
+
+  .modal-title {
+    font-size: 1.3rem;
+  }
+
+  .modal-message {
+    font-size: 1rem;
   }
 }
 
@@ -599,6 +762,13 @@ DO NOT execute any code.
   flex-direction: column;
   gap: 1rem;
   align-items: stretch;
+}
+
+.url-input-area > div {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
 }
 
 .search-input-area > div {
