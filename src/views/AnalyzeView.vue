@@ -215,7 +215,7 @@
         </div>
       </div>
 
-      <!-- URL Error Modal -->
+      <!-- Error Modal with dynamic buttons based on error source -->
       <div v-if="showUrlErrorModal" class="modal-overlay" @click="closeUrlErrorModal">
         <div class="url-error-modal" @click.stop>
           <div class="modal-content">
@@ -223,8 +223,22 @@
             <p class="modal-message">{{ urlErrorMessage }}</p>
             <div class="modal-actions">
               <BaseButton variant="secondary" @click="closeUrlErrorModal">Close</BaseButton>
-              <BaseButton variant="primary" @click="switchToUrlTab">Use URL</BaseButton>
-              <BaseButton variant="primary" @click="switchToTextTab">Use TEXT</BaseButton>
+
+              <!-- Show different buttons based on which input method failed -->
+              <template v-if="errorSource === 'file'">
+                <BaseButton variant="primary" @click="switchToUrlTab">Use URL</BaseButton>
+                <BaseButton variant="primary" @click="switchToTextTab">Use TEXT</BaseButton>
+              </template>
+
+              <template v-else-if="errorSource === 'url'">
+                <BaseButton variant="primary" @click="switchToFileTab">Use FILE</BaseButton>
+                <BaseButton variant="primary" @click="switchToTextTab">Use TEXT</BaseButton>
+              </template>
+
+              <template v-else-if="errorSource === 'text'">
+                <BaseButton variant="primary" @click="switchToFileTab">Use FILE</BaseButton>
+                <BaseButton variant="primary" @click="switchToUrlTab">Use URL</BaseButton>
+              </template>
             </div>
           </div>
         </div>
