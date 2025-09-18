@@ -4,8 +4,8 @@
       v-for="tab in tabs"
       :key="tab.id"
       class="tab-button"
-      :class="{ active: activeTab === tab.id }"
-      @click="$emit('tab-change', tab.id)"
+      :class="{ active: activeTab === tab.id, disabled: tab.disabled }"
+      @click="handleTabClick(tab)"
     >
       {{ tab.label }}
     </button>
@@ -26,7 +26,12 @@ export default {
       required: true,
     },
   },
-  emits: ['tab-change'],
+  emits: ['tab-change'], // Changed from 'tab-click' to 'tab-change'
+  methods: {
+    handleTabClick(tab) {
+      this.$emit('tab-change', tab.id) // Changed event name and emit tab.id instead of full tab object
+    },
+  },
   computed: {
     activeTabIndex() {
       return this.tabs.findIndex((tab) => tab.id === this.activeTab)
@@ -73,6 +78,12 @@ export default {
 
 .tab-button.active {
   color: #60a5fa;
+}
+
+.tab-button.disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  color: #64748b;
 }
 
 .tab-underline {
