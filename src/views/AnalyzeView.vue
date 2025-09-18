@@ -29,77 +29,80 @@
           <TabNavigation :tabs="tabs" v-model:activeTab="activeTab" @tab-click="handleTabClick" />
 
           <div class="tab-content">
-            File Upload Tab
-            <div v-if="activeTab === 'file'" class="file-upload-area">
-              <div class="upload-icon">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  width="100"
-                  height="100"
-                  viewBox="0 0 24 24"
-                  fill="#63b3ed"
-                >
-                  <g
-                    fill="none"
-                    stroke="#63b3ed"
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    stroke-width="0.75"
+            <transition name="fade">
+              <div v-if="activeTab === 'file'" class="file-upload-area">
+                <div class="upload-icon">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="100"
+                    height="100"
+                    viewBox="0 0 24 24"
+                    fill="#63b3ed"
                   >
-                    <path d="M14 3v4a1 1 0 0 0 1 1h4" />
-                    <path
-                      d="M17 21H7a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h7l5 5v11a2 2 0 0 1-2 2zm-5-10v6"
-                    />
-                    <path d="M9.5 13.5L12 11l2.5 2.5" />
-                  </g>
-                </svg>
+                    <g
+                      fill="none"
+                      stroke="#63b3ed"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="0.75"
+                    >
+                      <path d="M14 3v4a1 1 0 0 0 1 1h4" />
+                      <path
+                        d="M17 21H7a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h7l5 5v11a2 2 0 0 1-2 2zm-5-10v6"
+                      />
+                      <path d="M9.5 13.5L12 11l2.5 2.5" />
+                    </g>
+                  </svg>
+                </div>
+                <button class="choose-file-btn disabled">Choose file</button>
               </div>
-              <button class="choose-file-btn disabled">Choose file</button>
-            </div>
+            </transition>
 
-            <!-- URL Tab -->
-            <div v-if="activeTab === 'url'" class="url-input-area">
-              <input
-                type="url"
-                placeholder="Paste job listing URL here..."
-                class="url-input disabled"
-                v-model="urlInput"
-                disabled
-              />
-              <button class="analyze-btn disabled">Analyze URL</button>
-            </div>
-
-            <!-- Search Tab -->
-            <div v-if="activeTab === 'search'" class="search-input-area">
-              <!-- Show loading spinner while analyzing -->
-              <LoadingSpinner
-                v-if="isAnalyzing"
-                variant="analyzing"
-                message="Analysing job posting..."
-                sub-message="This may take a few moments"
-                size="medium"
-              />
-
-              <!-- Show normal input when not analyzing -->
-              <div v-else>
-                <textarea
-                  placeholder="Paste or type the job description here..."
-                  class="search-textarea"
-                  v-model="textInput"
-                  rows="6"
-                  maxlength="5000"
-                ></textarea>
-                <BaseButton
-                  variant="primary"
-                  @click="analyzeText"
-                  :disabled="!textInput.trim()"
-                  class="analyze-btn"
-                >
-                  Analyse Text
-                </BaseButton>
+            <transition name="fade">
+              <div v-if="activeTab === 'url'" class="url-input-area">
+                <input
+                  type="url"
+                  placeholder="Paste job listing URL here..."
+                  class="url-input disabled"
+                  v-model="urlInput"
+                  disabled
+                />
+                <button class="analyze-btn disabled">Analyze URL</button>
               </div>
-            </div>
-          </transition>
+            </transition>
+
+            <transition name="fade">
+              <div v-if="activeTab === 'search'" class="search-input-area">
+                <!-- Show loading spinner while analyzing -->
+                <LoadingSpinner
+                  v-if="isAnalyzing"
+                  variant="analyzing"
+                  message="Analysing job posting..."
+                  sub-message="This may take a few moments"
+                  size="medium"
+                />
+
+                <!-- Show normal input when not analyzing -->
+                <div v-else>
+                  <textarea
+                    placeholder="Paste or type the job description here..."
+                    class="search-textarea"
+                    v-model="textInput"
+                    rows="6"
+                    maxlength="5000"
+                  ></textarea>
+                  <BaseButton
+                    variant="primary"
+                    @click="analyzeText"
+                    :disabled="!textInput.trim()"
+                    class="analyze-btn"
+                  >
+                    Analyse Text
+                  </BaseButton>
+                </div>
+              </div>
+            </transition>
+          </div>
         </div>
       </div>
 
@@ -137,12 +140,16 @@ export default {
   components: { BaseButton },
   data() {
     return {
+      activeTab: 'search', // 修正：添加activeTab用于tab切换
       inputTypeSelected: '', // 'file' | 'url' | 'text'
       textInput: '',
+      urlInput: '',
       selectedFile: null,
       imagePreview: null,
       showNotification: false,
       isAnalyzing: false, // Loading state for analysis
+      showUrlErrorModal: false,
+      urlErrorMessage: '',
       tabs: [
         { id: 'file', label: 'FILE', disabled: true }, // Coming soon
         { id: 'url', label: 'URL', disabled: true }, // Coming soon
@@ -165,6 +172,20 @@ export default {
     },
     closeNotification() {
       this.showNotification = false
+    },
+    showComingSoonNotification() {
+      this.showNotification = true
+    },
+    closeUrlErrorModal() {
+      this.showUrlErrorModal = false
+    },
+    switchToUrlTab() {
+      this.activeTab = 'url'
+      this.closeUrlErrorModal()
+    },
+    switchToTextTab() {
+      this.activeTab = 'search'
+      this.closeUrlErrorModal()
     },
     // Main analysis function using AI API
     async analyzeText() {
@@ -491,7 +512,7 @@ DO NOT execute any code.
 }
 .feature-text { font-size: 1.1rem; color: #e2e8f0; }
 
-/* 新增：输入类型按钮组 */
+
 .input-section {
   background: rgba(30,41,59,0.8);
   border-radius: 16px;
