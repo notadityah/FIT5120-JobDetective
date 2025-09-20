@@ -1,30 +1,38 @@
 <template>
   <div class="home-cyber-container">
-    <div class="cyber-hero-section">
-      <!-- Illustration on the left -->
-      <div class="cyber-hero-illustration">
-        <img :src="illustration" alt="Cyber Illustration" />
+    <!-- 上方主标题，居中 -->
+    <header class="cyber-hero-header">
+      <h1 class="cyber-hero-title">
+        DETECT <span class="cyber-highlight">JOB SCAMS</span>
+      </h1>
+    </header>
+    <!-- 下方左右布局 -->
+    <section class="cyber-hero-main">
+      <!-- 左侧动漫人物 -->
+      <div class="cyber-hero-illustration-col">
+        <div class="anime-lines"></div>
+        <img :src="illustration" alt="Cyber Illustration" class="cyber-hero-illustration" />
       </div>
-      <!-- Hero content on the right -->
-      <div class="cyber-hero-content">
-        <h1 class="cyber-hero-title">
-          Detect <span class="cyber-highlight">Job Scams</span><br />
-          with <span class="cyber-gradient">AI-powered</span> analysis
-        </h1>
-        <p class="cyber-hero-subtitle">
-          JobDetective uses advanced AI to scan job postings for scams.<br />
-          <span class="cyber-highlight">Stay safe in your job search.</span>
-        </p>
-        <div class="cyber-cta-buttons">
-          <BaseButton variant="primary" size="large" @click="$router.push('/analyse')">
+      <!-- 右侧说明+按钮 -->
+      <div class="cyber-hero-desc-col">
+        <div class="cyber-hero-desc">
+          <div class="cyber-hero-subtitle">
+            Our <span class="ai-model-highlight">AI model</span> identifies fake jobs before you apply - protecting job seekers from scams
+          </div>
+          <BaseButton
+            variant="primary"
+            size="large"
+            class="cyber-cta-btn"
+            @click="$router.push('/analyse')"
+          >
             Analyse Job Now
           </BaseButton>
         </div>
       </div>
-    </div>
+    </section>
 
     <!-- Features section -->
-    <div class="cyber-features-section">
+    <section class="cyber-features-section">
       <div class="cyber-features-grid">
         <FeatureCard
           icon="🔍"
@@ -42,7 +50,7 @@
           description="Detects fake companies, payment fraud, and identity theft."
         />
       </div>
-    </div>
+    </section>
   </div>
 </template>
 
@@ -52,233 +60,285 @@ import BaseButton from '@/components/BaseButton.vue'
 import illustration from '@/assets/images/illustration.svg'
 </script>
 
-<script>
-export default {
-  name: 'HomeView',
-}
-</script>
-
 <style scoped>
+@import url('https://fonts.googleapis.com/css2?family=Bangers&family=Fredoka+One&family=Nunito:wght@700&display=swap');
+
 .home-cyber-container {
   min-height: 100vh;
-  background: linear-gradient(120deg, #0f172a 0%, #232b4d 60%, #2e1a47 100%);
-  color: #e0e7ef;
+  background: #fff;
+  color: #1d1d1f;
   position: relative;
   overflow-x: hidden;
 }
 
-.home-cyber-container::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background: repeating-linear-gradient(
-    135deg,
-    rgba(59,130,246,0.07) 0 2px,
-    transparent 2px 40px
-  );
-  pointer-events: none;
-  z-index: 0;
+/* 上方主标题 */
+.cyber-hero-header {
+  width: 100%;
+  text-align: center;
+  margin-top: 3.5rem;
+  margin-bottom: 2.5rem;
+}
+.cyber-hero-title {
+  font-size: 4.5rem;
+  font-family: 'Bangers', 'Fredoka One', 'Arial Black', sans-serif;
+  font-weight: 900;
+  letter-spacing: 0.03em;
+  color: #222;
+  line-height: 1.05;
+  text-shadow: 2px 2px 0 #fff, 4px 4px 0 #fbbf24, 0 0 12px #f472b6;
+  margin: 0 auto;
+  display: inline-block;
+}
+.cyber-highlight {
+  display: inline-block;
+  color: #fff;
+  background: #f472b6;
+  border-radius: 10px;
+  padding: 0 0.3em;
+  font-weight: 900;
+  margin-left: 0.2em;
+  box-shadow: 2px 2px 0 #fbbf24;
+  text-shadow: 0 2px 8px #f472b6cc;
 }
 
-/* Hero content with mockup */
-.cyber-hero-section {
+/* 下方主区块：左右布局 */
+.cyber-hero-main {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 4vw;
-  padding: 7rem 2rem 4rem 2rem;
-  max-width: 1400px;
-  margin: 0 auto;
+  gap: 1rem;
+  max-width: 1500px;
+  margin: 0 auto 2.5rem auto;
+  padding: 0 1rem;
+  min-height: 420px;
   position: relative;
-  z-index: 1;
 }
 
-.cyber-hero-content {
-  flex: 1.2;
+/* 左侧动漫人物 */
+.cyber-hero-illustration-col {
+  flex: 7;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  position: relative;
+  min-width: 260px;
+  max-width: 900px;
+  padding-left: 5rem;
+}
+.cyber-hero-illustration {
+  width: 120%;
+  max-width: 620px;
+  min-width: 220px;
+  height: auto;
+  filter: grayscale(0.1) contrast(1.15) drop-shadow(0 8px 32px #fbbf2466);
+  z-index: 1;
+  position: relative;
+  border-radius: 32px;
+  background: transparent;
+  animation: anime-pop 1.2s cubic-bezier(.68,-0.55,.27,1.55);
+}
+.anime-lines {
+  position: absolute;
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 100%;
+  height: 90%;
+  pointer-events: none;
+  z-index: 0;
+  background:
+    repeating-linear-gradient(120deg, #fbbf24 0 2px, transparent 2px 16px),
+    repeating-linear-gradient(-120deg, #f472b6 0 2px, transparent 2px 16px);
+  opacity: 0.2;
+  border-radius: 50%;
+  filter: blur(1px);
+}
+
+/* 右侧说明+按钮 */
+.cyber-hero-desc-col {
+  flex: 3;
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-  z-index: 2;
-  padding-left: 2vw;
-}
-
-.cyber-hero-illustration {
-  flex: 1.1;
-  display: flex;
-  align-items: center;
   justify-content: center;
-  min-width: 340px;
-  max-width: 600px;
-  filter: drop-shadow(0 0 40px #3b82f6aa) drop-shadow(0 0 80px #a21caf55);
-  animation: float2 8s ease-in-out infinite;
+  min-width: 220px;
+  max-width: 420px;
+  margin-left: 2vw;
 }
-
-.cyber-hero-illustration img {
-  width: 100%;
-  max-width: 480px;
-  height: auto;
-  user-select: none;
-  pointer-events: none;
-}
-
-.cyber-hero-title {
-  font-size: 3.2rem;
-  font-weight: 700;
-  line-height: 1.1;
-  margin-bottom: 2rem;
-  letter-spacing: -0.01em;
-  text-shadow: 0 0 12px #3b82f644, 0 2px 16px #a21caf33;
-}
-
-.cyber-highlight {
-  color: #3b82f6;
-  text-shadow: 0 0 8px #3b82f6cc, 0 0 16px #a21caf66;
-  font-weight: 800;
-  letter-spacing: 0.01em;
-}
-
-.cyber-gradient {
-  background: linear-gradient(90deg, #3b82f6 20%, #a21caf 80%);
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
-  font-weight: 800;
-  text-shadow: 0 0 16px #a21caf66;
-}
-
-.cyber-hero-subtitle {
-  font-size: 1.3rem;
-  line-height: 1.7;
-  margin-bottom: 2.5rem;
-  color: #cbd5e1;
-  font-weight: 400;
-  text-shadow: 0 1px 8px #3b82f633;
-}
-
-.cyber-cta-buttons {
+.cyber-hero-desc {
   display: flex;
-  gap: 1.5rem;
-  margin-top: 0.5rem;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 2.2rem;
+  width: 100%;
 }
-
-.cyber-cta-buttons .base-btn {
-  font-size: 1.15rem;
+.cyber-hero-subtitle {
+  font-size: 1.5rem;
+  color: #222;
+  font-family: 'Nunito', 'Comic Neue', Arial, sans-serif;
   font-weight: 700;
-  padding: 1.1rem 2.5rem;
-  border-radius: 12px;
-  background: linear-gradient(90deg, #3b82f6 60%, #a21caf 100%);
-  box-shadow: 0 0 16px #3b82f6aa, 0 0 32px #a21caf44;
-  border: 2px solid #3b82f6;
-  transition: background 0.2s, box-shadow 0.2s;
+  margin-bottom: 0.5rem;
+  line-height: 1.6;
+  text-shadow: none;
+}
+.ai-model-highlight {
+  color: #f472b6;
+  font-size: 1.8rem;
+  font-weight: 900;
+  font-family: 'Bangers', 'Fredoka One', sans-serif;
+  letter-spacing: 0.02em;
+  text-shadow: 2px 2px 0 #fbbf24;
+  display: inline-block;
+  animation: ai-pulse 2s ease-in-out infinite;
+}
+.cyber-cta-btn {
+  font-size: 1.3rem; /* 从 1.15rem 增加到 1.3rem */
+  font-family: 'Nunito', 'Comic Neue', Arial, sans-serif;
+  font-weight: 700;
+  padding: 1.3rem 3rem; /* 从 1.1rem 2.5rem 增加到 1.3rem 3rem */
+  border-radius: 16px; /* 从 14px 增加到 16px */
+  background: linear-gradient(135deg, #fbbf24 0%, #f472b6 100%); /* 渊变色 */
+  color: #fff;
+  border: none;
+  box-shadow: 0 4px 15px rgba(244, 114, 182, 0.4);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  position: relative;
+  overflow: hidden;
+}
+.cyber-cta-btn::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+  transition: left 0.5s;
+}
+.cyber-cta-btn:hover {
+  background: linear-gradient(135deg, #f472b6 0%, #fbbf24 100%);
+  transform: translateY(-3px) scale(1.05);
+  box-shadow: 0 8px 25px rgba(244, 114, 182, 0.6);
+  animation: btn-bounce 0.6s ease-in-out;
+}
+.cyber-cta-btn:hover::before {
+  left: 100%;
 }
 
-.cyber-cta-buttons .base-btn:hover {
-  background: linear-gradient(90deg, #a21caf 0%, #3b82f6 100%);
-  box-shadow: 0 0 32px #a21cafcc, 0 0 48px #3b82f6aa;
-  border-color: #a21caf;
-}
-
+/* Features Section */
 .cyber-features-section {
-  padding: 5rem 0 7rem 0;
-  background: linear-gradient(180deg, transparent 0%, #181c2f 100%);
+  padding: 4rem 0 6rem 0;
+  background: #fff;
   position: relative;
   z-index: 1;
 }
-
 .cyber-features-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  grid-template-columns: repeat(3, 1fr);
   gap: 2.5rem;
   max-width: 1100px;
   margin: 0 auto;
   padding: 0 2rem;
 }
-
-@keyframes float2 {
-  0%,100% { transform: translateY(0);}
-  50% { transform: translateY(-18px);}
+@media (max-width: 1100px) {
+  .cyber-features-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+@media (max-width: 700px) {
+  .cyber-features-grid {
+    grid-template-columns: 1fr;
+    gap: 1.2rem;
+  }
 }
 
-/* Mobile Styles */
-@media (max-width: 768px) {
-  .cyber-hero-section {
+/* FeatureCard漫画风格 */
+.feature-card {
+  background: #fff;
+  border-radius: 20px;
+  box-shadow: 0 2px 12px #fbbf2422;
+  border: 2.5px dashed #f472b6;
+  color: #000 !important; /* 强制黑色 */
+  font-family: 'Nunito', 'Comic Neue', Arial, sans-serif;
+  transition: box-shadow 0.2s, border 0.2s;
+  padding: 2rem 1.5rem;
+  min-height: 220px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  animation: card-pop 0.8s cubic-bezier(.68,-0.55,.27,1.55);
+}
+.feature-card:hover {
+  box-shadow: 0 4px 24px #f472b6aa;
+  border: 2.5px solid #fbbf24;
+  transform: scale(1.03) rotate(1deg);
+}
+.feature-card .card-title,
+.feature-card .card-description,
+.feature-card h3,
+.feature-card p,
+.feature-card * {
+  color: #000 !important; /* 强制所有文字为黑色 */
+  text-shadow: none !important;
+  background: none !important;
+  font-weight: 700;
+  font-family: 'Nunito', 'Comic Neue', Arial, sans-serif !important;
+}
+
+/* 动画效果 */
+@keyframes anime-pop {
+  0% { transform: scale(0.92) rotate(-2deg);}
+  60% { transform: scale(1.04) rotate(2deg);}
+  100% { transform: scale(1) rotate(0);}
+}
+@keyframes card-pop {
+  0% { transform: scale(0.95);}
+  60% { transform: scale(1.05);}
+  100% { transform: scale(1);}
+}
+@keyframes ai-pulse {
+  0%, 100% { transform: scale(1);}
+  50% { transform: scale(1.05);}
+}
+@keyframes btn-bounce {
+  0%, 100% { transform: translateY(-3px) scale(1.05);}
+  50% { transform: translateY(-5px) scale(1.08);}
+}
+
+/* 响应式布局 */
+@media (max-width: 900px) {
+  .cyber-hero-main {
     flex-direction: column;
-    gap: 3.5rem;
-    padding: 3.5rem 1.5rem;
-    min-height: 70vh;
+    align-items: center;
+    gap: 2.5rem;
+    padding: 0 1rem;
   }
-
-  .cyber-hero-content {
-    text-align: center;
+  .cyber-hero-illustration-col,
+  .cyber-hero-desc-col {
     max-width: 100%;
+    margin-left: 0;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
   }
-
-  .cyber-hero-title {
-    font-size: 2.5rem;
-  }
-
-  .mockup-screen {
-    width: 100%;
-    max-width: 350px;
-    height: 300px;
-    transform: none !important;
-    animation: none;
-  }
-
-  .cyber-features-section {
-    padding: 5rem 0;
-  }
-  .section-title {
-    font-size: 2.2rem;
-    margin-bottom: 3rem;
+  .cyber-hero-desc {
+    align-items: center;
   }
 }
-
-@media (max-width: 480px) {
+@media (max-width: 600px) {
   .cyber-hero-title {
-    font-size: 2rem;
+    font-size: 2.2rem;
   }
-
-  .cyber-cta-buttons {
-    display: flex;
-    justify-content: center;
-    gap: 1rem;
-  }
-
-  .mockup-container {
-    height: auto;
-  }
-
-  .mockup-screen {
-    height: auto;
+  .cyber-highlight {
+    font-size: 2.2rem;
   }
   .cyber-hero-subtitle {
-    font-size: 1.1rem;
+    font-size: 1.2rem;
   }
-
-  .cyber-features-grid {
-    gap: 1.5rem;
+  .ai-model-highlight {
+    font-size: 1.4rem;
   }
-}
-
-@media (max-width: 1024px) {
-  .cyber-hero-section {
-    flex-direction: column;
-    gap: 2.5rem;
-    padding: 4rem 1rem 2rem 1rem;
-  }
-  .cyber-hero-content {
-    align-items: center;
-    padding-left: 0;
-    text-align: center;
-  }
-  .cyber-hero-title { font-size: 2.2rem; }
-  .cyber-hero-illustration { max-width: 340px; }
-}
-
-@media (max-width: 600px) {
-  .cyber-hero-title { font-size: 1.3rem; }
-  .cyber-features-section { padding: 2.5rem 0 3rem 0; }
-  .cyber-features-grid { gap: 1.2rem; }
 }
 </style>
