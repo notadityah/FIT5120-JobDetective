@@ -116,14 +116,14 @@ import illustration from '@/assets/images/illustration.svg'
 
 /* 左侧动漫人物 */
 .cyber-hero-illustration-col {
-  flex: 7;
+  flex: 6; /* 从 7 减少到 6，给右侧更多空间 */
   display: flex;
   align-items: center;
   justify-content: flex-start;
   position: relative;
   min-width: 260px;
-  max-width: 900px;
-  padding-left: 5rem;
+  max-width: 800px; /* 从 900px 减少到 800px */
+  padding-left: 3rem; /* 从 5rem 减少到 3rem */
 }
 .cyber-hero-illustration {
   width: 120%;
@@ -139,31 +139,33 @@ import illustration from '@/assets/images/illustration.svg'
 }
 .anime-lines {
   position: absolute;
-  left: 0;
+  left: -2rem; /* 从 0 改为 -2rem，让栅格向右扩展 */
   top: 50%;
   transform: translateY(-50%);
-  width: 100%;
+  width: 120%; /* 从 100% 增加到 120% */
   height: 90%;
   pointer-events: none;
-  z-index: 0;
+  z-index: 1; /* 确保栅格在文字下方 */
   background:
     repeating-linear-gradient(120deg, #fbbf24 0 2px, transparent 2px 16px),
     repeating-linear-gradient(-120deg, #f472b6 0 2px, transparent 2px 16px);
-  opacity: 0.2;
+  opacity: 0.15; /* 从 0.2 减少到 0.15，让栅格更淡一些 */
   border-radius: 50%;
-  filter: blur(1px);
+  filter: blur(0.8px); /* 从 1px 减少到 0.8px */
 }
 
 /* 右侧说明+按钮 */
 .cyber-hero-desc-col {
-  flex: 3;
+  flex: 4; /* 从 3 增加到 4，扩大右侧区域 */
   display: flex;
   flex-direction: column;
   align-items: flex-start;
   justify-content: center;
-  min-width: 220px;
-  max-width: 420px;
-  margin-left: 2vw;
+  min-width: 320px; /* 从 220px 增加到 320px */
+  max-width: 520px; /* 从 420px 增加到 520px */
+  margin-left: -1rem; /* 负边距让文字向左扩展，与栅格交互 */
+  position: relative;
+  z-index: 2; /* 确保文字在栅格之上 */
 }
 .cyber-hero-desc {
   display: flex;
@@ -173,40 +175,52 @@ import illustration from '@/assets/images/illustration.svg'
   width: 100%;
 }
 .cyber-hero-subtitle {
-  font-size: 1.5rem;
+  font-size: 1.8rem; /* 从 1.5rem 增加到 1.8rem */
   color: #222;
   font-family: 'Nunito', 'Comic Neue', Arial, sans-serif;
   font-weight: 700;
   margin-bottom: 0.5rem;
-  line-height: 1.6;
-  text-shadow: none;
+  line-height: 1.5; /* 从 1.6 减少到 1.5，让文字更紧凑 */
+  text-shadow: 1px 1px 2px rgba(255,255,255,0.8); /* 添加白色阴影，让文字在栅格上更清晰 */
+  background: transparent; /* 从 rgba(255,255,255,0.9) 改为 transparent */
+  padding: 1rem 1.5rem; /* 添加内边距 */
+  border-radius: 12px; /* 圆角 */
+  box-shadow: none; /* 从 0 4px 20px rgba(251, 191, 36, 0.1) 改为 none */
+  backdrop-filter: none; /* 从 blur(5px) 改为 none */
 }
 .ai-model-highlight {
   color: #f472b6;
-  font-size: 1.8rem;
+  font-size: 2.2rem; /* 从 1.8rem 增加到 2.2rem */
   font-weight: 900;
   font-family: 'Bangers', 'Fredoka One', sans-serif;
   letter-spacing: 0.02em;
-  text-shadow: 2px 2px 0 #fbbf24;
+  text-shadow: 2px 2px 0 #fbbf24, 0 0 10px rgba(244, 114, 182, 0.5); /* 增强阴影效果 */
   display: inline-block;
   animation: ai-pulse 2s ease-in-out infinite;
+  background: linear-gradient(45deg, #f472b6, #fbbf24);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
 }
 .cyber-cta-btn {
-  font-size: 1.3rem; /* 从 1.15rem 增加到 1.3rem */
+  font-size: 1.4rem; /* 从 1.3rem 增加到 1.4rem */
   font-family: 'Nunito', 'Comic Neue', Arial, sans-serif;
   font-weight: 700;
-  padding: 1.3rem 3rem; /* 从 1.1rem 2.5rem 增加到 1.3rem 3rem */
-  border-radius: 16px; /* 从 14px 增加到 16px */
-  background: linear-gradient(135deg, #fbbf24 0%, #f472b6 100%); /* 渊变色 */
+  padding: 1.4rem 3.2rem; /* 从 1.3rem 3rem 增加到 1.4rem 3.2rem */
+  border-radius: 18px; /* 从 16px 增加到 18px */
+  background: linear-gradient(135deg, #fbbf24 0%, #f472b6 100%);
   color: #fff;
   border: none;
-  box-shadow: 0 4px 15px rgba(244, 114, 182, 0.4);
+  box-shadow: 0 6px 20px rgba(244, 114, 182, 0.4); /* 增强阴影 */
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   letter-spacing: 0.02em;
   text-transform: uppercase;
   position: relative;
   overflow: hidden;
+  margin-top: 0.5rem; /* 添加上边距 */
+  margin-left: 2rem; /* 向右移动按钮 */
 }
+
 .cyber-cta-btn::before {
   content: '';
   position: absolute;
@@ -335,10 +349,15 @@ import illustration from '@/assets/images/illustration.svg'
     font-size: 2.2rem;
   }
   .cyber-hero-subtitle {
-    font-size: 1.2rem;
+    font-size: 1.3rem; /* 从 1.2rem 增加到 1.3rem */
+    padding: 0.8rem 1rem; /* 移动端减少内边距 */
   }
   .ai-model-highlight {
-    font-size: 1.4rem;
+    font-size: 1.6rem; /* 从 1.4rem 增加到 1.6rem */
+  }
+  .cyber-cta-btn {
+    font-size: 1.2rem;
+    padding: 1.2rem 2.8rem;
   }
 }
 </style>
