@@ -116,14 +116,14 @@ import illustration from '@/assets/images/illustration.svg'
 
 /* 左侧动漫人物 */
 .cyber-hero-illustration-col {
-  flex: 6; /* 从 7 减少到 6，给右侧更多空间 */
+  flex: 7; /* 从 7 减少到 6，给右侧更多空间 */
   display: flex;
   align-items: center;
   justify-content: flex-start;
   position: relative;
   min-width: 260px;
-  max-width: 800px; /* 从 900px 减少到 800px */
-  padding-left: 3rem; /* 从 5rem 减少到 3rem */
+  max-width: 800%; /* 从 900px 减少到 800px */
+  padding-left: 5%; /* 从 5rem 减少到 3rem */
 }
 .cyber-hero-illustration {
   width: 120%;
@@ -161,9 +161,9 @@ import illustration from '@/assets/images/illustration.svg'
   flex-direction: column;
   align-items: flex-start;
   justify-content: center;
-  min-width: 320px; /* 从 220px 增加到 320px */
-  max-width: 520px; /* 从 420px 增加到 520px */
-  margin-left: -1rem; /* 负边距让文字向左扩展，与栅格交互 */
+  min-width: 420px; /* 从 220px 增加到 320px */
+  max-width: 620px; /* 从 420px 增加到 520px */
+  margin-left: -3rem; /* 负边距让文字向左扩展，与栅格交互 */
   position: relative;
   z-index: 2; /* 确保文字在栅格之上 */
 }
