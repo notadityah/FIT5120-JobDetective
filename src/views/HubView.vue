@@ -192,10 +192,43 @@
 -->
 
     <!-- Scam Statistics Section -->
-
     <div v-if="activeTab === 'statistics'" class="content-section">
       <div class="section-header">
         <h2 class="section-title">Australian Scam Statistics</h2>
+        <p class="section-subtitle">Interactive dashboard showing job scam trends and data</p>
+      </div>
+
+      <!-- Tableau Chart Container -->
+      <div class="tableau-container">
+        <div class="tableauPlaceholder" id="viz1758442623639" style="position: relative">
+          <noscript>
+            <a href="#">
+              <img
+                alt="Dashboard 2"
+                src="https://public.tableau.com/static/images/51/5120v1/Dashboard2/1_rss.png"
+                style="border: none"
+              />
+            </a>
+          </noscript>
+          <object class="tableauViz" style="display: none">
+            <param name="host_url" value="https%3A%2F%2Fpublic.tableau.com%2F" />
+            <param name="embed_code_version" value="3" />
+            <param name="site_root" value="" />
+            <param name="name" value="5120v1&#47;Dashboard2" />
+            <param name="tabs" value="no" />
+            <param name="toolbar" value="no" />
+            <param
+              name="static_image"
+              value="https://public.tableau.com/static/images/51/5120v1/Dashboard2/1.png"
+            />
+            <param name="animate_transition" value="yes" />
+            <param name="display_static_image" value="yes" />
+            <param name="display_spinner" value="yes" />
+            <param name="display_overlay" value="yes" />
+            <param name="display_count" value="yes" />
+            <param name="language" value="en-AU" />
+          </object>
+        </div>
       </div>
     </div>
 
@@ -470,7 +503,7 @@ export default {
       tabs: [
         { id: 'before', label: 'Before You Apply Checklist' },
         // { id: 'reported', label: 'Recently Reported Scams (WIP)' },
-        { id: 'statistics', label: 'Australian Scam Statistics (WIP)' },
+        { id: 'statistics', label: 'Australian Scam Statistics' },
         { id: 'news', label: 'Recent Scam News' },
       ],
       scamFilters: [
@@ -545,6 +578,62 @@ export default {
         return this.recentScams
       }
       return this.recentScams.filter((scam) => scam.type === this.activeFilter)
+    },
+  },
+  mounted() {
+    // Initialize Tableau visualization when statistics tab is active
+    this.$nextTick(() => {
+      if (this.activeTab === 'statistics') {
+        this.initTableauViz()
+      }
+    })
+  },
+  watch: {
+    activeTab(newTab) {
+      if (newTab === 'statistics') {
+        this.$nextTick(() => {
+          this.initTableauViz()
+        })
+      }
+    },
+  },
+  methods: {
+    initTableauViz() {
+      // Check if Tableau script is already loaded
+      if (typeof tableau !== 'undefined') {
+        this.loadTableauChart()
+      } else {
+        // Load Tableau API script
+        const script = document.createElement('script')
+        script.src = 'https://public.tableau.com/javascripts/api/viz_v1.js'
+        script.onload = () => {
+          this.loadTableauChart()
+        }
+        document.head.appendChild(script)
+      }
+    },
+    loadTableauChart() {
+      const divElement = document.getElementById('viz1758442623639')
+      if (divElement) {
+        const vizElement = divElement.getElementsByTagName('object')[0]
+        if (divElement.offsetWidth > 800) {
+          vizElement.style.width = '100%'
+          vizElement.style.height = divElement.offsetWidth * 0.75 + 'px'
+        } else if (divElement.offsetWidth > 500) {
+          vizElement.style.width = '100%'
+          vizElement.style.height = divElement.offsetWidth * 0.75 + 'px'
+        } else {
+          vizElement.style.width = '100%'
+          vizElement.style.height = '1027px'
+        }
+
+        // Load the visualization if not already loaded
+        if (!vizElement.style.display || vizElement.style.display === 'none') {
+          const scriptElement = document.createElement('script')
+          scriptElement.src = 'https://public.tableau.com/javascripts/api/viz_v1.js'
+          vizElement.parentNode.insertBefore(scriptElement, vizElement)
+        }
+      }
     },
   },
 }
@@ -1797,6 +1886,42 @@ export default {
     height: auto;
     min-height: 350px;
     max-height: none;
+  }
+}
+
+/* Tableau Container Styles */
+.tableau-container {
+  margin: 2rem 0;
+  padding: 1.5rem;
+  background: rgba(255, 255, 255, 0.9);
+  border-radius: 16px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  backdrop-filter: blur(10px);
+}
+
+.tableauPlaceholder {
+  width: 100%;
+  min-height: 400px;
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .tableau-container {
+    margin: 1rem 0;
+    padding: 1rem;
+  }
+
+  .tableauPlaceholder {
+    min-height: 300px;
+  }
+}
+
+@media (max-width: 480px) {
+  .tableau-container {
+    padding: 0.75rem;
   }
 }
 </style>
