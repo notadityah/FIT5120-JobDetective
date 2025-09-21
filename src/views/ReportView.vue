@@ -3,7 +3,7 @@
     <div class="report-content">
       <!-- Header -->
       <div class="report-header">
-        <BaseButton variant="back" @click="goBack" size="medium"> ← Back to Analysis </BaseButton>
+        <BaseButton variant="back" @click="goBack" size="medium"> ← Back </BaseButton>
         <h1 class="report-title">Job Analysis Report</h1>
       </div>
 
@@ -215,15 +215,6 @@ export default {
     0 4px 12px rgba(0, 0, 0, 0.05);
   text-align: center;
   margin-bottom: 2rem;
-  transition: all 0.3s ease;
-}
-
-.not-job-posting-card:hover {
-  transform: translateY(-4px);
-  box-shadow:
-    0 15px 35px rgba(0, 0, 0, 0.15),
-    0 8px 20px rgba(0, 0, 0, 0.1);
-  border-color: #3b82f6;
 }
 
 .not-job-icon {
@@ -253,16 +244,7 @@ export default {
     0 8px 25px rgba(0, 0, 0, 0.1),
     0 4px 12px rgba(0, 0, 0, 0.05);
   margin-bottom: 2rem;
-  transition: all 0.3s ease;
   position: relative;
-}
-
-.report-card:hover {
-  transform: translateY(-4px);
-  box-shadow:
-    0 15px 35px rgba(0, 0, 0, 0.15),
-    0 8px 20px rgba(0, 0, 0, 0.1);
-  border-color: #3b82f6;
 }
 
 .risk-section {
@@ -360,12 +342,6 @@ export default {
   border-radius: 12px;
   border-left: 4px solid #ef4444;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
-  transition: all 0.3s ease;
-}
-
-.red-flag-item:hover {
-  transform: translateX(4px);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
 
 .red-flag-item:last-child {
@@ -405,15 +381,6 @@ export default {
   box-shadow:
     0 8px 25px rgba(0, 0, 0, 0.1),
     0 4px 12px rgba(0, 0, 0, 0.05);
-  transition: all 0.3s ease;
-}
-
-.safety-tips-card:hover {
-  transform: translateY(-4px);
-  box-shadow:
-    0 15px 35px rgba(0, 0, 0, 0.15),
-    0 8px 20px rgba(0, 0, 0, 0.1);
-  border-color: #10b981;
 }
 
 .safety-tips-card h3 {
@@ -439,12 +406,6 @@ export default {
   font-weight: 500;
   line-height: 1.6;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
-  transition: all 0.3s ease;
-}
-
-.tips-list li:hover {
-  transform: translateX(4px);
-  box-shadow: 0 4px 12px rgba(16, 185, 129, 0.15);
 }
 
 .tips-list li:last-child {

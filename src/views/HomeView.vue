@@ -11,8 +11,8 @@
         </div>
         <div class="cyber-hero-desc">
           <div class="cyber-hero-subtitle">
-            Our <span class="cyber-highlight">AI job detection tool</span> helps young job seekers
-            spot fake jobs and scams - <b>empowering safer, smarter choices online.</b>
+            Our AI - powered job detection tool helps young job seekers spot fake jobs and scams -
+            <b>empowering safer & smarter choices online.</b>
           </div>
 
           <BaseButton
