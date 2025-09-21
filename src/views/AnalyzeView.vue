@@ -1087,6 +1087,10 @@ export default {
   border: 1px solid #e2e8f0;
   box-shadow: 0 8px 20px -5px rgba(0, 0, 0, 0.08);
   transition: all 0.3s ease;
+  align-self: flex-end;
+  width: auto;
+  margin-top: 1.5rem;
+  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
 }
 
 .selected-file:hover {
