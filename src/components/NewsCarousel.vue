@@ -91,12 +91,12 @@
             </div>
           </div>
 
-          <div class="hover-overlay">
+          <!-- <div class="hover-overlay">
             <div class="hover-content">
               <i class="fas fa-arrow-right"></i>
               <span>Read Full Article</span>
             </div>
-          </div>
+          </div> -->
         </article>
       </div>
 
