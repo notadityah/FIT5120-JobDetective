@@ -195,12 +195,12 @@
     <div v-if="activeTab === 'statistics'" class="content-section">
       <div class="section-header">
         <h2 class="section-title">Australian Scam Statistics</h2>
-        <p class="section-subtitle">Interactive dashboard showing job scam trends and data</p>
+        <p class="section-subtitle">Interactive visualisations showing job scam trends and data</p>
       </div>
 
       <!-- Tableau Chart Container -->
       <div class="tableau-container">
-        <div class="tableauPlaceholder" id="viz1758442623639" style="position: relative">
+        <div class="tableauPlaceholder" id="viz1758451186828" style="position: relative">
           <noscript>
             <a href="#">
               <img
@@ -216,7 +216,7 @@
             <param name="site_root" value="" />
             <param name="name" value="5120v1&#47;Dashboard2" />
             <param name="tabs" value="no" />
-            <param name="toolbar" value="no" />
+            <param name="toolbar" value="yes" />
             <param
               name="static_image"
               value="https://public.tableau.com/static/images/51/5120v1/Dashboard2/1.png"
@@ -587,52 +587,79 @@ export default {
         this.initTableauViz()
       }
     })
+
+    // Add resize listener
+    window.addEventListener('resize', this.handleResize)
+  },
+  beforeUnmount() {
+    window.removeEventListener('resize', this.handleResize)
   },
   watch: {
+    // Add watcher for tab changes
     activeTab(newTab) {
       if (newTab === 'statistics') {
         this.$nextTick(() => {
-          this.initTableauViz()
+          setTimeout(() => {
+            this.initTableauViz()
+          }, 100)
         })
       }
     },
   },
   methods: {
     initTableauViz() {
-      // Check if Tableau script is already loaded
-      if (typeof tableau !== 'undefined') {
-        this.loadTableauChart()
-      } else {
-        // Load Tableau API script
-        const script = document.createElement('script')
-        script.src = 'https://public.tableau.com/javascripts/api/viz_v1.js'
-        script.onload = () => {
+      this.$nextTick(() => {
+        setTimeout(() => {
           this.loadTableauChart()
-        }
-        document.head.appendChild(script)
-      }
+        }, 100)
+      })
     },
-    loadTableauChart() {
-      const divElement = document.getElementById('viz1758442623639')
-      if (divElement) {
-        const vizElement = divElement.getElementsByTagName('object')[0]
-        if (divElement.offsetWidth > 800) {
-          vizElement.style.width = '100%'
-          vizElement.style.height = divElement.offsetWidth * 0.75 + 'px'
-        } else if (divElement.offsetWidth > 500) {
-          vizElement.style.width = '100%'
-          vizElement.style.height = divElement.offsetWidth * 0.75 + 'px'
-        } else {
-          vizElement.style.width = '100%'
-          vizElement.style.height = '1027px'
-        }
 
-        // Load the visualization if not already loaded
-        if (!vizElement.style.display || vizElement.style.display === 'none') {
-          const scriptElement = document.createElement('script')
-          scriptElement.src = 'https://public.tableau.com/javascripts/api/viz_v1.js'
-          vizElement.parentNode.insertBefore(scriptElement, vizElement)
-        }
+    loadTableauChart() {
+      // Use the correct ID from your embed script
+      const divElement = document.getElementById('viz1758451186828')
+      if (!divElement) return
+
+      const vizElement = divElement.getElementsByTagName('object')[0]
+      if (!vizElement) return
+
+      // Clear any existing scripts to prevent conflicts
+      const existingScripts = document.querySelectorAll('script[src*="viz_v1.js"]')
+      existingScripts.forEach((script) => script.remove())
+
+      // Make the viz element visible
+      vizElement.style.display = 'block'
+
+      // Apply the exact same logic as Tableau's embed code
+      if (divElement.offsetWidth > 800) {
+        vizElement.style.width = '100%'
+        vizElement.style.height = divElement.offsetWidth * 0.75 + 'px'
+      } else if (divElement.offsetWidth > 500) {
+        vizElement.style.width = '100%'
+        vizElement.style.height = divElement.offsetWidth * 0.75 + 'px'
+      } else {
+        vizElement.style.width = '100%'
+        vizElement.style.height = '1027px'
+      }
+
+      // Create and insert the script exactly as Tableau does
+      const scriptElement = document.createElement('script')
+      scriptElement.src = 'https://public.tableau.com/javascripts/api/viz_v1.js'
+      scriptElement.onload = () => {
+        console.log('Tableau script loaded')
+      }
+      scriptElement.onerror = (error) => {
+        console.error('Failed to load Tableau script:', error)
+      }
+      vizElement.parentNode.insertBefore(scriptElement, vizElement)
+    },
+
+    // Handle window resize
+    handleResize() {
+      if (this.activeTab === 'statistics') {
+        setTimeout(() => {
+          this.loadTableauChart()
+        }, 200)
       }
     },
   },
@@ -1898,6 +1925,7 @@ export default {
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
   border: 1px solid rgba(255, 255, 255, 0.2);
   backdrop-filter: blur(10px);
+  width: 100%;
 }
 
 .tableauPlaceholder {
@@ -1905,6 +1933,11 @@ export default {
   min-height: 400px;
   border-radius: 12px;
   overflow: hidden;
+}
+
+/* Let Tableau handle its own sizing - minimal CSS interference */
+.tableauViz {
+  border-radius: 8px;
 }
 
 /* Responsive adjustments */
