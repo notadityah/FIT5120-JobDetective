@@ -3,6 +3,7 @@ import HomeView from '../views/HomeView.vue'
 import AnalyzeView from '../views/AnalyzeView.vue'
 import ReportView from '../views/ReportView.vue'
 import HubView from '../views/HubView.vue'
+import AboutView from '../views/AboutView.vue'
 
 // Configure application routes
 const routes = [
@@ -27,6 +28,11 @@ const routes = [
     path: '/hub',
     name: 'hub',
     component: HubView,
+  },
+  {
+    path: '/aboutus',
+    name: 'aboutus',
+    component: AboutView,
   },
 ]
 

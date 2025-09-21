@@ -24,13 +24,13 @@
             <router-link class="nav-link" to="/">Home</router-link>
           </li>
           <li class="nav-item">
-            <router-link class="nav-link" to="/analyse">Analyse Job</router-link>
+            <router-link class="nav-link" to="/analyse">Analyse Jobs</router-link>
           </li>
           <!-- <li class="nav-item">
             <a class="nav-link" href="#" @click.prevent>Scam Detection Simulation</a>
           </li> -->
           <li class="nav-item">
-            <router-link class="nav-link" to="/hub">Scam Awareness Hub</router-link>
+            <router-link class="nav-link" to="/hub">Awareness Hub</router-link>
           </li>
         </ul>
       </div>

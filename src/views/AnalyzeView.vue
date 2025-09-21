@@ -247,7 +247,7 @@ export default {
   },
   data() {
     return {
-      activeTab: 'search', // Default to text input tab
+      activeTab: 'file', // Default to file input tab
       urlInput: '',
       textInput: '',
       selectedFile: null,
@@ -564,7 +564,7 @@ export default {
 </script>
 
 <style scoped>
-/* Notification styles improvement */
+/* Notification styles - Light theme */
 .notification {
   position: fixed;
   bottom: 2rem;
@@ -575,16 +575,19 @@ export default {
 }
 
 .notification-content {
-  background: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%);
+  background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
   color: white;
   padding: 1.2rem 2rem;
   border-radius: 12px;
   display: flex;
   align-items: center;
   gap: 1.2rem;
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4);
+  box-shadow:
+    0 10px 25px -5px rgba(59, 130, 246, 0.25),
+    0 10px 20px -5px rgba(0, 0, 0, 0.1);
   font-weight: 500;
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  backdrop-filter: blur(20px);
 }
 
 .close-btn {
@@ -614,67 +617,72 @@ export default {
   }
 }
 
-/* URL Error Modal Styles - Updated */
+/* URL Error Modal Styles - Light theme */
 .modal-overlay {
   position: fixed;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
-  background: rgba(0, 0, 0, 0.7);
+  background: rgba(0, 0, 0, 0.4);
   display: flex;
   align-items: center;
   justify-content: center;
   z-index: 1000;
-  backdrop-filter: blur(5px);
+  backdrop-filter: blur(8px);
 }
 
 .url-error-modal {
   position: relative;
   width: 90%;
-  max-width: 500px; /* Increased from 400px to 500px */
-  background: rgba(30, 41, 59, 0.95);
-  border-radius: 12px;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
-  backdrop-filter: blur(8px);
+  max-width: 500px;
+  background: white;
+  border-radius: 16px;
+  box-shadow:
+    0 20px 50px -5px rgba(0, 0, 0, 0.15),
+    0 10px 20px -5px rgba(0, 0, 0, 0.1);
   animation: fadeIn 0.4s ease-out;
+  border: 1px solid rgba(0, 0, 0, 0.05);
 }
 
 .modal-content {
   padding: 2rem;
-  color: white;
+  color: #1f2937;
 }
 
 .modal-title {
   font-size: 1.5rem;
   margin-bottom: 1rem;
-  text-align: center; /* Center the title */
+  text-align: center;
+  font-weight: 700;
+  color: #1f2937;
 }
 
 .modal-message {
   font-size: 1.1rem;
-  line-height: 1.4;
+  line-height: 1.5;
   margin-bottom: 2rem;
-  text-align: center; /* Center the message */
+  text-align: center;
+  color: #6b7280;
 }
 
 .modal-actions {
   display: flex;
-  justify-content: center; /* Center the buttons */
-  gap: 1rem; /* Increased gap */
+  justify-content: center;
+  gap: 1rem;
   flex-wrap: wrap;
 }
 
 .modal-actions .base-button {
-  min-width: 120px; /* Increased minimum width */
-  flex: 1; /* Make buttons equal width */
-  max-width: 140px; /* Prevent buttons from getting too wide */
+  min-width: 120px;
+  flex: 1;
+  max-width: 140px;
 }
 
-/* Mobile responsiveness for modal actions */
+/* Mobile responsiveness for modal */
 @media (max-width: 768px) {
   .url-error-modal {
-    max-width: 450px; /* Slightly smaller on tablets */
+    max-width: 450px;
   }
 
   .modal-actions {
@@ -692,7 +700,7 @@ export default {
 
 @media (max-width: 480px) {
   .url-error-modal {
-    max-width: 95%; /* Almost full width on small screens */
+    max-width: 95%;
   }
 
   .modal-content {
@@ -708,36 +716,21 @@ export default {
   }
 }
 
-/* Disabled button styles */
-.choose-file-btn.disabled,
-.analyze-btn.disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
-  background: #4a5568;
-  border-color: #4a5568;
-  color: #a0aec0;
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
 }
 
-.choose-file-btn.disabled:hover,
-.analyze-btn.disabled:hover {
-  background: #4a5568;
-  border-color: #4a5568;
-  color: #a0aec0;
-}
-
-.url-input.disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
-  background: #2d3748;
-}
-
-/* Loading/Analyzing State - now handled by LoadingSpinner component */
-
-/* Disabled analyze button - now handled by BaseButton component */
-
+/* Main Container - Light theme */
 .analyze-container {
   min-height: 100vh;
-  background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #334155 100%);
+  background: linear-gradient(135deg, #f8fafc 0%, #ffffff 50%, #f1f5f9 100%);
   display: flex;
   align-items: center;
   padding: 3rem 0;
@@ -752,8 +745,8 @@ export default {
   right: -150px;
   width: 500px;
   height: 500px;
-  background: radial-gradient(circle, rgba(59, 130, 246, 0.3) 0%, transparent 70%);
-  opacity: 0.4;
+  background: radial-gradient(circle, rgba(59, 130, 246, 0.1) 0%, transparent 70%);
+  opacity: 0.6;
   z-index: 0;
   pointer-events: none;
 }
@@ -765,8 +758,8 @@ export default {
   left: -100px;
   width: 400px;
   height: 400px;
-  background: radial-gradient(circle, rgba(239, 68, 68, 0.2) 0%, transparent 70%);
-  opacity: 0.3;
+  background: radial-gradient(circle, rgba(99, 102, 241, 0.08) 0%, transparent 70%);
+  opacity: 0.8;
   z-index: 0;
   pointer-events: none;
 }
@@ -787,21 +780,22 @@ export default {
   align-items: center;
 }
 
+/* Left side content - Light theme */
 .analyze-text {
-  color: white;
+  color: #1f2937;
 }
 
 .analyze-title {
   font-size: 3.5rem;
-  font-weight: 700;
-  line-height: 1.2;
+  font-weight: 800;
+  line-height: 1.1;
   margin-bottom: 1.5rem;
-  letter-spacing: -0.01em;
-  text-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+  letter-spacing: -0.02em;
+  color: #0f172a;
 }
 
 .title-accent {
-  background: linear-gradient(90deg, #3b82f6, #60a5fa);
+  background: linear-gradient(135deg, #3b82f6 0%, #6366f1 100%);
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
@@ -810,60 +804,70 @@ export default {
 }
 
 .analyze-subtitle {
-  font-size: 1.3rem;
+  font-size: 1.25rem;
   line-height: 1.6;
-  opacity: 0.9;
+  color: #64748b;
   margin-bottom: 2rem;
   max-width: 90%;
+  font-weight: 500;
 }
 
 .features-list {
   display: flex;
   flex-direction: column;
-  gap: 0.7rem;
+  gap: 1rem;
   margin-top: 2rem;
 }
 
 .feature-item {
   display: flex;
   align-items: center;
-  gap: 0.7rem;
+  gap: 1rem;
+  padding: 0.75rem 0;
 }
 
 .feature-icon {
-  background: linear-gradient(135deg, #3b82f6 0%, #60a5fa 100%);
-  width: 26px;
-  height: 26px;
+  background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+  width: 28px;
+  height: 28px;
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
   color: white;
   font-weight: bold;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+  font-size: 0.9rem;
+  box-shadow:
+    0 4px 8px rgba(59, 130, 246, 0.25),
+    0 2px 4px rgba(0, 0, 0, 0.1);
+  flex-shrink: 0;
 }
 
 .feature-text {
   font-size: 1.1rem;
-  color: #e2e8f0;
+  color: #475569;
+  font-weight: 500;
 }
 
+/* Upload section - Light theme */
 .upload-section {
-  background: rgba(30, 41, 59, 0.8);
-  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.9);
+  border-radius: 20px;
   padding: 2.5rem;
-  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.4);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  backdrop-filter: blur(10px);
+  box-shadow:
+    0 20px 40px -5px rgba(0, 0, 0, 0.1),
+    0 10px 20px -5px rgba(0, 0, 0, 0.05);
+  border: 1px solid rgba(0, 0, 0, 0.05);
+  backdrop-filter: blur(20px);
   animation: floatIn 0.6s ease-out;
-  transition:
-    transform 0.3s ease,
-    box-shadow 0.3s ease;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .upload-section:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
+  transform: translateY(-8px);
+  box-shadow:
+    0 25px 50px -5px rgba(0, 0, 0, 0.15),
+    0 15px 30px -5px rgba(0, 0, 0, 0.1);
 }
 
 @keyframes floatIn {
@@ -877,8 +881,6 @@ export default {
   }
 }
 
-/* Tab navigation now handled by TabNavigation component */
-
 .tab-content {
   min-height: 250px;
   display: flex;
@@ -888,83 +890,96 @@ export default {
   margin-top: 2rem;
 }
 
+/* File upload area - Light theme */
 .file-upload-area {
   text-align: center;
-  color: #a0aec0;
+  color: #64748b;
 }
 
 .upload-icon {
   margin-bottom: 2rem;
-  color: #63b3ed;
+  opacity: 0.8;
 }
 
-/* Only apply custom styling to file upload buttons */
+.upload-icon svg {
+  filter: drop-shadow(0 4px 8px rgba(59, 130, 246, 0.2));
+}
+
+/* File upload buttons - Light theme */
 .file-upload-area .choose-file-btn {
-  background: linear-gradient(90deg, #6366f1, #8b5cf6);
+  background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
   border: none;
   color: white;
   padding: 1.2rem 3rem;
-  border-radius: 12px;
+  border-radius: 14px;
   font-weight: 600;
   font-size: 1.1rem;
   cursor: pointer;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  box-shadow: 0 4px 15px rgba(99, 102, 241, 0.4);
+  box-shadow:
+    0 8px 20px -5px rgba(59, 130, 246, 0.4),
+    0 4px 10px -2px rgba(0, 0, 0, 0.1);
   text-transform: none;
-  letter-spacing: 0.5px;
+  letter-spacing: 0.3px;
   margin-bottom: 1rem;
   min-width: 200px;
 }
 
 .file-upload-area .choose-file-btn:hover {
-  background: linear-gradient(90deg, #5b21b6, #7c3aed);
+  background: linear-gradient(135deg, #2563eb 0%, #1e40af 100%);
   transform: translateY(-3px);
-  box-shadow: 0 8px 25px rgba(99, 102, 241, 0.5);
+  box-shadow:
+    0 12px 30px -5px rgba(59, 130, 246, 0.5),
+    0 8px 20px -2px rgba(0, 0, 0, 0.15);
 }
 
 .file-upload-area .choose-file-btn:active {
   transform: translateY(-1px);
-  box-shadow: 0 4px 15px rgba(99, 102, 241, 0.4);
+  box-shadow:
+    0 6px 15px -3px rgba(59, 130, 246, 0.4),
+    0 4px 8px -1px rgba(0, 0, 0, 0.1);
 }
 
-/* Only apply custom styling to file analyze button */
 .file-upload-area .analyze-btn {
-  background: linear-gradient(90deg, #3b82f6, #60a5fa);
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
   border: none;
   color: white;
-  padding: 1.2rem 3rem;
-  border-radius: 12px;
+  border-radius: 14px;
   font-weight: 600;
   font-size: 1.1rem;
   cursor: pointer;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   align-self: center;
   width: auto;
-  margin: 1.5rem 0 0.75rem;
-  box-shadow: 0 4px 15px rgba(59, 130, 246, 0.4);
+  box-shadow:
+    0 8px 20px -5px rgba(16, 185, 129, 0.4),
+    0 4px 10px -2px rgba(0, 0, 0, 0.1);
   text-transform: none;
-  letter-spacing: 0.5px;
-  min-width: 200px;
+  margin: 0 1rem;
+  letter-spacing: 0.3px;
+  min-width: 180px;
 }
 
 .file-upload-area .analyze-btn:hover {
-  background: linear-gradient(90deg, #2563eb, #3b82f6);
+  background: linear-gradient(135deg, #059669 0%, #047857 100%);
   transform: translateY(-3px);
-  box-shadow: 0 8px 25px rgba(59, 130, 246, 0.5);
+  box-shadow:
+    0 12px 30px -5px rgba(16, 185, 129, 0.5),
+    0 8px 20px -2px rgba(0, 0, 0, 0.15);
 }
 
 .file-upload-area .analyze-btn:active {
   transform: translateY(-1px);
-  box-shadow: 0 4px 15px rgba(59, 130, 246, 0.4);
+  box-shadow:
+    0 6px 15px -3px rgba(16, 185, 129, 0.4),
+    0 4px 8px -1px rgba(0, 0, 0, 0.1);
 }
 
-/* Only apply custom styling to file change button */
 .file-upload-area .change-file-btn {
-  background: rgba(71, 85, 105, 0.8);
-  border: 2px solid rgba(148, 163, 184, 0.3);
-  color: #e2e8f0;
-  padding: 0.9rem 2.5rem;
-  border-radius: 10px;
+  background: rgba(248, 250, 252, 0.9);
+  border: 2px solid #e2e8f0;
+  color: #475569;
+  border-radius: 12px;
   font-weight: 500;
   font-size: 1rem;
   cursor: pointer;
@@ -975,14 +990,14 @@ export default {
 }
 
 .file-upload-area .change-file-btn:hover {
-  background: rgba(100, 116, 139, 0.9);
-  border-color: rgba(148, 163, 184, 0.5);
-  color: white;
+  background: #f1f5f9;
+  border-color: #cbd5e1;
+  color: #1e293b;
   transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 6px 20px -5px rgba(0, 0, 0, 0.15);
 }
 
-/* URL and Search input areas styling */
+/* URL and Search input areas */
 .url-input-area,
 .search-input-area {
   width: 100%;
@@ -999,55 +1014,52 @@ export default {
   gap: 1rem;
 }
 
-/* Align URL and text analyze buttons to the right */
 .url-input-area .analyze-btn,
-.search-input-area .analyze-btn {
+.search-input_area .analyze-btn {
   align-self: flex-end;
   width: auto;
   margin-top: 1.5rem;
 }
 
-/* URL Input styling */
+/* Input styling - Light theme */
 .url-input {
-  background: rgba(51, 65, 85, 0.8);
-  border: 2px solid rgba(100, 116, 139, 0.5);
-  border-radius: 10px;
+  background: rgba(248, 250, 252, 0.8);
+  border: 2px solid #e2e8f0;
+  border-radius: 12px;
   padding: 1.2rem;
-  color: #e2e8f0;
+  color: #1e293b;
   font-size: 1.05rem;
   height: 52px;
   width: 100%;
   box-sizing: border-box;
-  transition:
-    border-color 0.3s ease,
-    box-shadow 0.3s ease;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 8px -2px rgba(0, 0, 0, 0.05);
 }
 
 .url-input:focus {
   outline: none;
   border-color: #3b82f6;
-  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.3);
+  box-shadow:
+    0 0 0 3px rgba(59, 130, 246, 0.1),
+    0 4px 12px -2px rgba(59, 130, 246, 0.2);
+  background: white;
 }
 
 .url-input::placeholder {
   color: #94a3b8;
 }
 
-/* Search textarea styling */
 .search-textarea {
-  background: rgba(51, 65, 85, 0.8);
-  border: 2px solid rgba(100, 116, 139, 0.5);
-  border-radius: 10px;
+  background: rgba(248, 250, 252, 0.8);
+  border: 2px solid #e2e8f0;
+  border-radius: 12px;
   padding: 1.2rem;
-  color: #e2e8f0;
+  color: #1e293b;
   font-size: 1.05rem;
   width: 100%;
   box-sizing: border-box;
-  transition:
-    border-color 0.3s ease,
-    box-shadow 0.3s ease;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 8px -2px rgba(0, 0, 0, 0.05);
   resize: vertical;
   min-height: 150px;
   font-family: inherit;
@@ -1056,33 +1068,167 @@ export default {
 .search-textarea:focus {
   outline: none;
   border-color: #3b82f6;
-  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.3);
+  box-shadow:
+    0 0 0 3px rgba(59, 130, 246, 0.1),
+    0 4px 12px -2px rgba(59, 130, 246, 0.2);
+  background: white;
 }
 
 .search-textarea::placeholder {
   color: #94a3b8;
 }
 
-/* File upload button container layout */
-.file-upload-area > div {
+/* Selected file container - Light theme */
+.selected-file {
+  margin: 1.5rem 0;
+  padding: 2rem;
+  background: rgba(248, 250, 252, 0.8);
+  border-radius: 16px;
+  border: 1px solid #e2e8f0;
+  box-shadow: 0 8px 20px -5px rgba(0, 0, 0, 0.08);
+  transition: all 0.3s ease;
+}
+
+.selected-file:hover {
+  background: rgba(255, 255, 255, 0.9);
+  border-color: #cbd5e1;
+  transform: translateY(-2px);
+  box-shadow: 0 12px 30px -5px rgba(0, 0, 0, 0.12);
+}
+
+.file-name {
+  color: #1e293b;
+  font-weight: 700;
+  margin: 0 0 0.75rem;
+  word-break: break-all;
+  font-size: 1.1rem;
+  text-align: center;
+}
+
+.file-size {
+  color: #64748b;
+  font-size: 0.95rem;
+  margin: 0 0 1.5rem;
+  text-align: center;
+  font-weight: 500;
+}
+
+.image-preview {
+  margin: 1.5rem 0;
+  border-radius: 12px;
+  overflow: hidden;
+  display: flex;
+  justify-content: center;
+  background: rgba(248, 250, 252, 0.6);
+  padding: 1rem;
+  border: 1px solid #e2e8f0;
+  max-width: 100%;
+}
+
+.image-preview img {
+  max-width: 200px;
+  max-height: 150px;
+  width: auto;
+  height: auto;
+  object-fit: contain;
+  border-radius: 8px;
+  box-shadow: 0 8px 20px -5px rgba(0, 0, 0, 0.15);
+}
+
+.pdf-indicator {
+  margin: 1.5rem 0;
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 1rem;
+  gap: 0.75rem;
+  padding: 1.5rem;
+  background: rgba(248, 250, 252, 0.6);
+  border-radius: 12px;
+  border: 1px solid #e2e8f0;
 }
 
-/* Ensure all buttons in file area are centered and consistent */
-.file-upload-area .analyze-btn,
-.file-upload-area .choose-file-btn,
-.file-upload-area .change-file-btn {
-  align-self: center;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
+.pdf-text {
+  color: #475569;
+  font-size: 1rem;
+  margin: 0;
+  font-weight: 600;
 }
 
-/* Button responsiveness */
+.file-help-text {
+  margin-top: 2rem;
+  color: #64748b;
+  font-size: 0.9rem;
+  text-align: center;
+  font-weight: 500;
+}
+
+.file-help-text p {
+  margin: 0;
+  opacity: 0.8;
+}
+
+/* Disabled states - Light theme */
+.choose-file-btn.disabled,
+.analyze-btn.disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  background: #94a3b8;
+  border-color: #94a3b8;
+  color: white;
+}
+
+.choose-file-btn.disabled:hover,
+.analyze-btn.disabled:hover {
+  background: #94a3b8;
+  border-color: #94a3b8;
+  color: white;
+  transform: none;
+}
+
+.url-input.disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  background: #f1f5f9;
+}
+
+/* Responsive design */
+@media (max-width: 1024px) {
+  .content-wrapper {
+    grid-template-columns: 1fr;
+    gap: 3rem;
+    text-align: center;
+  }
+
+  .analyze-title {
+    font-size: 3rem;
+  }
+
+  .analyze-subtitle {
+    max-width: 100%;
+  }
+}
+
 @media (max-width: 768px) {
+  .analyze-container {
+    padding: 2rem 0;
+  }
+
+  .analyze-section {
+    padding: 0 1rem;
+  }
+
+  .upload-section {
+    padding: 2rem;
+  }
+
+  .analyze-title {
+    font-size: 2.5rem;
+  }
+
+  .analyze-subtitle {
+    font-size: 1.1rem;
+  }
+
   .file-upload-area .analyze-btn,
   .file-upload-area .choose-file-btn,
   .file-upload-area .change-file-btn {
@@ -1101,118 +1247,33 @@ export default {
   .selected-file {
     padding: 1.5rem;
   }
-}
 
-/* Improve selected file container */
-.selected-file {
-  margin: 1.5rem 0;
-  padding: 2rem;
-  background: rgba(51, 65, 85, 0.7);
-  border-radius: 16px;
-  border: 1px solid rgba(100, 116, 139, 0.4);
-  backdrop-filter: blur(10px);
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
-  transition: all 0.3s ease;
-}
-
-.selected-file:hover {
-  background: rgba(51, 65, 85, 0.8);
-  border-color: rgba(100, 116, 139, 0.5);
-  transform: translateY(-2px);
-  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.3);
-}
-
-/* Improve file info styling */
-.file-name {
-  color: #f1f5f9;
-  font-weight: 700;
-  margin: 0 0 0.75rem;
-  word-break: break-all;
-  font-size: 1.1rem;
-  text-align: center;
-}
-
-.file-size {
-  color: #94a3b8;
-  font-size: 0.95rem;
-  margin: 0 0 1.5rem;
-  text-align: center;
-  font-weight: 500;
-}
-
-/* Fix image preview size */
-.image-preview {
-  margin: 1.5rem 0;
-  border-radius: 12px;
-  overflow: hidden;
-  display: flex;
-  justify-content: center;
-  background: rgba(30, 41, 59, 0.5);
-  padding: 1rem;
-  border: 1px solid rgba(100, 116, 139, 0.3);
-  max-width: 100%;
-}
-
-.image-preview img {
-  max-width: 200px; /* Limit width to 200px */
-  max-height: 150px; /* Limit height to 150px */
-  width: auto;
-  height: auto;
-  object-fit: contain;
-  border-radius: 8px;
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4);
-}
-
-/* Improve PDF indicator */
-.pdf-indicator {
-  margin: 1.5rem 0;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 0.75rem;
-  padding: 1.5rem;
-  background: rgba(30, 41, 59, 0.5);
-  border-radius: 12px;
-  border: 1px solid rgba(100, 116, 139, 0.3);
-}
-
-.pdf-text {
-  color: #e2e8f0;
-  font-size: 1rem;
-  margin: 0;
-  font-weight: 600;
-}
-
-/* Improve help text */
-.file-help-text {
-  margin-top: 2rem;
-  color: #94a3b8;
-  font-size: 0.9rem;
-  text-align: center;
-  font-weight: 500;
-}
-
-.file-help-text p {
-  margin: 0;
-  opacity: 0.8;
-}
-
-/* Mobile responsiveness for image preview */
-@media (max-width: 768px) {
   .image-preview img {
-    max-width: 150px; /* Smaller on mobile */
+    max-width: 150px;
     max-height: 120px;
-  }
-
-  .selected-file {
-    padding: 1.5rem;
   }
 }
 
 @media (max-width: 480px) {
+  .analyze-title {
+    font-size: 2rem;
+  }
+
+  .analyze-subtitle {
+    font-size: 1rem;
+  }
+
+  .upload-section {
+    padding: 1.5rem;
+  }
+
   .image-preview img {
-    max-width: 120px; /* Even smaller on very small screens */
+    max-width: 120px;
     max-height: 100px;
+  }
+
+  .selected-file {
+    padding: 1rem;
   }
 }
 </style>

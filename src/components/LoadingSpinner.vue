@@ -123,13 +123,13 @@ const spinnerSize = computed(() => `spinner-${props.size}`)
 }
 
 .loading-analyzing .loading-text {
-  color: #e2e8f0;
+  color: #000000;
   font-size: 1.2rem;
 }
 
 .loading-default .loading-text,
 .loading-stats .loading-text {
-  color: #d1d5db;
+  color: #000000;
   font-size: 1.4rem;
 }
 
@@ -137,7 +137,7 @@ const spinnerSize = computed(() => `spinner-${props.size}`)
   font-size: 0.9rem;
   opacity: 0.7;
   margin: 0;
-  color: #cbd5e1;
+  color: #000000;
 }
 
 @keyframes spin {
