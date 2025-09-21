@@ -171,9 +171,9 @@ export default {
 <style scoped>
 .report-container {
   min-height: 100vh;
-  background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #334155 100%);
+  background: linear-gradient(135deg, #fefefe 0%, #f1f5f9 100%);
   padding: 2rem 0;
-  color: white;
+  color: #2d3748;
 }
 
 .report-content {
@@ -187,37 +187,43 @@ export default {
   align-items: center;
   gap: 2rem;
   margin-bottom: 2rem;
-}
-
-.back-btn {
-  background: #6b7280;
-  color: white;
-  border: none;
-  padding: 0.75rem 1.5rem;
-  border-radius: 8px;
-  cursor: pointer;
-  font-weight: 500;
-  transition: background 0.3s ease;
-}
-
-.back-btn:hover {
-  background: #4b5563;
+  padding: 2rem 0;
 }
 
 .report-title {
-  font-size: 2rem;
-  color: white;
+  font-size: 3rem;
+  font-family: 'Bangers', 'Fredoka One', 'Arial Black', sans-serif;
+  font-weight: 900;
+  letter-spacing: 0.03em;
+  color: #2d3748;
+  line-height: 1.05;
+  text-shadow:
+    2px 2px 0 #fff,
+    4px 4px 0 #3b82f6,
+    0 0 12px rgba(59, 130, 246, 0.3);
   margin: 0;
+  display: inline-block;
 }
 
 .not-job-posting-card {
-  background: #1e293b;
-  border-radius: 12px;
+  background: #ffffff;
+  border-radius: 20px;
   padding: 2rem;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+  border: 2px solid #e2e8f0;
+  box-shadow:
+    0 8px 25px rgba(0, 0, 0, 0.1),
+    0 4px 12px rgba(0, 0, 0, 0.05);
   text-align: center;
   margin-bottom: 2rem;
-  border: 1px solid #334155;
+  transition: all 0.3s ease;
+}
+
+.not-job-posting-card:hover {
+  transform: translateY(-4px);
+  box-shadow:
+    0 15px 35px rgba(0, 0, 0, 0.15),
+    0 8px 20px rgba(0, 0, 0, 0.1);
+  border-color: #3b82f6;
 }
 
 .not-job-icon {
@@ -226,23 +232,37 @@ export default {
 }
 
 .not-job-title {
-  color: white;
-  font-size: 1.5rem;
+  color: #2d3748;
+  font-size: 1.8rem;
+  font-weight: 700;
   margin-bottom: 1rem;
 }
 
 .not-job-explanation {
-  color: #cbd5e1;
+  color: #4a5568;
   font-size: 1.1rem;
+  line-height: 1.6;
 }
 
 .report-card {
-  background: #1e293b;
-  border-radius: 12px;
-  padding: 2rem;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+  background: #ffffff;
+  border-radius: 20px;
+  padding: 2.5rem;
+  border: 2px solid #e2e8f0;
+  box-shadow:
+    0 8px 25px rgba(0, 0, 0, 0.1),
+    0 4px 12px rgba(0, 0, 0, 0.05);
   margin-bottom: 2rem;
-  border: 1px solid #334155;
+  transition: all 0.3s ease;
+  position: relative;
+}
+
+.report-card:hover {
+  transform: translateY(-4px);
+  box-shadow:
+    0 15px 35px rgba(0, 0, 0, 0.15),
+    0 8px 20px rgba(0, 0, 0, 0.1);
+  border-color: #3b82f6;
 }
 
 .risk-section {
@@ -251,18 +271,25 @@ export default {
 
 .risk-info {
   display: flex;
-  gap: 1rem;
+  gap: 1.5rem;
+  align-items: flex-start;
 }
 
 .risk-icon {
-  font-size: 2rem;
+  font-size: 2.5rem;
   margin-top: 0.5rem;
+  flex-shrink: 0;
+}
+
+.risk-text {
+  flex: 1;
 }
 
 .risk-level {
-  font-size: 1.8rem;
-  font-weight: bold;
+  font-size: 2rem;
+  font-weight: 800;
   margin: 0 0 1rem 0;
+  line-height: 1.2;
 }
 
 .risk-level.high {
@@ -278,52 +305,67 @@ export default {
 }
 
 .risk-description {
-  font-size: 1.1rem;
-  color: #cbd5e1;
-  margin-bottom: 1rem;
+  font-size: 1.2rem;
+  color: #4a5568;
+  margin-bottom: 1.5rem;
   line-height: 1.6;
-}
-
-.probability {
-  font-weight: 600;
-  color: white;
+  font-weight: 500;
 }
 
 .algorithm-note {
-  color: #9ca3af;
-  font-size: 0.95rem;
-  line-height: 1.5;
+  color: #64748b;
+  font-size: 1rem;
+  line-height: 1.6;
   margin: 0;
+  font-style: italic;
+  padding: 1rem;
+  background: #f8fafc;
+  border-radius: 12px;
+  border-left: 4px solid #3b82f6;
 }
 
 .reasons-section {
-  border-top: 1px solid #374151;
-  padding-top: 2rem;
+  border-top: 2px solid #e2e8f0;
+  padding-top: 2.5rem;
+  margin-top: 2rem;
 }
 
 .reasons-title {
   display: flex;
   align-items: center;
   gap: 0.5rem;
-  font-size: 1.3rem;
-  color: white;
-  margin-bottom: 1.5rem;
+  font-size: 1.5rem;
+  color: #2d3748;
+  margin-bottom: 2rem;
+  font-weight: 700;
 }
 
 .info-icon {
-  color: #9ca3af;
+  color: #64748b;
 }
 
 .red-flags-list {
-  background: #374151;
-  border-radius: 8px;
-  padding: 1.5rem;
+  background: #f8fafc;
+  border-radius: 16px;
+  padding: 2rem;
+  border: 1px solid #e2e8f0;
 }
 
 .red-flag-item {
   display: flex;
   gap: 1rem;
   margin-bottom: 1.5rem;
+  padding: 1.5rem;
+  background: #ffffff;
+  border-radius: 12px;
+  border-left: 4px solid #ef4444;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  transition: all 0.3s ease;
+}
+
+.red-flag-item:hover {
+  transform: translateX(4px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
 
 .red-flag-item:last-child {
@@ -333,20 +375,21 @@ export default {
 .flag-icon {
   font-size: 1.2rem;
   margin-top: 0.2rem;
+  flex-shrink: 0;
 }
 
 .flag-title {
-  font-weight: 600;
-  color: white;
+  font-weight: 700;
+  color: #2d3748;
   margin: 0 0 0.5rem 0;
   font-size: 1.1rem;
 }
 
 .flag-description {
-  color: #cbd5e1;
+  color: #4a5568;
   margin: 0;
-  line-height: 1.5;
-  font-style: italic;
+  line-height: 1.6;
+  font-size: 0.95rem;
 }
 
 .report-action {
@@ -354,32 +397,30 @@ export default {
   margin-top: 2rem;
 }
 
-.report-scam-btn {
-  background: #dc2626;
-  color: white;
-  border: none;
-  padding: 1rem 2rem;
-  border-radius: 8px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: background 0.3s ease;
-}
-
-.report-scam-btn:hover {
-  background: #b91c1c;
-}
-
 .safety-tips-card {
-  background: #1e293b;
-  border-radius: 12px;
-  padding: 2rem;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
-  border: 1px solid #334155;
+  background: #ffffff;
+  border-radius: 20px;
+  padding: 2.5rem;
+  border: 2px solid #e2e8f0;
+  box-shadow:
+    0 8px 25px rgba(0, 0, 0, 0.1),
+    0 4px 12px rgba(0, 0, 0, 0.05);
+  transition: all 0.3s ease;
+}
+
+.safety-tips-card:hover {
+  transform: translateY(-4px);
+  box-shadow:
+    0 15px 35px rgba(0, 0, 0, 0.15),
+    0 8px 20px rgba(0, 0, 0, 0.1);
+  border-color: #10b981;
 }
 
 .safety-tips-card h3 {
-  color: white;
-  margin-bottom: 1rem;
+  color: #2d3748;
+  font-size: 1.5rem;
+  font-weight: 700;
+  margin-bottom: 1.5rem;
 }
 
 .tips-list {
@@ -389,26 +430,37 @@ export default {
 }
 
 .tips-list li {
-  background: #064e3b;
+  background: #f0fdf4;
   border-left: 4px solid #10b981;
-  padding: 1rem;
-  margin-bottom: 0.75rem;
-  border-radius: 0 6px 6px 0;
-  color: #d1fae5;
+  padding: 1.2rem;
+  margin-bottom: 1rem;
+  border-radius: 0 12px 12px 0;
+  color: #064e3b;
+  font-weight: 500;
+  line-height: 1.6;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  transition: all 0.3s ease;
+}
+
+.tips-list li:hover {
+  transform: translateX(4px);
+  box-shadow: 0 4px 12px rgba(16, 185, 129, 0.15);
 }
 
 .tips-list li:last-child {
   margin-bottom: 0;
 }
 
+/* Responsive Design */
 @media (max-width: 768px) {
-  .risk-section {
-    text-align: center;
+  .report-container {
+    padding: 1rem 0;
   }
 
   .risk-info {
     flex-direction: column;
     align-items: center;
+    text-align: center;
     gap: 1rem;
   }
 
@@ -424,10 +476,50 @@ export default {
     flex-direction: column;
     align-items: flex-start;
     gap: 1rem;
+    padding: 1rem 0;
+  }
+
+  .report-title {
+    font-size: 2rem;
+  }
+
+  .report-card,
+  .not-job-posting-card,
+  .safety-tips-card {
+    padding: 1.5rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .red-flags-list {
+    padding: 1rem;
+  }
+
+  .red-flag-item {
+    padding: 1rem;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .flag-icon {
+    align-self: flex-start;
+  }
+}
+
+@media (max-width: 480px) {
+  .report-content {
+    padding: 0 1rem;
   }
 
   .report-title {
     font-size: 1.5rem;
+  }
+
+  .risk-level {
+    font-size: 1.5rem;
+  }
+
+  .risk-description {
+    font-size: 1rem;
   }
 }
 </style>

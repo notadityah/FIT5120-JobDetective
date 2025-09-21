@@ -1344,31 +1344,7 @@ export default {
   opacity: 1;
 }
 
-/* Mobile Responsiveness */
-@media (max-width: 1200px) {
-  .checklist-grid,
-  .checklist-grid.has-expanded-1,
-  .checklist-grid.has-expanded-2,
-  .checklist-grid.has-expanded-3,
-  .checklist-grid.has-expanded-4 {
-    grid-template-columns: 1fr 1fr 1fr 1fr;
-  }
-
-  .checklist-card {
-    height: 300px;
-    min-height: 300px;
-    max-height: 300px;
-  }
-
-  .checklist-content {
-    max-height: calc(300px - 140px);
-  }
-
-  .scams-grid {
-    grid-template-columns: 1fr;
-  }
-}
-
+/* Mobile-First Responsive Design */
 @media (max-width: 768px) {
   .hero-title {
     font-size: 2.5rem;
@@ -1383,23 +1359,7 @@ export default {
   }
 
   .content-section {
-    padding: 2rem 1rem;
-  }
-
-  .cta-title {
-    font-size: 2rem;
-  }
-
-  .stat-amount {
-    font-size: 5rem;
-  }
-
-  .stat-intro {
-    font-size: 1.6rem;
-  }
-
-  .stat-description {
-    font-size: 1.4rem;
+    padding: 1.5rem 1rem;
   }
 
   .checklist-grid,
@@ -1407,113 +1367,331 @@ export default {
   .checklist-grid.has-expanded-2,
   .checklist-grid.has-expanded-3,
   .checklist-grid.has-expanded-4 {
-    grid-template-columns: 1fr 1fr 1fr 1fr;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    margin-top: 1.5rem;
   }
 
   .checklist-card {
-    height: 280px;
-    min-height: 280px;
-    max-height: 280px;
+    width: 100%;
+    height: auto;
+    min-height: auto;
+    max-height: none;
     padding: 1.25rem;
+    margin-bottom: 0;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
   }
 
-  .checklist-content {
-    max-height: calc(280px - 130px);
+  .checklist-card.expanded {
+    box-shadow: 0 4px 20px rgba(59, 130, 246, 0.15);
+    border-color: #3b82f6;
+  }
+
+  .checklist-card.completed {
+    box-shadow: 0 4px 20px rgba(34, 197, 94, 0.15);
+    border-color: #22c55e;
+  }
+
+  .checklist-header {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    text-align: left;
+    padding: 1rem;
+    margin-bottom: 0.75rem;
+    background: #f8fafc;
+    border-radius: 12px;
+    cursor: pointer;
+  }
+
+  .checklist-header:hover {
+    background: #f1f5f9;
+  }
+
+  .step-number {
+    width: 48px;
+    height: 48px;
+    font-size: 1.3rem;
+    font-weight: 700;
+    flex-shrink: 0;
+    margin-right: 1rem;
   }
 
   .step-title {
     font-size: 1.1rem;
+    font-weight: 600;
+    line-height: 1.3;
+    flex: 1;
+    text-align: left;
+    margin: 0;
+    color: #1e293b;
   }
 
-  .step-number {
-    width: 40px;
-    height: 40px;
+  .expand-icon {
+    flex-shrink: 0;
+    margin-left: 1rem;
     font-size: 1.2rem;
+    color: #64748b;
+    transition: transform 0.2s ease;
   }
 
-  .progress-summary {
-    flex-direction: column;
-    align-items: stretch;
-    gap: 1rem;
+  .checklist-card.expanded .expand-icon {
+    transform: rotate(180deg);
   }
 
-  .progress-stats {
+  .card-progress {
+    margin: 0.75rem 0;
+  }
+
+  .progress-bar {
+    height: 6px;
+    background: #e2e8f0;
+    border-radius: 3px;
+    overflow: hidden;
+  }
+
+  .progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #3b82f6, #1d4ed8);
+    border-radius: 3px;
+    transition: width 0.3s ease;
+  }
+
+  .checklist-card.completed .progress-fill {
+    background: linear-gradient(90deg, #22c55e, #16a34a);
+  }
+
+  .checklist-content {
+    max-height: none;
+    overflow: visible;
+    padding: 0;
+  }
+
+  .todo-list {
+    display: flex;
     flex-direction: column;
-    align-items: stretch;
     gap: 0.75rem;
   }
 
-  .overall-progress-bar {
-    min-width: unset;
-    order: 2;
+  .todo-item {
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    padding: 0;
+    margin: 0;
+    overflow: hidden;
+    transition: all 0.2s ease;
+  }
+
+  .todo-item:hover {
+    border-color: #cbd5e1;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  }
+
+  .todo-item.completed {
+    background: #f0fdf4;
+    border-color: #bbf7d0;
+  }
+
+  .todo-checkbox {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.75rem;
+    padding: 1rem;
+    cursor: pointer;
+    min-height: auto;
+  }
+
+  .todo-checkbox input[type='checkbox'] {
+    margin: 0;
+    width: 20px;
+    height: 20px;
+    flex-shrink: 0;
+    margin-top: 2px;
+  }
+
+  .checkmark {
+    width: 20px;
+    height: 20px;
+    flex-shrink: 0;
+    margin-top: 2px;
+  }
+
+  .todo-content {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .todo-text {
+    font-size: 0.95rem;
+    line-height: 1.5;
+    color: #374151;
+    margin: 0 0 0.5rem 0;
+    word-wrap: break-word;
+  }
+
+  .todo-item.completed .todo-text {
+    color: #059669;
+    text-decoration: line-through;
+  }
+
+  .todo-links {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    margin-top: 0.75rem;
+  }
+
+  .todo-link {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    padding: 0.5rem 0.75rem;
+    background: #f1f5f9;
+    color: #3b82f6;
+    text-decoration: none;
+    border-radius: 6px;
+    font-size: 0.85rem;
+    font-weight: 500;
+    transition: all 0.2s ease;
+    min-height: 44px;
+    text-align: center;
+  }
+
+  .todo-link:hover {
+    background: #e2e8f0;
+    color: #1d4ed8;
+  }
+
+  .progress-summary {
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
+    padding: 1.5rem;
+    margin: 1.5rem 0;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .progress-info {
+    width: 100%;
+  }
+
+  .progress-stats {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+    text-align: center;
   }
 
   .progress-text {
+    font-size: 1rem;
+    font-weight: 500;
+    color: #374151;
     order: 1;
-    white-space: normal;
-    text-align: center;
+  }
+
+  .overall-progress-bar {
+    width: 100%;
+    height: 8px;
+    background: #e2e8f0;
+    border-radius: 4px;
+    overflow: hidden;
+    order: 2;
+  }
+
+  .overall-progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #3b82f6, #1d4ed8);
+    border-radius: 4px;
+    transition: width 0.3s ease;
   }
 
   .progress-percentage {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #3b82f6;
     order: 3;
-    text-align: center;
   }
 
   .reset-section {
     display: flex;
     justify-content: center;
+    margin-top: 0.5rem;
+  }
+
+  .reset-button {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.75rem 1.25rem;
+    background: #f1f5f9;
+    color: #374151;
+    border: 1px solid #d1d5db;
+    border-radius: 8px;
+    font-size: 0.9rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    min-height: 44px;
+  }
+
+  .reset-button:hover:not(:disabled) {
+    background: #e2e8f0;
+    border-color: #9ca3af;
+  }
+
+  .reset-button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+
+  .modal-overlay {
+    padding: 1rem;
   }
 
   .modal-content {
-    margin: 1rem;
-    max-width: calc(100% - 2rem);
+    width: 100%;
+    max-width: calc(100vw - 2rem);
+    margin: 0;
+    border-radius: 12px;
+  }
+
+  .modal-header {
+    padding: 1.5rem 1.5rem 1rem;
+  }
+
+  .modal-body {
+    padding: 0 1.5rem 1rem;
   }
 
   .modal-footer {
+    padding: 1rem 1.5rem 1.5rem;
+    display: flex;
     flex-direction: column;
+    gap: 0.75rem;
   }
 
   .modal-button {
     width: 100%;
-  }
-}
-
-@media (max-width: 580px) {
-  .checklist-grid,
-  .checklist-grid.has-expanded-1,
-  .checklist-grid.has-expanded-2,
-  .checklist-grid.has-expanded-3,
-  .checklist-grid.has-expanded-4 {
-    grid-template-columns: 1fr 1fr;
-  }
-
-  .checklist-card {
-    height: 320px;
-    min-height: 320px;
-    max-height: 320px;
-    padding: 1rem;
-  }
-
-  .checklist-content {
-    max-height: calc(320px - 140px);
-  }
-
-  .step-number {
-    width: 35px;
-    height: 35px;
+    padding: 0.875rem;
     font-size: 1rem;
+    min-height: 50px;
+    border-radius: 8px;
+    font-weight: 600;
   }
 
-  .step-title {
-    font-size: 1rem;
+  .modal-button.confirm {
+    order: 1;
   }
 
-  .hero-title {
-    font-size: 2rem;
-  }
-
-  .section-title {
-    font-size: 1.8rem;
+  .modal-button.cancel {
+    order: 2;
   }
 
   .stat-amount {
@@ -1527,42 +1705,98 @@ export default {
   .stat-description {
     font-size: 1.2rem;
   }
+
+  .cta-title {
+    font-size: 1.8rem;
+  }
 }
 
-/* Stats Placeholder */
-.stats-placeholder {
-  background: #ffffff;
-  border: 2px solid #e2e8f0;
-  border-radius: 16px;
-  padding: 4rem 2rem;
-  text-align: center;
-  margin-top: 2rem;
-  box-shadow:
-    0 1px 3px 0 rgba(0, 0, 0, 0.1),
-    0 1px 2px 0 rgba(0, 0, 0, 0.06);
+/* Extra small screens */
+@media (max-width: 480px) {
+  .content-section {
+    padding: 1rem 0.75rem;
+  }
+
+  .hero-section {
+    padding: 1.5rem 0.75rem;
+  }
+
+  .hero-title {
+    font-size: 2rem;
+  }
+
+  .section-title {
+    font-size: 1.8rem;
+  }
+
+  .checklist-card {
+    padding: 1rem;
+    border-radius: 12px;
+  }
+
+  .checklist-header {
+    padding: 0.875rem;
+  }
+
+  .step-number {
+    width: 42px;
+    height: 42px;
+    font-size: 1.2rem;
+  }
+
+  .step-title {
+    font-size: 1rem;
+    line-height: 1.2;
+  }
+
+  .todo-checkbox {
+    padding: 0.875rem;
+  }
+
+  .todo-text {
+    font-size: 0.9rem;
+  }
+
+  .progress-summary {
+    padding: 1.25rem;
+    margin: 1rem 0;
+  }
+
+  .progress-text {
+    font-size: 0.95rem;
+  }
+
+  .progress-percentage {
+    font-size: 1.3rem;
+  }
+
+  .stat-amount {
+    font-size: 3rem;
+  }
+
+  .stat-intro {
+    font-size: 1.2rem;
+  }
+
+  .stat-description {
+    font-size: 1rem;
+  }
 }
 
-.placeholder-content {
-  max-width: 500px;
-  margin: 0 auto;
-}
+@media (min-width: 769px) and (max-width: 1024px) {
+  .checklist-grid,
+  .checklist-grid.has-expanded-1,
+  .checklist-grid.has-expanded-2,
+  .checklist-grid.has-expanded-3,
+  .checklist-grid.has-expanded-4 {
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+  }
 
-.placeholder-icon {
-  font-size: 4rem;
-  margin-bottom: 1.5rem;
-}
-
-.placeholder-content h3 {
-  font-size: 1.8rem;
-  color: #374151;
-  margin-bottom: 1rem;
-  font-weight: 600;
-}
-
-.placeholder-content p {
-  font-size: 1.1rem;
-  color: #6b7280;
-  margin-bottom: 2rem;
-  line-height: 1.6;
+  .checklist-card {
+    height: auto;
+    min-height: 350px;
+    max-height: none;
+  }
 }
 </style>
