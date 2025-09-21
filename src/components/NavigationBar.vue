@@ -82,7 +82,6 @@ export default {
   background: rgba(59, 130, 246, 0.1);
 }
 
-/* Active tab styling */
 .nav-link.router-link-active {
   color: #fff !important;
   background: rgba(59, 130, 246, 0.15);
@@ -100,7 +99,7 @@ export default {
   border-radius: 1px;
 }
 
-/* Optional: Add hover underline effect for non-active links */
+/* Animated underline for non-active links */
 .nav-link:not(.router-link-active)::after {
   content: '';
   position: absolute;
@@ -118,7 +117,6 @@ export default {
   width: 40%;
 }
 
-/* Responsive Navbar Toggler */
 .navbar-toggler {
   border: none;
   padding: 0.5rem;

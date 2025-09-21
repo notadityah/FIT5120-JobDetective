@@ -14,6 +14,10 @@
 
     <!-- Before You Apply Section - Dynamic Checklist -->
     <div v-if="activeTab === 'before'" class="content-section">
+      <div class="section-header">
+        <h2 class="section-title">Before You Apply Checklist</h2>
+        <p class="section-subtitle">Understand the job and the company before you apply</p>
+      </div>
       <!-- Progress Summary and Reset Section -->
       <div class="progress-summary">
         <div class="progress-info">
@@ -150,84 +154,48 @@
     </div>
 
     <!-- Recently Reported Scams Section -->
-    <div v-if="activeTab === 'reported'" class="content-section">
-      <div class="section-header">
-        <h2 class="section-title">Recently Reported Scams (WORK IN PROGRESS)</h2>
-        <p class="section-subtitle">Learn from real scam job postings reported by other users</p>
+    <!--
+<div v-if="activeTab === 'reported'" class="content-section">
+  <div class="section-header">
+    <h2 class="section-title">Recently Reported Scams (WORK IN PROGRESS)</h2>
+    <p class="section-subtitle">Learn from real scam job postings reported by other users</p>
+  </div>
+
+  <FilterTabs
+    :filters="scamFilters"
+    :active-filter="activeFilter"
+    @filter-change="activeFilter = $event"
+  />
+
+  <div class="scams-grid">
+    <div v-for="scam in filteredScams" :key="scam.id" class="scam-card">
+      <div class="scam-header">
+        <div class="scam-category">{{ scam.category }}</div>
+        <h3 class="scam-title">{{ scam.title }}</h3>
       </div>
 
-      <FilterTabs
-        :filters="scamFilters"
-        :active-filter="activeFilter"
-        @filter-change="activeFilter = $event"
-      />
+      <div class="scam-content">
+        <p class="scam-description">{{ scam.description }}</p>
 
-      <div class="scams-grid">
-        <div v-for="scam in filteredScams" :key="scam.id" class="scam-card">
-          <div class="scam-header">
-            <div class="scam-category">{{ scam.category }}</div>
-            <h3 class="scam-title">{{ scam.title }}</h3>
-          </div>
-
-          <div class="scam-content">
-            <p class="scam-description">{{ scam.description }}</p>
-
-            <div class="red-flags-section">
-              <h4 class="red-flags-title">🚩 Red Flags:</h4>
-              <ul class="red-flags-list">
-                <li v-for="flag in scam.redFlags" :key="flag" class="red-flag-item">
-                  {{ flag }}
-                </li>
-              </ul>
-            </div>
-          </div>
+        <div class="red-flags-section">
+          <h4 class="red-flags-title">🚩 Red Flags:</h4>
+          <ul class="red-flags-list">
+            <li v-for="flag in scam.redFlags" :key="flag" class="red-flag-item">
+              {{ flag }}
+            </li>
+          </ul>
         </div>
       </div>
     </div>
+  </div>
+</div>
+-->
 
     <!-- Scam Statistics Section -->
+
     <div v-if="activeTab === 'statistics'" class="content-section">
       <div class="section-header">
         <h2 class="section-title">Australian Scam Statistics</h2>
-        <p class="section-subtitle">Real data on employment scam losses for young Australians</p>
-      </div>
-
-      <!-- Stats Card -->
-      <div class="stats-card">
-        <div v-if="!loading && !error && scamData" class="stats-content">
-          <div class="stat-intro">
-            In 2025, young job seekers across Australia aged 18-24 lost a total of
-          </div>
-
-          <div class="stat-amount-wrapper">
-            <span class="stat-amount" v-if="totalData">
-              {{ formatCurrency(totalData.total_amount_lost) }}
-            </span>
-            <span class="stat-amount" v-else>No data available</span>
-          </div>
-
-          <div class="stat-description">
-            to job and employment scams in
-            {{ totalData ? formatNumber(totalData.total_reports) : '0' }} reported cases.
-          </div>
-        </div>
-
-        <!-- Loading State -->
-        <LoadingSpinner
-          v-else-if="loading"
-          variant="stats"
-          message="Loading statistics..."
-          size="large"
-        />
-
-        <!-- Error State -->
-        <ErrorDisplay
-          v-else-if="error"
-          variant="stats"
-          message="Unable to load current statistics"
-          :show-retry="true"
-          @retry="fetchScamStatistics"
-        />
       </div>
     </div>
 
@@ -262,37 +230,23 @@
 <script>
 import { ref, onMounted, computed, watch } from 'vue'
 import TabNavigation from '@/components/TabNavigation.vue'
-import FilterTabs from '@/components/FilterTabs.vue'
+//import FilterTabs from '@/components/FilterTabs.vue'
 import BaseButton from '@/components/BaseButton.vue'
-import LoadingSpinner from '@/components/LoadingSpinner.vue'
-import ErrorDisplay from '@/components/ErrorDisplay.vue'
 import NewsCarousel from '../components/NewsCarousel.vue'
 
 export default {
   name: 'HubView',
   components: {
     TabNavigation,
-    FilterTabs,
+    //FilterTabs,
     BaseButton,
-    LoadingSpinner,
-    ErrorDisplay,
     NewsCarousel,
   },
   setup() {
-    // Reactive data for statistics
-    const scamData = ref(null)
-    const loading = ref(true)
-    const error = ref(null)
-
     // New reactive data for checklist functionality
-    const expandedCard = ref(1) // Changed from null to 1
+    const expandedCard = ref(1)
     const completedItems = ref({})
     const showResetConfirmation = ref(false)
-
-    // Cache configuration
-    const CACHE_KEY = 'jobdetective_scam_stats'
-    const CACHE_EXPIRY_KEY = 'jobdetective_scam_stats_expiry'
-    const CACHE_DURATION = 24 * 60 * 60 * 1000 // 24 hours
 
     // Checklist cache configuration
     const CHECKLIST_CACHE_KEY = 'jobdetective_checklist_progress'
@@ -487,143 +441,11 @@ export default {
       return totalItems.value > 0 ? (totalCompletedItems.value / totalItems.value) * 100 : 0
     })
 
-    // Computed properties for statistics
-    const totalData = computed(() => {
-      return scamData.value || null
-    })
-
-    // Format functions
-    const formatCurrency = (amount) => {
-      return new Intl.NumberFormat('en-AU', {
-        style: 'currency',
-        currency: 'AUD',
-        minimumFractionDigits: 0,
-        maximumFractionDigits: 0,
-      }).format(amount)
-    }
-
-    const formatNumber = (number) => {
-      return new Intl.NumberFormat('en-AU').format(number)
-    }
-
-    // Cache management functions for statistics
-    const getCachedData = () => {
-      try {
-        const cachedData = localStorage.getItem(CACHE_KEY)
-        const cacheExpiry = localStorage.getItem(CACHE_EXPIRY_KEY)
-
-        if (cachedData && cacheExpiry) {
-          const now = Date.now()
-          const expiryTime = parseInt(cacheExpiry, 10)
-
-          if (now < expiryTime) {
-            console.log(
-              'Using cached data, expires in:',
-              Math.round((expiryTime - now) / (1000 * 60)),
-              'minutes',
-            )
-            return JSON.parse(cachedData)
-          } else {
-            console.log('Cache expired, will fetch fresh data')
-            clearCache()
-          }
-        }
-        return null
-      } catch (error) {
-        console.error('Error reading cache:', error)
-        clearCache()
-        return null
-      }
-    }
-
-    const setCacheData = (data) => {
-      try {
-        const expiryTime = Date.now() + CACHE_DURATION
-        localStorage.setItem(CACHE_KEY, JSON.stringify(data))
-        localStorage.setItem(CACHE_EXPIRY_KEY, expiryTime.toString())
-        console.log('Data cached until:', new Date(expiryTime).toLocaleString())
-      } catch (error) {
-        console.error('Error setting cache:', error)
-      }
-    }
-
-    const clearCache = () => {
-      try {
-        localStorage.removeItem(CACHE_KEY)
-        localStorage.removeItem(CACHE_EXPIRY_KEY)
-        console.log('Cache cleared')
-      } catch (error) {
-        console.error('Error clearing cache:', error)
-      }
-    }
-
-    const fetchScamStatistics = async () => {
-      try {
-        loading.value = true
-        error.value = null
-
-        // First check if we have valid cached data
-        const cachedData = getCachedData()
-        if (cachedData) {
-          scamData.value = cachedData
-          loading.value = false
-          return
-        }
-
-        // If no valid cache, fetch from API
-        console.log('Fetching fresh data from API...')
-        const API_ENDPOINT = import.meta.env.VITE_API_GATEWAY_URL
-        const API_KEY = import.meta.env.VITE_API_KEY
-
-        const fetchOptions = {
-          method: 'GET',
-          mode: 'cors',
-          headers: {
-            Accept: 'application/json',
-            'Content-Type': 'application/json',
-          },
-        }
-
-        // Add API key if available
-        if (API_KEY) {
-          fetchOptions.headers['X-API-Key'] = API_KEY
-        }
-
-        console.log('Fetching from:', API_ENDPOINT)
-        const response = await fetch(API_ENDPOINT, fetchOptions)
-
-        if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`)
-        }
-
-        const data = await response.json()
-        console.log('Received fresh data:', data)
-
-        // Store the data and cache it
-        scamData.value = data
-        setCacheData(data)
-      } catch (err) {
-        console.error('Error fetching scam statistics:', err)
-        error.value = err.message
-      } finally {
-        loading.value = false
-      }
-    }
-
     onMounted(() => {
-      fetchScamStatistics()
       loadProgress()
     })
 
     return {
-      // Statistics
-      scamData,
-      loading,
-      error,
-      totalData,
-      formatCurrency,
-      formatNumber,
-      fetchScamStatistics,
       // Checklist
       steps,
       expandedCard,
@@ -647,7 +469,7 @@ export default {
       activeFilter: 'all',
       tabs: [
         { id: 'before', label: 'Before You Apply Checklist' },
-        { id: 'reported', label: 'Recently Reported Scams (WIP)' },
+        // { id: 'reported', label: 'Recently Reported Scams (WIP)' },
         { id: 'statistics', label: 'Australian Scam Statistics (WIP)' },
         { id: 'news', label: 'Recent Scam News' },
       ],
@@ -1705,5 +1527,42 @@ export default {
   .stat-description {
     font-size: 1.2rem;
   }
+}
+
+/* Stats Placeholder */
+.stats-placeholder {
+  background: #ffffff;
+  border: 2px solid #e2e8f0;
+  border-radius: 16px;
+  padding: 4rem 2rem;
+  text-align: center;
+  margin-top: 2rem;
+  box-shadow:
+    0 1px 3px 0 rgba(0, 0, 0, 0.1),
+    0 1px 2px 0 rgba(0, 0, 0, 0.06);
+}
+
+.placeholder-content {
+  max-width: 500px;
+  margin: 0 auto;
+}
+
+.placeholder-icon {
+  font-size: 4rem;
+  margin-bottom: 1.5rem;
+}
+
+.placeholder-content h3 {
+  font-size: 1.8rem;
+  color: #374151;
+  margin-bottom: 1rem;
+  font-weight: 600;
+}
+
+.placeholder-content p {
+  font-size: 1.1rem;
+  color: #6b7280;
+  margin-bottom: 2rem;
+  line-height: 1.6;
 }
 </style>

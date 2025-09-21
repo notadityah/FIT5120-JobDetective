@@ -1,6 +1,5 @@
 <template>
   <div class="news-carousel">
-    <!-- Carousel Header -->
     <div class="carousel-header">
       <div class="header-content">
         <h3 class="carousel-title">Latest Scam News & Alerts</h3>
@@ -10,7 +9,6 @@
       </div>
     </div>
 
-    <!-- Loading State -->
     <div v-if="loading" class="loading-container">
       <div class="loading-grid">
         <div v-for="i in 3" :key="i" class="loading-card">
@@ -24,7 +22,6 @@
       </div>
     </div>
 
-    <!-- Error State -->
     <div v-else-if="error" class="error-container">
       <div class="error-content">
         <i class="fas fa-exclamation-triangle error-icon"></i>
@@ -37,7 +34,6 @@
       </div>
     </div>
 
-    <!-- Main Carousel - Removed redundant wrapper -->
     <div v-else class="carousel-track-container" ref="trackContainer">
       <div class="carousel-track" :style="trackStyle" ref="track">
         <article
@@ -54,7 +50,6 @@
           role="button"
           :aria-label="`Read article: ${article.title}`"
         >
-          <!-- Article Image with Gradient Overlay -->
           <div class="article-image-container">
             <img
               :src="article.urlToImage || '/api/placeholder/400/240'"
@@ -65,19 +60,16 @@
             />
             <div class="image-overlay"></div>
 
-            <!-- Source Badge -->
             <div class="source-badge">
               <i class="fas fa-newspaper"></i>
               {{ article.source.name }}
             </div>
 
-            <!-- Published Date -->
             <div class="published-date">
               {{ formatDate(article.publishedAt) }}
             </div>
           </div>
 
-          <!-- Article Content -->
           <div class="article-content">
             <div class="content-header">
               <h4 class="article-title">{{ article.title }}</h4>
@@ -99,7 +91,6 @@
             </div>
           </div>
 
-          <!-- Hover Effect Overlay -->
           <div class="hover-overlay">
             <div class="hover-content">
               <i class="fas fa-arrow-right"></i>
@@ -109,42 +100,34 @@
         </article>
       </div>
 
-      <!-- Enhanced Pagination - Simplified -->
       <div class="pagination-container">
-        <div class="pagination-dots">
+        <div class="pagination-controls">
+          <button class="pagination-nav" @click="previousSlide" :disabled="currentIndex === 0">
+            <i class="fas fa-chevron-left"></i>
+            Previous
+          </button>
+
+          <div class="page-numbers">
+            <button
+              v-for="(page, index) in paginationDots"
+              :key="index"
+              class="page-number"
+              :class="{ active: index === Math.floor(currentIndex / itemsPerView) }"
+              @click="goToSlide(index * itemsPerView)"
+            >
+              {{ index + 1 }}
+            </button>
+          </div>
+
           <button
-            v-for="(dot, index) in paginationDots"
-            :key="index"
-            class="pagination-dot"
-            :class="{
-              active: index === Math.floor(currentIndex / itemsPerView),
-            }"
-            @click="goToSlide(index * itemsPerView)"
-            :aria-label="`Go to page ${index + 1}`"
-          ></button>
+            class="pagination-nav"
+            @click="nextSlide"
+            :disabled="currentIndex >= newsArticles.length - itemsPerView"
+          >
+            Next
+            <i class="fas fa-chevron-right"></i>
+          </button>
         </div>
-
-        <!-- Progress Indicator -->
-        <div class="progress-indicator">
-          <div class="progress-text">
-            {{ Math.floor(currentIndex / itemsPerView) + 1 }} / {{ totalPages }}
-          </div>
-          <div class="progress-bar">
-            <div class="progress-fill" :style="{ width: progressPercentage + '%' }"></div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Auto-play Toggle - Moved inside track container -->
-      <div class="carousel-footer">
-        <button
-          class="autoplay-toggle"
-          @click="toggleAutoplay"
-          :class="{ active: isAutoplayActive }"
-        >
-          <i :class="isAutoplayActive ? 'fas fa-pause' : 'fas fa-play'"></i>
-          {{ isAutoplayActive ? 'Pause' : 'Auto-play' }}
-        </button>
       </div>
     </div>
   </div>
@@ -156,7 +139,6 @@ import { ref, onMounted, onUnmounted, computed, watch } from 'vue'
 export default {
   name: 'NewsCarousel',
   setup() {
-    // Reactive data
     const newsArticles = ref([])
     const loading = ref(true)
     const error = ref(null)
@@ -167,12 +149,11 @@ export default {
     const track = ref(null)
     const trackContainer = ref(null)
 
-    // Cache configuration
+    // Cache system: 1-hour expiry for news data
     const CACHE_KEY = 'jobdetective_news_cache'
     const CACHE_EXPIRY_KEY = 'jobdetective_news_cache_expiry'
-    const CACHE_DURATION = 60 * 60 * 1000 // 1 hour
+    const CACHE_DURATION = 60 * 60 * 1000
 
-    // Computed properties
     const totalPages = computed(() => {
       return Math.ceil(newsArticles.value.length / itemsPerView.value)
     })
@@ -181,6 +162,7 @@ export default {
       return Array.from({ length: totalPages.value }, (_, i) => i)
     })
 
+    // Dynamic carousel positioning with smooth cubic-bezier animation
     const trackStyle = computed(() => {
       const cardWidth = 100 / itemsPerView.value
       const translateX = -(currentIndex.value * cardWidth)
@@ -196,7 +178,6 @@ export default {
       return ((currentPage + 1) / totalPages.value) * 100
     })
 
-    // Cache management
     const getCachedNews = () => {
       try {
         const cachedData = localStorage.getItem(CACHE_KEY)
@@ -242,21 +223,17 @@ export default {
       }
     }
 
-    // API functions
     const fetchNews = async () => {
       try {
         loading.value = true
         error.value = null
 
-        // Check cache first
         const cachedData = getCachedNews()
         if (cachedData) {
           newsArticles.value = cachedData
           loading.value = false
           return
         }
-
-        // Fetch from API
         const API_ENDPOINT = import.meta.env.VITE_NEWS_API_GATEWAY_URL
         const API_KEY = import.meta.env.VITE_NEWS_API_KEY
 
@@ -286,7 +263,7 @@ export default {
         const data = await response.json()
         let articles = []
 
-        // Parse the response body (it's a string containing JSON array)
+        // Handle different API response formats
         if (data.body) {
           articles = JSON.parse(data.body)
         } else if (Array.isArray(data)) {
@@ -295,7 +272,7 @@ export default {
           throw new Error('Unexpected API response format')
         }
 
-        // Filter and validate articles
+        // Filter articles and ensure data integrity
         const validArticles = articles
           .filter(
             (article) =>
@@ -306,7 +283,7 @@ export default {
               article.source &&
               article.source.name,
           )
-          .slice(0, 10) // Limit to 10 articles
+          .slice(0, 10)
 
         if (validArticles.length === 0) {
           throw new Error('No valid articles found')
@@ -318,7 +295,7 @@ export default {
         console.error('Error fetching news:', err)
         error.value = err.message || 'Failed to load news articles'
 
-        // Try to use cached data as fallback
+        // Fallback to cached data if available
         const cachedData = getCachedNews()
         if (cachedData) {
           newsArticles.value = cachedData
@@ -329,12 +306,12 @@ export default {
       }
     }
 
-    // Navigation functions
+    // Carousel navigation with infinite loop behavior
     const nextSlide = () => {
       if (currentIndex.value < newsArticles.value.length - itemsPerView.value) {
         currentIndex.value += itemsPerView.value
       } else {
-        currentIndex.value = 0 // Loop back to start
+        currentIndex.value = 0
       }
     }
 
@@ -342,7 +319,7 @@ export default {
       if (currentIndex.value > 0) {
         currentIndex.value -= itemsPerView.value
       } else {
-        currentIndex.value = Math.max(0, newsArticles.value.length - itemsPerView.value) // Go to last page
+        currentIndex.value = Math.max(0, newsArticles.value.length - itemsPerView.value)
       }
     }
 
@@ -350,14 +327,13 @@ export default {
       currentIndex.value = Math.min(index, newsArticles.value.length - itemsPerView.value)
     }
 
-    // Autoplay functions
     const startAutoplay = () => {
       if (autoplayInterval.value) {
         clearInterval(autoplayInterval.value)
       }
       autoplayInterval.value = setInterval(() => {
         nextSlide()
-      }, 5000) // 5 seconds
+      }, 5000)
     }
 
     const stopAutoplay = () => {
@@ -376,7 +352,6 @@ export default {
       }
     }
 
-    // Utility functions
     const formatDate = (dateString) => {
       try {
         const date = new Date(dateString)
@@ -417,7 +392,7 @@ export default {
       event.target.src = '/api/placeholder/400/240'
     }
 
-    // Responsive handling
+    // Responsive carousel: adjusts items per viewport size
     const updateItemsPerView = () => {
       const width = window.innerWidth
       if (width < 768) {
@@ -428,13 +403,12 @@ export default {
         itemsPerView.value = 3
       }
 
-      // Adjust current index if needed
+      // Prevent index overflow after resize
       if (currentIndex.value >= newsArticles.value.length - itemsPerView.value + 1) {
         currentIndex.value = Math.max(0, newsArticles.value.length - itemsPerView.value)
       }
     }
 
-    // Watch for autoplay state changes
     watch(isAutoplayActive, (newValue) => {
       if (newValue) {
         startAutoplay()
@@ -443,7 +417,6 @@ export default {
       }
     })
 
-    // Lifecycle hooks
     onMounted(() => {
       fetchNews()
       updateItemsPerView()
@@ -494,7 +467,6 @@ export default {
     0 2px 4px -1px rgba(0, 0, 0, 0.06);
 }
 
-/* Header */
 .carousel-header {
   display: flex;
   justify-content: space-between;
@@ -572,7 +544,7 @@ export default {
   font-size: 0.9rem;
 }
 
-/* Loading State */
+/* Skeleton loading animation */
 .loading-container {
   padding: 2rem;
 }
@@ -637,7 +609,6 @@ export default {
   }
 }
 
-/* Error State */
 .error-container {
   padding: 3rem 2rem;
   text-align: center;
@@ -687,7 +658,6 @@ export default {
   box-shadow: 0 4px 8px rgba(59, 130, 246, 0.3);
 }
 
-/* Carousel Track Container - Combined styles */
 .carousel-track-container {
   overflow: hidden;
   padding: 2rem 2rem 0;
@@ -699,7 +669,6 @@ export default {
   width: calc(100% * var(--total-slides, 1));
 }
 
-/* News Cards */
 .news-card {
   flex: 0 0 calc((100% - 3rem) / 3);
   background: white;
@@ -737,7 +706,6 @@ export default {
     0 8px 16px -3px rgba(0, 0, 0, 0.1);
 }
 
-/* Article Image */
 .article-image-container {
   position: relative;
   height: 200px;
@@ -806,7 +774,6 @@ export default {
   backdrop-filter: blur(10px);
 }
 
-/* Article Content */
 .article-content {
   padding: 1.5rem;
   display: flex;
@@ -891,7 +858,6 @@ export default {
   transform: translateX(4px);
 }
 
-/* Hover Effect Overlay */
 .hover-overlay {
   position: absolute;
   top: 0;
@@ -926,40 +892,84 @@ export default {
   transform: translateY(0);
 }
 
-/* Pagination - Simplified and fixed */
+/* Centered pagination controls */
 .pagination-container {
   display: flex;
-  justify-content: space-between;
+  justify-content: center;
   align-items: center;
   padding: 2rem 0 1rem;
   margin-top: 1rem;
 }
 
-.pagination-dots {
+.pagination-controls {
   display: flex;
-  gap: 0.75rem;
+  align-items: center;
+  gap: 1rem;
+}
+
+.pagination-nav {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1.25rem;
+  background: #f8fafc;
+  border: 2px solid #e2e8f0;
+  color: #6b7280;
+  border-radius: 25px;
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  white-space: nowrap;
+}
+
+.pagination-nav:hover:not(:disabled) {
+  background: #f1f5f9;
+  border-color: #cbd5e1;
+}
+
+.pagination-nav:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.pagination-nav i {
+  font-size: 0.8rem;
+}
+
+.page-numbers {
+  display: flex;
+  gap: 0.5rem;
   align-items: center;
 }
 
-.pagination-dot {
-  width: 12px;
-  height: 12px;
+.page-number {
+  width: 36px;
+  height: 36px;
   border: none;
   border-radius: 50%;
-  background: #cbd5e1;
+  background: #f8fafc;
+  color: #6b7280;
+  font-size: 0.9rem;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   cursor: pointer;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  position: relative;
+  border: 1px solid #e2e8f0;
 }
 
-.pagination-dot:hover {
-  background: #94a3b8;
-  transform: scale(1.2);
+.page-number:hover:not(.active) {
+  background: #e2e8f0;
+  color: #3b82f6;
 }
 
-.pagination-dot.active {
+.page-number.active {
   background: #3b82f6;
-  transform: scale(1.4);
+  color: white;
+  border: 1px solid #3b82f6;
   box-shadow:
     0 0 0 3px rgba(59, 130, 246, 0.2),
     0 2px 4px rgba(59, 130, 246, 0.3);
@@ -993,7 +1003,6 @@ export default {
   transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-/* Footer */
 .carousel-footer {
   padding: 0 0 2rem;
   display: flex;
@@ -1030,7 +1039,7 @@ export default {
   background: #bfdbfe;
 }
 
-/* Responsive Design */
+/* Responsive breakpoints for different screen sizes */
 @media (max-width: 1024px) {
   .news-card {
     flex: 0 0 calc((100% - 1.5rem) / 2);
@@ -1077,6 +1086,22 @@ export default {
     flex-direction: column;
     gap: 1rem;
     padding: 1rem 0;
+  }
+
+  .pagination-controls {
+    flex-direction: column;
+    gap: 0.75rem;
+    width: 100%;
+  }
+
+  .page-numbers {
+    justify-content: center;
+  }
+
+  .page-number {
+    width: 32px;
+    height: 32px;
+    font-size: 0.8rem;
   }
 
   .article-content {
@@ -1160,7 +1185,7 @@ export default {
   }
 }
 
-/* Fallback for browsers that don't support -webkit-line-clamp */
+/* Text truncation fallback for older browsers */
 @supports not (-webkit-line-clamp: 2) {
   .article-title {
     max-height: calc(1.4em * 2);
@@ -1185,7 +1210,7 @@ export default {
   }
 }
 
-/* Accessibility */
+/* Accessibility: reduced motion and high contrast support */
 @media (prefers-reduced-motion: reduce) {
   .news-card,
   .nav-button,

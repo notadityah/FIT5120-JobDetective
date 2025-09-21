@@ -43,7 +43,6 @@ const spinnerSize = computed(() => `spinner-${props.size}`)
   text-align: center;
 }
 
-/* Variant styles */
 .loading-default {
   background: linear-gradient(135deg, #374151 0%, #4b5563 100%);
   padding: 2rem;
@@ -73,7 +72,6 @@ const spinnerSize = computed(() => `spinner-${props.size}`)
   color: #a0aec0;
 }
 
-/* Size variants */
 .loading-small {
   padding: 1rem;
 }
@@ -86,7 +84,6 @@ const spinnerSize = computed(() => `spinner-${props.size}`)
   padding: 3rem;
 }
 
-/* Spinner styles */
 .spinner {
   border-radius: 50%;
   animation: spin 1s linear infinite;
@@ -114,7 +111,6 @@ const spinnerSize = computed(() => `spinner-${props.size}`)
   border-top: 5px solid #63b3ed;
 }
 
-/* Text styles */
 .loading-text {
   font-size: 1.2rem;
   font-weight: 600;
@@ -149,7 +145,6 @@ const spinnerSize = computed(() => `spinner-${props.size}`)
   }
 }
 
-/* Responsive adjustments */
 @media (max-width: 768px) {
   .loading-default,
   .loading-stats {

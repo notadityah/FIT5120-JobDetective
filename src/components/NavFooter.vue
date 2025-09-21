@@ -77,6 +77,17 @@
                   <i class="fas fa-external-link-alt"></i>
                 </a>
               </li>
+              <li>
+                <a
+                  href="https://ilus.ai/"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  class="footer-link external"
+                >
+                  Ilus AI
+                  <i class="fas fa-external-link-alt"></i>
+                </a>
+              </li>
             </ul>
           </div>
         </div>

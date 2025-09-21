@@ -5,20 +5,20 @@
         <div class="analyze-text">
           <h1 class="analyze-title"><span class="title-accent">Analyse</span> Job Listing</h1>
           <p class="analyze-subtitle">
-            Scan job listings for potential scams using our AI-powered tool. Simply paste the job
-            description and get instant analysis.
+            Scan job listings for potential scams using our AI-powered tool. Simply upload a file,
+            paste the Job URL or paste the job description and get instant analysis.
           </p>
           <div class="features-list">
             <div class="feature-item">
-              <div class="feature-icon">+</div>
+              <div class="feature-icon">🔍</div>
               <div class="feature-text">Identify suspicious job postings</div>
             </div>
             <div class="feature-item">
-              <div class="feature-icon">+</div>
+              <div class="feature-icon">🔍</div>
               <div class="feature-text">Get safety recommendations</div>
             </div>
             <div class="feature-item">
-              <div class="feature-icon">+</div>
+              <div class="feature-icon">🔍</div>
               <div class="feature-text">Verify legitimacy of job offers</div>
             </div>
           </div>
@@ -801,6 +801,7 @@ export default {
   color: transparent;
   position: relative;
   display: inline-block;
+  padding-bottom: 0.5rem;
 }
 
 .analyze-subtitle {
