@@ -1,470 +1,363 @@
 <template>
-  <div class="home-container">
-    <!-- Hero content with mockup -->
-    <div class="hero-section">
-      <div class="hero-content">
-        <h1 class="hero-title">
-          Detect
-          <span class="highlight">Job Scams</span>
-          with AI-powered analysis
-        </h1>
-        <p class="hero-subtitle">
-          JobDetective uses artificial intelligence to analyse job postings and identify potential
-          scams, helping you make informed decisions.
-          <span class="highlight">Stay safe in your job search</span>
-        </p>
-        <div class="cta-buttons">
-          <BaseButton variant="primary" size="large" @click="$router.push('/analyse')">
+  <div class="home-cyber-container">
+    <!-- 上方主标题，居中 -->
+    <header class="cyber-hero-header">
+      <h1 class="cyber-hero-title">
+        DETECT <span class="cyber-highlight">JOB SCAMS</span>
+      </h1>
+    </header>
+    <!-- 下方左右布局 -->
+    <section class="cyber-hero-main">
+      <!-- 左侧动漫人物 -->
+      <div class="cyber-hero-illustration-col">
+        <div class="anime-lines"></div>
+        <img :src="illustration" alt="Cyber Illustration" class="cyber-hero-illustration" />
+      </div>
+      <!-- 右侧说明+按钮 -->
+      <div class="cyber-hero-desc-col">
+        <div class="cyber-hero-desc">
+          <div class="cyber-hero-subtitle">
+            Our <span class="ai-model-highlight">AI model</span> identifies fake jobs before you apply - protecting job seekers from scams
+          </div>
+          <BaseButton
+            variant="primary"
+            size="large"
+            class="cyber-cta-btn"
+            @click="$router.push('/analyse')"
+          >
             Analyse Job Now
           </BaseButton>
         </div>
       </div>
-      <div class="hero-image">
-        <div class="mockup-container">
-          <div class="mockup-screen">
-            <div class="mockup-header">
-              <div class="mockup-controls">
-                <span class="control red"></span>
-                <span class="control yellow"></span>
-                <span class="control green"></span>
-              </div>
-              <div class="mockup-title">JobDetective Analysis</div>
-            </div>
-            <div class="mockup-content">
-              <div class="analysis-card">
-                <div class="risk-indicator high-risk">
-                  <span class="risk-dot"></span>
-                  High Risk Detected
-                </div>
-                <div class="analysis-details">
-                  <div class="detail-item">
-                    <span class="icon">⚠️</span>
-                    <span>Suspicious payment requests</span>
-                  </div>
-                  <div class="detail-item">
-                    <span class="icon">📧</span>
-                    <span>Generic email address</span>
-                  </div>
-                  <div class="detail-item">
-                    <span class="icon">💰</span>
-                    <span>Unrealistic salary promises</span>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
+    </section>
 
     <!-- Features section -->
-    <div class="features-section">
-      <div class="container">
-        <h2 class="section-title">How <span class="highlight">JobDetective</span> Protects You</h2>
-        <div class="features-grid">
-          <FeatureCard
-            icon="🔍"
-            title="AI-Powered Analysis"
-            description="Advanced machine learning algorithms analyse job postings for common scam patterns and red flags."
-          />
-          <FeatureCard
-            icon="⚡"
-            title="Real-time Detection"
-            description="Get instant results whether you upload files, paste URLs, or enter text descriptions."
-          />
-          <FeatureCard
-            icon="🛡️"
-            title="Complete Protection"
-            description="Identifies multiple types of job scams including fake companies, payment fraud, and identity theft."
-          />
-        </div>
+    <section class="cyber-features-section">
+      <div class="cyber-features-grid">
+        <FeatureCard
+          icon="🔍"
+          title="AI-Powered Analysis"
+          description="Machine learning algorithms scan for scam patterns and red flags."
+        />
+        <FeatureCard
+          icon="⚡"
+          title="Real-time Detection"
+          description="Get instant results for files, URLs, or text descriptions."
+        />
+        <FeatureCard
+          icon="🛡️"
+          title="Complete Protection"
+          description="Detects fake companies, payment fraud, and identity theft."
+        />
       </div>
-    </div>
+    </section>
   </div>
 </template>
 
 <script setup>
 import FeatureCard from '@/components/FeatureCard.vue'
 import BaseButton from '@/components/BaseButton.vue'
-</script>
-
-<script>
-export default {
-  name: 'HomeView',
-}
+import illustration from '@/assets/images/illustration.svg'
 </script>
 
 <style scoped>
-.home-container {
+@import url('https://fonts.googleapis.com/css2?family=Bangers&family=Fredoka+One&family=Nunito:wght@700&display=swap');
+
+.home-cyber-container {
   min-height: 100vh;
-  background: linear-gradient(135deg, #0f172a 0%, #1e293b 60%, #334155 100%);
-  color: white;
+  background: #fff;
+  color: #1d1d1f;
   position: relative;
   overflow-x: hidden;
 }
 
-.home-container::before {
-  content: '';
-  position: absolute;
-  top: 120px;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 900px;
-  height: 400px;
-  background: radial-gradient(circle, #3b82f6 0%, transparent 70%);
-  opacity: 0.12;
-  z-index: 0;
-  pointer-events: none;
+/* 上方主标题 */
+.cyber-hero-header {
+  width: 100%;
+  text-align: center;
+  margin-top: 3.5rem;
+  margin-bottom: 2.5rem;
 }
-
-.home-container::after {
-  content: '';
-  position: absolute;
-  bottom: 0;
-  right: -150px;
-  width: 600px;
-  height: 600px;
-  background: radial-gradient(circle, rgba(239, 68, 68, 0.2) 0%, transparent 70%);
-  opacity: 0.15;
-  z-index: 0;
-  pointer-events: none;
-}
-
-/* Hero content with mockup */
-.hero-section {
-  display: flex;
-  align-items: center;
-  padding: 6rem 2rem;
-  max-width: 1400px;
+.cyber-hero-title {
+  font-size: 4.5rem;
+  font-family: 'Bangers', 'Fredoka One', 'Arial Black', sans-serif;
+  font-weight: 900;
+  letter-spacing: 0.03em;
+  color: #222;
+  line-height: 1.05;
+  text-shadow: 2px 2px 0 #fff, 4px 4px 0 #fbbf24, 0 0 12px #f472b6;
   margin: 0 auto;
-  gap: 5rem;
-  position: relative;
-  background: transparent;
-  min-height: 80vh;
-}
-
-.hero-content {
-  flex: 1;
-  max-width: 600px;
-  text-align: left;
-  position: relative;
-  z-index: 2;
-}
-
-.hero-image {
-  flex: 1;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  position: relative;
-  z-index: 1;
-}
-
-.hero-title {
-  font-size: 3.5rem;
-  font-weight: 300;
-  line-height: 1.1;
-  margin-bottom: 2rem;
-  letter-spacing: -0.02em;
-  text-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
-  animation: fadeUp 1s ease-out;
-}
-
-.highlight {
-  background: linear-gradient(90deg, #3b82f6, #60a5fa);
-  background-clip: text;
-  color: transparent;
-  font-weight: 500;
-  position: relative;
   display: inline-block;
 }
-
-.hero-subtitle {
-  font-size: 1.25rem;
-  line-height: 1.7;
-  margin-bottom: 3rem;
-  color: #cbd5e1;
-  font-weight: 300;
-  animation: fadeUp 1s ease-out 0.2s backwards;
-}
-
-@keyframes fadeUp {
-  from {
-    opacity: 0;
-    transform: translateY(20px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-.cta-buttons {
-  display: flex;
-  gap: 1rem;
-  flex-wrap: wrap;
-  animation: fadeUp 1s ease-out 0.4s backwards;
-}
-
-.mockup-container {
-  perspective: 1200px;
-  animation: fadeIn 1.2s ease-out 0.6s backwards;
-}
-
-.mockup-screen {
-  width: 600px;
-  height: auto;
-  background: #1e293b;
-  border-radius: 16px;
-  border: 1px solid rgba(59, 130, 246, 0.2);
-  box-shadow:
-    0 30px 60px rgba(0, 0, 0, 0.3),
-    0 8px 25px rgba(59, 130, 246, 0.15),
-    inset 0 1px 1px rgba(255, 255, 255, 0.1);
-  transform: rotateY(-8deg) rotateX(5deg);
-  overflow: hidden;
-  transition:
-    transform 0.5s ease,
-    box-shadow 0.5s ease;
-  animation: float2 8s ease-in-out infinite;
-}
-
-.mockup-container:hover .mockup-screen {
-  transform: rotateY(-5deg) rotateX(3deg) scale(1.02);
-  box-shadow:
-    0 40px 70px rgba(0, 0, 0, 0.4),
-    0 10px 30px rgba(59, 130, 246, 0.2),
-    inset 0 1px 1px rgba(255, 255, 255, 0.15);
-}
-
-@keyframes float2 {
-  0%,
-  100% {
-    transform: rotateY(-8deg) rotateX(5deg) translateZ(0);
-  }
-  50% {
-    transform: rotateY(-8deg) rotateX(5deg) translateZ(10px);
-  }
-}
-
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-  }
-  to {
-    opacity: 1;
-  }
-}
-
-.mockup-header {
-  background: linear-gradient(90deg, #0f172a, #1e293b);
-  padding: 1rem;
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-  border-bottom: 1px solid rgba(59, 130, 246, 0.15);
-}
-
-.mockup-controls {
-  display: flex;
-  gap: 0.5rem;
-}
-
-.control {
-  width: 12px;
-  height: 12px;
-  border-radius: 50%;
-  box-shadow: 0 0 5px rgba(0, 0, 0, 0.2);
-}
-
-.control.red {
-  background: linear-gradient(135deg, #ef4444, #b91c1c);
-}
-.control.yellow {
-  background: linear-gradient(135deg, #f59e0b, #d97706);
-}
-.control.green {
-  background: linear-gradient(135deg, #10b981, #059669);
-}
-
-.mockup-title {
-  font-size: 0.9rem;
-  color: #94a3b8;
-  font-weight: 500;
-  text-shadow: 0 1px 1px rgba(0, 0, 0, 0.2);
-}
-
-.mockup-content {
-  padding: 2rem;
-  background: linear-gradient(180deg, rgba(30, 41, 59, 0.8), rgba(15, 23, 42, 0.9));
-}
-
-.analysis-card {
-  background: rgba(51, 65, 85, 0.8);
+.cyber-highlight {
+  display: inline-block;
+  color: #fff;
+  background: #f472b6;
   border-radius: 10px;
-  padding: 1.5rem;
-  border-left: 4px solid #ef4444;
-  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
-  backdrop-filter: blur(5px);
-  border: 1px solid rgba(59, 130, 246, 0.1);
-  transform: translateY(0);
-  transition:
-    transform 0.3s ease,
-    box-shadow 0.3s ease;
+  padding: 0 0.3em;
+  font-weight: 900;
+  margin-left: 0.2em;
+  box-shadow: 2px 2px 0 #fbbf24;
+  text-shadow: 0 2px 8px #f472b6cc;
 }
 
-.analysis-card:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 15px 30px rgba(0, 0, 0, 0.3);
-}
-
-.risk-indicator {
+/* 下方主区块：左右布局 */
+.cyber-hero-main {
   display: flex;
   align-items: center;
-  gap: 0.5rem;
-  margin-bottom: 1rem;
-  color: #ef4444;
-  font-weight: 600;
-  font-size: 1.1rem;
-}
-
-.risk-dot {
-  width: 10px;
-  height: 10px;
-  background: #ef4444;
-  border-radius: 50%;
-  animation: pulse 2s infinite;
-  box-shadow: 0 0 10px rgba(239, 68, 68, 0.5);
-}
-
-.analysis-details {
-  display: flex;
-  flex-direction: column;
+  justify-content: center;
   gap: 1rem;
-}
-
-.detail-item {
-  display: flex;
-  align-items: center;
-  gap: 0.8rem;
-  font-size: 0.95rem;
-  color: #e2e8f0;
-  background: rgba(51, 65, 85, 0.5);
-  padding: 0.7rem 1rem;
-  border-radius: 8px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-  transition:
-    transform 0.3s ease,
-    background 0.3s ease;
-}
-
-.detail-item:hover {
-  transform: translateX(5px);
-  background: rgba(51, 65, 85, 0.7);
-}
-
-.features-section {
-  border-top: 1px solid rgba(255, 255, 255, 0.1);
-  padding: 7rem 0;
-  background: linear-gradient(180deg, transparent, rgba(15, 23, 42, 0.8));
+  max-width: 1500px;
+  margin: 0 auto 2.5rem auto;
+  padding: 0 1rem;
+  min-height: 420px;
   position: relative;
 }
 
-.features-section::before {
-  content: '';
+/* 左侧动漫人物 */
+.cyber-hero-illustration-col {
+  flex: 7; /* 从 7 减少到 6，给右侧更多空间 */
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  position: relative;
+  min-width: 260px;
+  max-width: 800%; /* 从 900px 减少到 800px */
+  padding-left: 5%; /* 从 5rem 减少到 3rem */
+}
+.cyber-hero-illustration {
+  width: 120%;
+  max-width: 620px;
+  min-width: 220px;
+  height: auto;
+  filter: grayscale(0.1) contrast(1.15) drop-shadow(0 8px 32px #fbbf2466);
+  z-index: 1;
+  position: relative;
+  border-radius: 32px;
+  background: transparent;
+  animation: anime-pop 1.2s cubic-bezier(.68,-0.55,.27,1.55);
+}
+.anime-lines {
   position: absolute;
-  width: 300px;
-  height: 300px;
-  background: rgba(59, 130, 246, 0.03);
-  border-radius: 50%;
+  left: -2rem; /* 从 0 改为 -2rem，让栅格向右扩展 */
   top: 50%;
-  left: 10%;
-  filter: blur(60px);
-  z-index: 0;
+  transform: translateY(-50%);
+  width: 120%; /* 从 100% 增加到 120% */
+  height: 90%;
+  pointer-events: none;
+  z-index: 1; /* 确保栅格在文字下方 */
+  background:
+    repeating-linear-gradient(120deg, #fbbf24 0 2px, transparent 2px 16px),
+    repeating-linear-gradient(-120deg, #f472b6 0 2px, transparent 2px 16px);
+  opacity: 0.15; /* 从 0.2 减少到 0.15，让栅格更淡一些 */
+  border-radius: 50%;
+  filter: blur(0.8px); /* 从 1px 减少到 0.8px */
 }
 
-.container {
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 0 2rem;
+/* 右侧说明+按钮 */
+.cyber-hero-desc-col {
+  flex: 4; /* 从 3 增加到 4，扩大右侧区域 */
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: center;
+  min-width: 420px; /* 从 220px 增加到 320px */
+  max-width: 620px; /* 从 420px 增加到 520px */
+  margin-left: -3rem; /* 负边距让文字向左扩展，与栅格交互 */
+  position: relative;
+  z-index: 2; /* 确保文字在栅格之上 */
+}
+.cyber-hero-desc {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 2.2rem;
+  width: 100%;
+}
+.cyber-hero-subtitle {
+  font-size: 1.8rem; /* 从 1.5rem 增加到 1.8rem */
+  color: #222;
+  font-family: 'Nunito', 'Comic Neue', Arial, sans-serif;
+  font-weight: 700;
+  margin-bottom: 0.5rem;
+  line-height: 1.5; /* 从 1.6 减少到 1.5，让文字更紧凑 */
+  text-shadow: 1px 1px 2px rgba(255,255,255,0.8); /* 添加白色阴影，让文字在栅格上更清晰 */
+  background: transparent; /* 从 rgba(255,255,255,0.9) 改为 transparent */
+  padding: 1rem 1.5rem; /* 添加内边距 */
+  border-radius: 12px; /* 圆角 */
+  box-shadow: none; /* 从 0 4px 20px rgba(251, 191, 36, 0.1) 改为 none */
+  backdrop-filter: none; /* 从 blur(5px) 改为 none */
+}
+.ai-model-highlight {
+  color: #f472b6;
+  font-size: 2.2rem; /* 从 1.8rem 增加到 2.2rem */
+  font-weight: 900;
+  font-family: 'Bangers', 'Fredoka One', sans-serif;
+  letter-spacing: 0.02em;
+  text-shadow: 2px 2px 0 #fbbf24, 0 0 10px rgba(244, 114, 182, 0.5); /* 增强阴影效果 */
+  display: inline-block;
+  animation: ai-pulse 2s ease-in-out infinite;
+  background: linear-gradient(45deg, #f472b6, #fbbf24);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+.cyber-cta-btn {
+  font-size: 1.4rem; /* 从 1.3rem 增加到 1.4rem */
+  font-family: 'Nunito', 'Comic Neue', Arial, sans-serif;
+  font-weight: 700;
+  padding: 1.4rem 3.2rem; /* 从 1.3rem 3rem 增加到 1.4rem 3.2rem */
+  border-radius: 18px; /* 从 16px 增加到 18px */
+  background: linear-gradient(135deg, #fbbf24 0%, #f472b6 100%);
+  color: #fff;
+  border: none;
+  box-shadow: 0 6px 20px rgba(244, 114, 182, 0.4); /* 增强阴影 */
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  position: relative;
+  overflow: hidden;
+  margin-top: 0.5rem; /* 添加上边距 */
+  margin-left: 2rem; /* 向右移动按钮 */
+}
+
+.cyber-cta-btn::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+  transition: left 0.5s;
+}
+.cyber-cta-btn:hover {
+  background: linear-gradient(135deg, #f472b6 0%, #fbbf24 100%);
+  transform: translateY(-3px) scale(1.05);
+  box-shadow: 0 8px 25px rgba(244, 114, 182, 0.6);
+  animation: btn-bounce 0.6s ease-in-out;
+}
+.cyber-cta-btn:hover::before {
+  left: 100%;
+}
+
+/* Features Section */
+.cyber-features-section {
+  padding: 4rem 0 6rem 0;
+  background: #fff;
   position: relative;
   z-index: 1;
 }
-
-.section-title {
-  text-align: center;
-  font-size: 3rem;
-  font-weight: 300;
-  margin-bottom: 5rem;
-  color: white;
-  text-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
-}
-
-.features-grid {
+.cyber-features-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  grid-template-columns: repeat(3, 1fr);
   gap: 2.5rem;
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 0 2rem;
+}
+@media (max-width: 1100px) {
+  .cyber-features-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+@media (max-width: 700px) {
+  .cyber-features-grid {
+    grid-template-columns: 1fr;
+    gap: 1.2rem;
+  }
 }
 
-/* Mobile Styles */
-@media (max-width: 768px) {
-  .hero-section {
+/* FeatureCard漫画风格 */
+.feature-card {
+  background: #fff;
+  border-radius: 20px;
+  box-shadow: 0 2px 12px #fbbf2422;
+  border: 2.5px dashed #f472b6;
+  color: #000 !important; /* 强制黑色 */
+  font-family: 'Nunito', 'Comic Neue', Arial, sans-serif;
+  transition: box-shadow 0.2s, border 0.2s;
+  padding: 2rem 1.5rem;
+  min-height: 220px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  animation: card-pop 0.8s cubic-bezier(.68,-0.55,.27,1.55);
+}
+.feature-card:hover {
+  box-shadow: 0 4px 24px #f472b6aa;
+  border: 2.5px solid #fbbf24;
+  transform: scale(1.03) rotate(1deg);
+}
+.feature-card .card-title,
+.feature-card .card-description,
+.feature-card h3,
+.feature-card p,
+.feature-card * {
+  color: #000 !important; /* 强制所有文字为黑色 */
+  text-shadow: none !important;
+  background: none !important;
+  font-weight: 700;
+  font-family: 'Nunito', 'Comic Neue', Arial, sans-serif !important;
+}
+
+/* 动画效果 */
+@keyframes anime-pop {
+  0% { transform: scale(0.92) rotate(-2deg);}
+  60% { transform: scale(1.04) rotate(2deg);}
+  100% { transform: scale(1) rotate(0);}
+}
+@keyframes card-pop {
+  0% { transform: scale(0.95);}
+  60% { transform: scale(1.05);}
+  100% { transform: scale(1);}
+}
+@keyframes ai-pulse {
+  0%, 100% { transform: scale(1);}
+  50% { transform: scale(1.05);}
+}
+@keyframes btn-bounce {
+  0%, 100% { transform: translateY(-3px) scale(1.05);}
+  50% { transform: translateY(-5px) scale(1.08);}
+}
+
+/* 响应式布局 */
+@media (max-width: 900px) {
+  .cyber-hero-main {
     flex-direction: column;
-    gap: 3.5rem;
-    padding: 3.5rem 1.5rem;
-    min-height: 70vh;
+    align-items: center;
+    gap: 2.5rem;
+    padding: 0 1rem;
   }
-
-  .hero-content {
-    text-align: center;
+  .cyber-hero-illustration-col,
+  .cyber-hero-desc-col {
     max-width: 100%;
+    margin-left: 0;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
   }
-
-  .hero-title {
-    font-size: 2.5rem;
-  }
-
-  .mockup-screen {
-    width: 100%;
-    max-width: 350px;
-    height: 300px;
-    transform: none !important;
-    animation: none;
-  }
-
-  .features-section {
-    padding: 5rem 0;
-  }
-  .section-title {
-    font-size: 2.2rem;
-    margin-bottom: 3rem;
+  .cyber-hero-desc {
+    align-items: center;
   }
 }
-
-@media (max-width: 480px) {
-  .hero-title {
-    font-size: 2rem;
+@media (max-width: 600px) {
+  .cyber-hero-title {
+    font-size: 2.2rem;
   }
-
-  .cta-buttons {
-    display: flex;
-    justify-content: center;
-    gap: 1rem;
+  .cyber-highlight {
+    font-size: 2.2rem;
   }
-
-  .mockup-container {
-    height: auto;
+  .cyber-hero-subtitle {
+    font-size: 1.3rem; /* 从 1.2rem 增加到 1.3rem */
+    padding: 0.8rem 1rem; /* 移动端减少内边距 */
   }
-
-  .mockup-screen {
-    height: auto;
+  .ai-model-highlight {
+    font-size: 1.6rem; /* 从 1.4rem 增加到 1.6rem */
   }
-  .hero-subtitle {
-    font-size: 1.1rem;
-  }
-
-  .features-grid {
-    gap: 1.5rem;
+  .cyber-cta-btn {
+    font-size: 1.2rem;
+    padding: 1.2rem 2.8rem;
   }
 }
 </style>

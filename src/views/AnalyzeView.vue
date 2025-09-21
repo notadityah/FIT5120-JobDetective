@@ -3,10 +3,11 @@
     <div class="analyze-section">
       <div class="content-wrapper">
         <div class="analyze-text">
-          <h1 class="analyze-title"><span class="title-accent">Analyse</span> Job Listing</h1>
+          <h1 class="analyze-title">
+            <span class="title-accent">Analyse</span> Job Listing
+          </h1>
           <p class="analyze-subtitle">
-            Scan job listings for potential scams using our AI-powered tool. Simply paste the job
-            description and get instant analysis.
+            Scan job listings for potential scams using our AI-powered tool. Paste the job description and get instant analysis.
           </p>
           <div class="features-list">
             <div class="feature-item">
@@ -25,22 +26,11 @@
         </div>
 
         <div class="upload-section">
-          <TabNavigation :tabs="tabs" :activeTab="activeTab" @tab-change="handleTabClick" />
+          <TabNavigation :tabs="tabs" v-model:activeTab="activeTab" @tab-click="handleTabClick" />
 
           <div class="tab-content">
-            <!-- File Upload Tab -->
-            <div v-if="activeTab === 'file'" class="file-upload-area">
-              <!-- Show loading spinner while analyzing file -->
-              <LoadingSpinner
-                v-if="isAnalyzingFile"
-                variant="analyzing"
-                message="Processing file..."
-                sub-message="This may take a few moments"
-                size="medium"
-              />
-
-              <!-- Show file upload interface when not analyzing -->
-              <div v-else>
+            <transition name="fade">
+              <div v-if="activeTab === 'file'" class="file-upload-area">
                 <div class="upload-icon">
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
@@ -64,145 +54,54 @@
                     </g>
                   </svg>
                 </div>
-
-                <!-- Hidden file input - updated accept attribute -->
-                <input
-                  ref="fileInput"
-                  type="file"
-                  accept=".png,.jpg,.jpeg,.webp,.pdf"
-                  @change="handleFileSelect"
-                  style="display: none"
-                />
-
-                <!-- File selection display -->
-                <div v-if="selectedFile" class="selected-file">
-                  <p class="file-name">{{ selectedFile.name }}</p>
-                  <p class="file-size">{{ (selectedFile.size / (1024 * 1024)).toFixed(2) }} MB</p>
-
-                  <!-- Image preview (only for image files) -->
-                  <div v-if="imagePreview" class="image-preview">
-                    <img :src="imagePreview" alt="Preview" />
-                  </div>
-
-                  <!-- PDF indicator (for PDF files) -->
-                  <div v-if="selectedFile.type === 'application/pdf'" class="pdf-indicator">
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      width="60"
-                      height="60"
-                      viewBox="0 0 24 24"
-                      fill="#ef4444"
-                    >
-                      <path
-                        d="M8.267 14.68c-.184 0-.308.018-.372.036v1.178c.076.018.171.023.302.023.479 0 .774-.242.774-.651 0-.366-.254-.586-.704-.586zm3.487.012c-.2 0-.33.018-.407.036v2.61c.077.018.201.018.313.018.817.006 1.349-.444 1.349-1.396.006-.83-.479-1.268-1.255-1.268z"
-                      />
-                      <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8l-6-6z" />
-                      <path d="M14 2v6h6" />
-                      <path
-                        d="M8.597 16.932h-.774v-2.58c.154-.018.347-.023.581-.023.809 0 1.302.58 1.302 1.376 0 .914-.465 1.227-1.109 1.227z"
-                      />
-                    </svg>
-                    <p class="pdf-text">PDF Document</p>
-                  </div>
-                </div>
-
-                <!-- File upload button -->
-                <BaseButton
-                  v-if="!selectedFile"
-                  variant="secondary"
-                  @click="triggerFileSelect"
-                  class="choose-file-btn"
-                >
-                  Choose File
-                </BaseButton>
-
-                <!-- Analyze button (shown when file is selected) -->
-                <BaseButton
-                  v-if="selectedFile"
-                  variant="primary"
-                  @click="analyzeFile"
-                  class="analyze-btn"
-                >
-                  Analyse File
-                </BaseButton>
-
-                <!-- Change file button -->
-                <BaseButton
-                  v-if="selectedFile"
-                  variant="secondary"
-                  @click="triggerFileSelect"
-                  class="change-file-btn"
-                >
-                  Choose Different File
-                </BaseButton>
-
-                <div class="file-help-text">
-                  <p>Supported formats: PNG, JPG, WebP, PDF (max 1MB)</p>
-                </div>
+                <button class="choose-file-btn disabled">Choose file</button>
               </div>
-            </div>
+            </transition>
 
-            <!-- URL Tab -->
-            <div v-if="activeTab === 'url'" class="url-input-area">
-              <!-- Show loading spinner while analyzing URL -->
-              <LoadingSpinner
-                v-if="isAnalyzingUrl"
-                variant="analyzing"
-                message="Analysing job URL..."
-                sub-message="This may take a few moments"
-                size="medium"
-              />
-
-              <!-- Show normal input when not analyzing -->
-              <div v-else>
+            <transition name="fade">
+              <div v-if="activeTab === 'url'" class="url-input-area">
                 <input
                   type="url"
                   placeholder="Paste job listing URL here..."
-                  class="url-input"
+                  class="url-input disabled"
                   v-model="urlInput"
-                  @keypress.enter="analyzeUrl"
+                  disabled
                 />
-                <BaseButton
-                  variant="primary"
-                  @click="analyzeUrl"
-                  :disabled="!isValidUrl(urlInput)"
-                  class="analyze-btn"
-                >
-                  Analyse URL
-                </BaseButton>
+                <button class="analyze-btn disabled">Analyze URL</button>
               </div>
-            </div>
+            </transition>
 
-            <!-- Search Tab -->
-            <div v-if="activeTab === 'search'" class="search-input-area">
-              <!-- Show loading spinner while analyzing -->
-              <LoadingSpinner
-                v-if="isAnalyzing"
-                variant="analyzing"
-                message="Analysing text..."
-                sub-message="This may take a few moments"
-                size="medium"
-              />
+            <transition name="fade">
+              <div v-if="activeTab === 'search'" class="search-input-area">
+                <!-- Show loading spinner while analyzing -->
+                <LoadingSpinner
+                  v-if="isAnalyzing"
+                  variant="analyzing"
+                  message="Analysing job posting..."
+                  sub-message="This may take a few moments"
+                  size="medium"
+                />
 
-              <!-- Show normal input when not analyzing -->
-              <div v-else>
-                <textarea
-                  placeholder="Paste or type the job description here..."
-                  class="search-textarea"
-                  v-model="textInput"
-                  rows="6"
-                  maxlength="5000"
-                ></textarea>
-                <BaseButton
-                  variant="primary"
-                  @click="analyzeText"
-                  :disabled="!textInput.trim()"
-                  class="analyze-btn"
-                >
-                  Analyse Text
-                </BaseButton>
+                <!-- Show normal input when not analyzing -->
+                <div v-else>
+                  <textarea
+                    placeholder="Paste or type the job description here..."
+                    class="search-textarea"
+                    v-model="textInput"
+                    rows="6"
+                    maxlength="5000"
+                  ></textarea>
+                  <BaseButton
+                    variant="primary"
+                    @click="analyzeText"
+                    :disabled="!textInput.trim()"
+                    class="analyze-btn"
+                  >
+                    Analyse Text
+                  </BaseButton>
+                </div>
               </div>
-            </div>
+            </transition>
           </div>
         </div>
       </div>
@@ -234,277 +133,61 @@
 </template>
 
 <script>
-import TabNavigation from '@/components/TabNavigation.vue'
 import BaseButton from '@/components/BaseButton.vue'
-import LoadingSpinner from '@/components/LoadingSpinner.vue'
 
 export default {
   name: 'AnalyzeView',
-  components: {
-    TabNavigation,
-    BaseButton,
-    LoadingSpinner,
-  },
+  components: { BaseButton },
   data() {
     return {
       activeTab: 'file', // Default to file input tab
       urlInput: '',
       textInput: '',
+      urlInput: '',
       selectedFile: null,
       imagePreview: null,
       showNotification: false,
-      isAnalyzing: false, // Loading state for text analysis
-      isAnalyzingUrl: false, // Loading state for URL analysis
-      isAnalyzingFile: false, // Loading state for file analysis
+      isAnalyzing: false, // Loading state for analysis
       showUrlErrorModal: false,
       urlErrorMessage: '',
-      errorSource: '', // Track which input method failed
       tabs: [
-        { id: 'file', label: 'FILE', disabled: false },
-        { id: 'url', label: 'URL', disabled: false },
-        { id: 'search', label: 'TEXT', disabled: false },
+        { id: 'file', label: 'FILE', disabled: true }, // Coming soon
+        { id: 'url', label: 'URL', disabled: true }, // Coming soon
+        { id: 'search', label: 'TEXT', disabled: false }, // Active tab
       ],
     }
   },
   methods: {
     // Handle tab clicks - show notification for disabled tabs
-    handleTabClick(tabId) {
-      const tab = this.tabs.find((t) => t.id === tabId)
-      if (tab && tab.disabled) {
+    handleTabClick(tab) {
+      if (tab.disabled) {
         this.showComingSoonNotification()
       } else {
-        this.activeTab = tabId
+        this.activeTab = tab.id
       }
     },
-    // Show notification for disabled features
-    showComingSoonNotification() {
-      this.showNotification = true
+    resetInputType() {
+      this.inputTypeSelected = ''
+      this.textInput = ''
     },
-    // Hide the notification
     closeNotification() {
       this.showNotification = false
     },
-    // Switch to File tab
-    switchToFileTab() {
-      this.activeTab = 'file'
-      this.closeUrlErrorModal()
+    showComingSoonNotification() {
+      this.showNotification = true
     },
-    // Switch to URL tab
+    closeUrlErrorModal() {
+      this.showUrlErrorModal = false
+    },
     switchToUrlTab() {
       this.activeTab = 'url'
       this.closeUrlErrorModal()
     },
-    // Switch to text tab
     switchToTextTab() {
       this.activeTab = 'search'
       this.closeUrlErrorModal()
     },
-    // Handle file selection
-    handleFileSelect(event) {
-      const file = event.target.files[0]
-      if (file) {
-        // Validate file type - only PNG, JPG, WebP, and PDF
-        const allowedTypes = [
-          'image/png',
-          'image/jpeg',
-          'image/jpg',
-          'image/webp',
-          'application/pdf',
-        ]
-        if (!allowedTypes.includes(file.type)) {
-          this.urlErrorMessage =
-            'Oops, we could not process your file. Try to use a url or text inputs'
-          this.errorSource = 'file'
-          this.showUrlErrorModal = true
-          return
-        }
-
-        // Validate file size (max 1MB)
-        if (file.size > 1 * 1024 * 1024) {
-          this.urlErrorMessage =
-            'Oops, we could not process your file. Try to use a url or text inputs'
-          this.errorSource = 'file'
-          this.showUrlErrorModal = true
-          return
-        }
-
-        this.selectedFile = file
-
-        // Only create image preview for image files, not PDFs
-        if (file.type.startsWith('image/')) {
-          this.createImagePreview(file)
-        } else {
-          this.imagePreview = null // Clear preview for PDFs
-        }
-      }
-    },
-    // Create image preview
-    createImagePreview(file) {
-      const reader = new FileReader()
-      reader.onload = (e) => {
-        this.imagePreview = e.target.result
-      }
-      reader.readAsDataURL(file)
-    },
-    // Trigger file input click
-    triggerFileSelect() {
-      this.$refs.fileInput.click()
-    },
-    // Convert file to base64
-    convertToBase64(file) {
-      return new Promise((resolve, reject) => {
-        const reader = new FileReader()
-        reader.onload = () => {
-          // Remove the data:image/jpeg;base64, prefix to get just the base64 string
-          const base64String = reader.result.split(',')[1]
-          resolve(base64String)
-        }
-        reader.onerror = reject
-        reader.readAsDataURL(file)
-      })
-    },
-    // Analyze uploaded file
-    async analyzeFile() {
-      if (!this.selectedFile) {
-        this.urlErrorMessage = 'Please select a file first'
-        this.errorSource = 'file'
-        this.showUrlErrorModal = true
-        return
-      }
-
-      this.isAnalyzingFile = true
-
-      try {
-        // Convert file to base64
-        const base64File = await this.convertToBase64(this.selectedFile)
-
-        console.log('Converting file to base64...')
-        console.log(`Base64 length: ${base64File.length} characters`)
-
-        // Call AWS Lambda function for file analysis
-        const response = await fetch(import.meta.env.VITE_ANALYSE_FILE_API_GATEWAY, {
-          method: 'POST',
-          mode: 'cors',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-            imageBase64: base64File,
-            fileName: this.selectedFile.name,
-            fileType: this.selectedFile.type,
-            fileSize: this.selectedFile.size,
-          }),
-        })
-
-        if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`)
-        }
-
-        const result = await response.json()
-
-        // Check if there was an error in the Lambda response
-        if (result.error) {
-          throw new Error(result.error)
-        }
-
-        // Check if analysis was successful
-        if (result.analysis && !result.analysis.error) {
-          // Navigate to report page with analysis results
-          this.$router.push({
-            name: 'Report',
-            params: { reportData: JSON.stringify(result.analysis) },
-          })
-        } else {
-          // Handle analysis errors
-          throw new Error(result.analysis?.error || 'Analysis failed')
-        }
-      } catch (error) {
-        console.error('File analysis failed:', error)
-
-        // Single error message for all file processing failures
-        this.urlErrorMessage =
-          'Oops, we could not process your file. Try to use a url or text inputs'
-        this.errorSource = 'file'
-        this.showUrlErrorModal = true
-      } finally {
-        this.isAnalyzingFile = false
-      }
-    },
-    // Validate URL format and ensure it's HTTP/HTTPS
-    isValidUrl(string) {
-      if (!string || !string.trim()) {
-        return false
-      }
-
-      try {
-        const url = new URL(string.trim())
-        // Must be HTTP or HTTPS protocol
-        return url.protocol === 'http:' || url.protocol === 'https:'
-      } catch (error) {
-        // This catch will trigger for truly malformed URLs
-        console.log('Invalid URL format:', error.message)
-        return false
-      }
-    },
-    // Close URL error modal
-    closeUrlErrorModal() {
-      this.showUrlErrorModal = false
-      this.urlErrorMessage = ''
-    },
-    // URL analysis function
-    async analyzeUrl() {
-      if (!this.isValidUrl(this.urlInput)) {
-        this.urlErrorMessage = 'Please enter a valid URL (e.g., https://example.com/job-posting)'
-        this.errorSource = 'url'
-        this.showUrlErrorModal = true
-        return
-      }
-
-      this.isAnalyzingUrl = true
-
-      try {
-        const response = await fetch(import.meta.env.VITE_ANALYSE_URL_API_GATEWAY, {
-          method: 'POST',
-          mode: 'cors',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-            jobUrl: this.urlInput.trim(),
-          }),
-        })
-
-        if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`)
-        }
-
-        const result = await response.json()
-
-        if (result.error) {
-          throw new Error(result.error)
-        }
-
-        if (result.analysis && !result.analysis.error) {
-          this.$router.push({
-            name: 'Report',
-            params: { reportData: JSON.stringify(result.analysis) },
-          })
-        } else {
-          throw new Error(result.analysis?.error || 'Unable to analyse the provided URL')
-        }
-      } catch (error) {
-        console.error('URL analysis failed:', error)
-
-        // Single error message for URL failures
-        this.urlErrorMessage =
-          'Oops, we could not process this URL. Try to use a file or text inputs'
-        this.errorSource = 'url'
-        this.showUrlErrorModal = true
-      } finally {
-        this.isAnalyzingUrl = false
-      }
-    },
-    // Updated text analysis function using AWS Lambda
+    // Main analysis function using AI API
     async analyzeText() {
       if (!this.textInput.trim()) {
         return
@@ -513,15 +196,69 @@ export default {
       this.isAnalyzing = true
 
       try {
-        // Call AWS Lambda function for text analysis
-        const response = await fetch(import.meta.env.VITE_ANALYSE_TEXT_API_GATEWAY, {
+        // System prompt for AI scam detection
+        const system_prompt = `Role: You are an AI assistant specializing in detecting employment scams targeting young Australians.
+
+Goal: Analyze text input and assess if it is a job posting. If yes, detect scam risk.
+If not a job posting, return a standard safe response.
+
+Instructions:
+- First, decide if the input is a job ad.
+- If it is a job ad: check for these red flags:
+  1. Requests for upfront payment or financial info
+  2. Unrealistic pay promises
+  3. Vague or unclear requirements
+  4. Urgent or pressured timelines
+  5. Poor grammar/spelling
+  6. Fake or unverifiable company details
+  7. Minimal-requirement work-from-home schemes
+- Always return JSON in the exact schema below.
+- Do not include explanations or text outside the JSON.
+- Keep lists short and specific.
+
+Output Format (strict JSON only):
+
+For job postings:
+{
+  "riskLevel": "low" | "medium" | "high",
+  "riskScore": 0-100,
+  "redFlags": ["specific issues found"],
+  "safetyTips": ["max 3 short, practical tips"],
+  "isLegitimate": true | false,
+  "explanation": "1-2 sentences, under 50 words"
+}
+
+If not a job posting:
+{
+  "riskLevel": "n/a",
+  "riskScore": 0,
+  "redFlags": [],
+  "safetyTips": [],
+  "isLegitimate": null,
+  "explanation": "The provided text does not appear to be a job posting."
+}
+
+DO NOT include explanations or text outside the JSON.
+DO NOT write any code.
+DO NOT execute any code.
+`
+
+        // API call to analyze job posting
+        const response = await fetch(import.meta.env.VITE_API_BASE_URL, {
           method: 'POST',
-          mode: 'cors',
           headers: {
             'Content-Type': 'application/json',
+            Authorization: `Bearer ${import.meta.env.VITE_AGENT_API_KEY}`,
           },
           body: JSON.stringify({
-            jobText: this.textInput.trim(),
+            messages: [
+              { role: 'system', content: system_prompt },
+              {
+                role: 'user',
+                content: `Check this job posting for scams: ${this.textInput.trim()}`,
+              },
+            ],
+            stream: false,
           }),
         })
 
@@ -529,32 +266,28 @@ export default {
           throw new Error(`HTTP error! status: ${response.status}`)
         }
 
-        const result = await response.json()
+        const apiResponse = await response.json()
+        const contentString = apiResponse.choices[0].message.content
+        const analysisResult = JSON.parse(contentString)
 
-        // Check if there was an error in the Lambda response
-        if (result.error) {
-          throw new Error(result.error)
-        }
-
-        // Check if analysis was successful
-        if (result.analysis && !result.analysis.error) {
-          // Navigate to report page with analysis results
-          this.$router.push({
-            name: 'Report',
-            params: { reportData: JSON.stringify(result.analysis) },
-          })
-        } else {
-          // Handle analysis errors
-          throw new Error(result.analysis?.error || 'Unable to analyse the provided text')
-        }
+        // Navigate to report page with analysis results
+        this.$router.push({
+          name: 'Report',
+          params: { reportData: JSON.stringify(analysisResult) },
+        })
       } catch (error) {
-        console.error('Text analysis failed:', error)
-
-        // Single error message for text failures
-        this.urlErrorMessage =
-          'Oops, we could not process this text. Try to use a file or url inputs'
-        this.errorSource = 'text'
-        this.showUrlErrorModal = true
+        console.error('Analysis failed:', error)
+        // Handle different types of errors with specific messages
+        let errorMessage = 'Failed to analyze the text. Please try again.'
+        if (error.name === 'TypeError' && error.message.includes('fetch')) {
+          errorMessage =
+            'Unable to connect to the analysis service. Please check your internet connection.'
+        } else if (error.message.includes('HTTP error')) {
+          errorMessage = `Server error: ${error.message}. Please try again later.`
+        } else if (error instanceof SyntaxError) {
+          errorMessage = 'Received invalid response format. Please try again.'
+        }
+        alert(errorMessage)
       } finally {
         this.isAnalyzing = false
       }
@@ -685,16 +418,10 @@ export default {
     max-width: 450px;
   }
 
-  .modal-actions {
-    flex-direction: column;
-    gap: 0.75rem;
-  }
-
-  .modal-actions .base-button {
+  .analyze-btn {
+    margin: 1.2rem auto 0;
+    display: block;
     width: 100%;
-    min-width: auto;
-    max-width: none;
-    flex: none;
   }
 }
 
@@ -772,7 +499,6 @@ export default {
   position: relative;
   z-index: 1;
 }
-
 .content-wrapper {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -793,16 +519,13 @@ export default {
   letter-spacing: -0.02em;
   color: #0f172a;
 }
-
 .title-accent {
   background: linear-gradient(135deg, #3b82f6 0%, #6366f1 100%);
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
-  position: relative;
   display: inline-block;
 }
-
 .analyze-subtitle {
   font-size: 1.25rem;
   line-height: 1.6;
@@ -811,21 +534,18 @@ export default {
   max-width: 90%;
   font-weight: 500;
 }
-
 .features-list {
   display: flex;
   flex-direction: column;
   gap: 1rem;
   margin-top: 2rem;
 }
-
 .feature-item {
   display: flex;
   align-items: center;
   gap: 1rem;
   padding: 0.75rem 0;
 }
-
 .feature-icon {
   background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
   width: 28px;
@@ -842,6 +562,7 @@ export default {
     0 2px 4px rgba(0, 0, 0, 0.1);
   flex-shrink: 0;
 }
+.feature-text { font-size: 1.1rem; color: #e2e8f0; }
 
 .feature-text {
   font-size: 1.1rem;
@@ -885,6 +606,12 @@ export default {
   min-height: 250px;
   display: flex;
   flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+.input-type-btns {
+  display: flex;
+  gap: 2rem;
   justify-content: center;
   align-items: center;
   margin-top: 2rem;
@@ -984,9 +711,6 @@ export default {
   font-size: 1rem;
   cursor: pointer;
   transition: all 0.3s ease;
-  margin-top: 0.75rem;
-  backdrop-filter: blur(10px);
-  min-width: 180px;
 }
 
 .file-upload-area .change-file-btn:hover {
@@ -1004,9 +728,9 @@ export default {
   display: flex;
   flex-direction: column;
   gap: 1rem;
+  align-items: stretch;
 }
 
-.url-input-area > div,
 .search-input-area > div {
   width: 100%;
   display: flex;
@@ -1064,7 +788,6 @@ export default {
   min-height: 150px;
   font-family: inherit;
 }
-
 .search-textarea:focus {
   outline: none;
   border-color: #3b82f6;
@@ -1087,6 +810,10 @@ export default {
   border: 1px solid #e2e8f0;
   box-shadow: 0 8px 20px -5px rgba(0, 0, 0, 0.08);
   transition: all 0.3s ease;
+  align-self: flex-end;
+  width: auto;
+  margin-top: 1.5rem;
+  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
 }
 
 .selected-file:hover {
