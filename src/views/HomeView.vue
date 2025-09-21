@@ -12,7 +12,7 @@
         <div class="cyber-hero-desc">
           <div class="cyber-hero-subtitle">
             Our <span class="cyber-highlight">AI job detection tool</span> helps young job seekers
-            spot fake jobs and scams - empowering safer, smarter choices online.
+            spot fake jobs and scams - <b>empowering safer, smarter choices online.</b>
           </div>
 
           <BaseButton
@@ -657,59 +657,6 @@ onMounted(() => {
   }
 }
 
-@media (max-width: 900px) {
-  .cyber-hero-main {
-    flex-direction: column;
-    align-items: center;
-    gap: 2.5rem;
-    padding: 0 1rem;
-  }
-
-  .cyber-hero-illustration-col,
-  .cyber-hero-desc-col {
-    max-width: 100%;
-    margin-left: 0;
-    justify-content: center;
-    align-items: center;
-    text-align: center;
-  }
-
-  .cyber-hero-desc {
-    align-items: center;
-  }
-}
-
-@media (max-width: 700px) {
-  .cyber-features-grid {
-    grid-template-columns: 1fr;
-    gap: 1.2rem;
-  }
-}
-
-@media (max-width: 600px) {
-  .cyber-hero-title {
-    font-size: 2.2rem;
-  }
-
-  .cyber-highlight {
-    font-size: 2.2rem;
-  }
-
-  .cyber-hero-subtitle {
-    font-size: 1.3rem;
-    padding: 0.8rem 1rem;
-  }
-
-  .ai-model-highlight {
-    font-size: 1.6rem;
-  }
-
-  .cyber-cta-btn {
-    font-size: 1.2rem;
-    padding: 1.2rem 2.8rem;
-  }
-}
-
 @media (max-width: 1024px) {
   .stats-main-container {
     flex-direction: column;
@@ -732,6 +679,28 @@ onMounted(() => {
   }
 }
 
+@media (max-width: 900px) {
+  .cyber-hero-main {
+    flex-direction: column;
+    align-items: center;
+    gap: 2.5rem;
+    padding: 0 1rem;
+  }
+
+  .cyber-hero-illustration-col,
+  .cyber-hero-desc-col {
+    max-width: 100%;
+    margin-left: 0;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+  }
+
+  .cyber-hero-desc {
+    align-items: center;
+  }
+}
+
 @media (max-width: 768px) {
   .cyber-hero-desc-col {
     min-width: auto;
@@ -740,29 +709,84 @@ onMounted(() => {
   }
 
   .stats-content-col {
-    min-width: auto;
-    max-width: 100%;
+    min-width: auto !important;
+    max-width: 100% !important;
+    order: 2 !important;
+    flex: none !important;
   }
 
   .stats-illustration-col {
-    min-width: auto;
-    max-width: 100%;
-    flex: none;
+    min-width: auto !important;
+    max-width: 100% !important;
+    flex: none !important;
+    order: 1 !important;
+    margin-bottom: 2rem !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
   }
 
   .stats-main-container {
-    padding: 0 1rem;
+    padding: 0 1rem !important;
+    flex-direction: column !important;
+    min-height: auto !important;
+    display: flex !important;
   }
 
   .stats-illustration {
-    max-width: 300px;
-    width: 100%;
-    display: block;
+    max-width: 280px !important;
+    width: 90% !important;
+    display: block !important;
+    margin: 0 auto !important;
+    opacity: 1 !important;
+    visibility: visible !important;
+    position: relative !important;
+    z-index: 1 !important;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  }
+
+  .stats-anime-lines {
+    display: none !important;
   }
 
   .stat-amount {
     font-size: 4.5rem;
     padding: 0.5rem;
+  }
+}
+
+@media (max-width: 700px) {
+  .cyber-features-grid {
+    grid-template-columns: 1fr;
+    gap: 1.2rem;
+  }
+}
+
+@media (max-width: 600px) {
+  .cyber-hero-title {
+    font-size: 2.2rem;
+  }
+
+  .cyber-highlight {
+    font-size: 1.1rem;
+    padding: 0.1em 0.25em;
+    display: inline;
+    margin-left: 0;
+  }
+
+  .cyber-hero-subtitle {
+    font-size: 1.3rem;
+    padding: 0.8rem 1rem;
+  }
+
+  .ai-model-highlight {
+    font-size: 1.6rem;
+  }
+
+  .cyber-cta-btn {
+    font-size: 1.2rem;
+    padding: 1.2rem 2.8rem;
   }
 }
 </style>
