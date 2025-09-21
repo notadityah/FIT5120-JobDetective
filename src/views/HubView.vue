@@ -742,7 +742,7 @@ export default {
 /* Checklist Grid Layout - Keep existing styles */
 .checklist-grid {
   display: grid;
-  grid-template-columns: 2fr 1fr 1fr 1fr;
+  grid-template-columns: 1fr 1fr 1fr 1fr;
   gap: 1.5rem;
   margin-top: 2rem;
   transition: grid-template-columns 0.3s ease;
