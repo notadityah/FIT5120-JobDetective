@@ -42,7 +42,6 @@ const containerClasses = computed(() => ['error-container', `error-${props.varia
   gap: 1rem;
 }
 
-/* Variant styles */
 .error-default {
   background: linear-gradient(135deg, #374151 0%, #4b5563 100%);
   padding: 3rem;
@@ -102,13 +101,11 @@ const containerClasses = computed(() => ['error-container', `error-${props.varia
   margin-top: 0.5rem;
 }
 
-/* Stats variant specific styles */
 .error-stats .error-text {
   color: #d1d5db;
   font-size: 1.4rem;
 }
 
-/* Responsive adjustments */
 @media (max-width: 768px) {
   .error-default,
   .error-stats {

@@ -1,6 +1,5 @@
 <template>
   <button :class="buttonClasses" :disabled="disabled || loading" @click="handleClick">
-    <!-- Show spinner during loading state -->
     <div v-if="loading" class="spinner-small"></div>
     <slot v-else></slot>
   </button>
@@ -23,12 +22,11 @@ const props = defineProps({
     default: 'medium',
     validator: (value) => ['small', 'medium', 'large'].includes(value),
   },
-  active: { type: Boolean, default: false }, // For tab buttons
+  active: { type: Boolean, default: false },
 })
 
 const emit = defineEmits(['click'])
 
-// Dynamically compute button classes based on props
 const buttonClasses = computed(() => [
   'base-btn',
   `btn-${props.variant}`,
@@ -40,7 +38,6 @@ const buttonClasses = computed(() => [
   },
 ])
 
-// Only emit click if button is interactive
 const handleClick = (event) => {
   if (!props.disabled && !props.loading) {
     emit('click', event)
@@ -96,7 +93,7 @@ const handleClick = (event) => {
 }
 
 .btn-secondary:hover:not(.btn-disabled) {
-  background: #4b5563;
+  background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
 }
 
 .btn-danger {

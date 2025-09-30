@@ -43,7 +43,6 @@ const spinnerSize = computed(() => `spinner-${props.size}`)
   text-align: center;
 }
 
-/* Variant styles */
 .loading-default {
   background: linear-gradient(135deg, #374151 0%, #4b5563 100%);
   padding: 2rem;
@@ -73,7 +72,6 @@ const spinnerSize = computed(() => `spinner-${props.size}`)
   color: #a0aec0;
 }
 
-/* Size variants */
 .loading-small {
   padding: 1rem;
 }
@@ -86,7 +84,6 @@ const spinnerSize = computed(() => `spinner-${props.size}`)
   padding: 3rem;
 }
 
-/* Spinner styles */
 .spinner {
   border-radius: 50%;
   animation: spin 1s linear infinite;
@@ -114,7 +111,6 @@ const spinnerSize = computed(() => `spinner-${props.size}`)
   border-top: 5px solid #63b3ed;
 }
 
-/* Text styles */
 .loading-text {
   font-size: 1.2rem;
   font-weight: 600;
@@ -123,13 +119,13 @@ const spinnerSize = computed(() => `spinner-${props.size}`)
 }
 
 .loading-analyzing .loading-text {
-  color: #e2e8f0;
+  color: #000000;
   font-size: 1.2rem;
 }
 
 .loading-default .loading-text,
 .loading-stats .loading-text {
-  color: #d1d5db;
+  color: #000000;
   font-size: 1.4rem;
 }
 
@@ -137,7 +133,7 @@ const spinnerSize = computed(() => `spinner-${props.size}`)
   font-size: 0.9rem;
   opacity: 0.7;
   margin: 0;
-  color: #cbd5e1;
+  color: #000000;
 }
 
 @keyframes spin {
@@ -149,7 +145,6 @@ const spinnerSize = computed(() => `spinner-${props.size}`)
   }
 }
 
-/* Responsive adjustments */
 @media (max-width: 768px) {
   .loading-default,
   .loading-stats {

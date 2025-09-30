@@ -2,9 +2,9 @@
 import NavigationBar from './components/NavigationBar.vue'
 import { useRoute } from 'vue-router'
 import { computed } from 'vue'
+import NavFooter from './components/NavFooter.vue'
 
 const route = useRoute()
-// Hide navigation bar on login page only
 const showNavBar = computed(() => route.name !== 'login')
 </script>
 
@@ -15,6 +15,7 @@ const showNavBar = computed(() => route.name !== 'login')
   <main>
     <router-view />
   </main>
+  <NavFooter />
 </template>
 
 <style scoped>

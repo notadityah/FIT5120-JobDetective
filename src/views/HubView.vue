@@ -14,6 +14,39 @@
 
     <!-- Before You Apply Section - Dynamic Checklist -->
     <div v-if="activeTab === 'before'" class="content-section">
+      <div class="section-header">
+        <h2 class="section-title">Before You Apply Checklist</h2>
+        <p class="section-subtitle">Understand the job and the company before you apply</p>
+      </div>
+      <!-- Progress Summary and Reset Section -->
+      <div class="progress-summary">
+        <div class="progress-info">
+          <div class="progress-stats">
+            <span class="progress-text">
+              Progress: {{ totalCompletedItems }}/{{ totalItems }} items completed
+            </span>
+            <div class="overall-progress-bar">
+              <div
+                class="overall-progress-fill"
+                :style="{ width: overallProgressPercentage + '%' }"
+              ></div>
+            </div>
+            <span class="progress-percentage">{{ Math.round(overallProgressPercentage) }}%</span>
+          </div>
+        </div>
+
+        <div class="reset-section" v-if="totalCompletedItems > 0">
+          <button
+            class="reset-button"
+            @click="showResetConfirmation = true"
+            :disabled="totalCompletedItems === 0"
+          >
+            <i class="fas fa-undo"></i>
+            Reset Progress
+          </button>
+        </div>
+      </div>
+
       <div
         class="checklist-grid"
         :class="{
@@ -92,87 +125,137 @@
           </transition>
         </div>
       </div>
-    </div>
 
-    <!-- Recently Reported Scams Section -->
-    <div v-if="activeTab === 'reported'" class="content-section">
-      <SectionHeader title="" />
-
-      <FilterTabs
-        :filters="scamFilters"
-        :active-filter="activeFilter"
-        @filter-change="activeFilter = $event"
-      />
-
-      <div class="scams-grid">
-        <FeatureCard
-          v-for="scam in filteredScams"
-          :key="scam.id"
-          card-type="scam"
-          :title="scam.title"
-          :category="scam.category"
-          :description="scam.description"
-          :red-flags="scam.redFlags"
-        />
+      <!-- Reset Confirmation Modal -->
+      <div
+        v-if="showResetConfirmation"
+        class="modal-overlay"
+        @click="showResetConfirmation = false"
+      >
+        <div class="modal-content" @click.stop>
+          <div class="modal-header">
+            <h3 class="modal-title">Reset Progress</h3>
+            <button class="modal-close" @click="showResetConfirmation = false">
+              <i class="fas fa-times"></i>
+            </button>
+          </div>
+          <div class="modal-body">
+            <p>Are you sure you want to reset all your checklist progress?</p>
+            <p class="modal-warning">This action cannot be undone.</p>
+          </div>
+          <div class="modal-footer">
+            <button class="modal-button cancel" @click="showResetConfirmation = false">
+              Cancel
+            </button>
+            <button class="modal-button confirm" @click="resetProgress">Reset Progress</button>
+          </div>
+        </div>
       </div>
     </div>
 
+    <!-- Recently Reported Scams Section -->
+    <!--
+<div v-if="activeTab === 'reported'" class="content-section">
+  <div class="section-header">
+    <h2 class="section-title">Recently Reported Scams (WORK IN PROGRESS)</h2>
+    <p class="section-subtitle">Learn from real scam job postings reported by other users</p>
+  </div>
+
+  <FilterTabs
+    :filters="scamFilters"
+    :active-filter="activeFilter"
+    @filter-change="activeFilter = $event"
+  />
+
+  <div class="scams-grid">
+    <div v-for="scam in filteredScams" :key="scam.id" class="scam-card">
+      <div class="scam-header">
+        <div class="scam-category">{{ scam.category }}</div>
+        <h3 class="scam-title">{{ scam.title }}</h3>
+      </div>
+
+      <div class="scam-content">
+        <p class="scam-description">{{ scam.description }}</p>
+
+        <div class="red-flags-section">
+          <h4 class="red-flags-title">🚩 Red Flags:</h4>
+          <ul class="red-flags-list">
+            <li v-for="flag in scam.redFlags" :key="flag" class="red-flag-item">
+              {{ flag }}
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+-->
+
     <!-- Scam Statistics Section -->
     <div v-if="activeTab === 'statistics'" class="content-section">
-      <SectionHeader title="" />
+      <div class="section-header">
+        <h2 class="section-title">Australian Scam Statistics</h2>
+        <p class="section-subtitle">Interactive visualisations showing job scam trends and data</p>
+      </div>
 
-      <!-- Stats Hero Section -->
-      <div class="stats-hero-section">
-        <div class="stats-display" v-if="!loading && !error && scamData">
-          <div class="stat-intro-section">
-            In 2025, young job seekers across Australia aged 18-24 lost a total of
-          </div>
-          <div class="stat-amount-section">
-            <span class="stat-amount" v-if="totalData">
-              {{ formatCurrency(totalData.total_amount_lost) }}
-            </span>
-            <span class="stat-amount" v-else>No data available</span>
-          </div>
-
-          <div class="stat-description-section">
-            to job and employment scams in
-            {{ totalData ? formatNumber(totalData.total_reports) : '0' }} reported cases.
-          </div>
+      <!-- Tableau Chart Container -->
+      <div class="tableau-container">
+        <div class="tableauPlaceholder" id="viz1758451186828" style="position: relative">
+          <noscript>
+            <a href="#">
+              <img
+                alt="Dashboard 2"
+                src="https://public.tableau.com/static/images/51/5120v1/Dashboard2/1_rss.png"
+                style="border: none"
+              />
+            </a>
+          </noscript>
+          <object class="tableauViz" style="display: none">
+            <param name="host_url" value="https%3A%2F%2Fpublic.tableau.com%2F" />
+            <param name="embed_code_version" value="3" />
+            <param name="site_root" value="" />
+            <param name="name" value="5120v1&#47;Dashboard2" />
+            <param name="tabs" value="no" />
+            <param name="toolbar" value="yes" />
+            <param
+              name="static_image"
+              value="https://public.tableau.com/static/images/51/5120v1/Dashboard2/1.png"
+            />
+            <param name="animate_transition" value="yes" />
+            <param name="display_static_image" value="yes" />
+            <param name="display_spinner" value="yes" />
+            <param name="display_overlay" value="yes" />
+            <param name="display_count" value="yes" />
+            <param name="language" value="en-AU" />
+          </object>
         </div>
-
-        <!-- Loading State -->
-        <LoadingSpinner
-          v-else-if="loading"
-          variant="stats"
-          message="Loading statistics..."
-          size="large"
-        />
-
-        <!-- Error State -->
-        <ErrorDisplay
-          v-else-if="error"
-          variant="stats"
-          message="Unable to load current statistics"
-          :show-retry="true"
-          @retry="fetchScamStatistics"
-        />
       </div>
     </div>
 
     <!-- Recent Scam News Section -->
     <div v-if="activeTab === 'news'" class="content-section">
-      <NewsCarousel />
+      <div class="section-header">
+        <h2 class="section-title">Recent Scam News</h2>
+        <p class="section-subtitle">Stay updated with the latest scam trends and warnings</p>
+      </div>
+
+      <div class="news-wrapper">
+        <NewsCarousel />
+      </div>
     </div>
 
     <!-- CTA Section -->
     <div class="cta-section">
-      <h2 class="cta-title">Think a job might be suspicious?</h2>
-      <p class="cta-subtitle">
-        Don't risk it. Use our free tool to check the listing for common red flags before you apply.
-      </p>
-      <BaseButton variant="primary" size="large" @click="$router.push('/analyse')">
-        Analyse it now
-      </BaseButton>
+      <div class="cta-content">
+        <h2 class="cta-title">Think a job might be suspicious?</h2>
+        <p class="cta-subtitle">
+          Don't risk it. Use our free tool to check the listing for common red flags before you
+          apply.
+        </p>
+        <BaseButton variant="primary" size="large" @click="$router.push('/analyse')">
+          Analyse it now
+        </BaseButton>
+      </div>
     </div>
   </div>
 </template>
@@ -180,40 +263,23 @@
 <script>
 import { ref, onMounted, computed, watch } from 'vue'
 import TabNavigation from '@/components/TabNavigation.vue'
-import FilterTabs from '@/components/FilterTabs.vue'
-import SectionHeader from '@/components/SectionHeader.vue'
-import FeatureCard from '@/components/FeatureCard.vue'
+//import FilterTabs from '@/components/FilterTabs.vue'
 import BaseButton from '@/components/BaseButton.vue'
-import LoadingSpinner from '@/components/LoadingSpinner.vue'
-import ErrorDisplay from '@/components/ErrorDisplay.vue'
 import NewsCarousel from '../components/NewsCarousel.vue'
 
 export default {
   name: 'HubView',
   components: {
     TabNavigation,
-    FilterTabs,
-    SectionHeader,
-    FeatureCard,
+    //FilterTabs,
     BaseButton,
-    LoadingSpinner,
-    ErrorDisplay,
     NewsCarousel,
   },
   setup() {
-    // Reactive data for statistics
-    const scamData = ref(null)
-    const loading = ref(true)
-    const error = ref(null)
-
     // New reactive data for checklist functionality
-    const expandedCard = ref(1) // Changed from null to 1
+    const expandedCard = ref(1)
     const completedItems = ref({})
-
-    // Cache configuration
-    const CACHE_KEY = 'jobdetective_scam_stats'
-    const CACHE_EXPIRY_KEY = 'jobdetective_scam_stats_expiry'
-    const CACHE_DURATION = 24 * 60 * 60 * 1000 // 24 hours
+    const showResetConfirmation = ref(false)
 
     // Checklist cache configuration
     const CHECKLIST_CACHE_KEY = 'jobdetective_checklist_progress'
@@ -245,6 +311,15 @@ export default {
     // Toggle card expansion
     const toggleCard = (cardNumber) => {
       expandedCard.value = expandedCard.value === cardNumber ? null : cardNumber
+    }
+
+    // Reset progress function
+    const resetProgress = () => {
+      completedItems.value = {}
+      showResetConfirmation.value = false
+      // Close any expanded cards
+      expandedCard.value = 1
+      console.log('Progress reset')
     }
 
     // Steps data with external links
@@ -331,7 +406,7 @@ export default {
             ],
           },
           {
-            text: 'If in doubt, use Job Detective’s Analyse Job or report suspicious ads to Scamwatch.',
+            text: "If in doubt, use Job Detective's Analyse Job or report suspicious ads to Scamwatch.",
             links: [
               { text: 'Analyse Job', url: '/analyse' },
               { text: 'Scamwatch', url: 'https://www.scamwatch.gov.au/report-a-scam' },
@@ -399,143 +474,11 @@ export default {
       return totalItems.value > 0 ? (totalCompletedItems.value / totalItems.value) * 100 : 0
     })
 
-    // Computed properties for statistics
-    const totalData = computed(() => {
-      return scamData.value || null
-    })
-
-    // Format functions
-    const formatCurrency = (amount) => {
-      return new Intl.NumberFormat('en-AU', {
-        style: 'currency',
-        currency: 'AUD',
-        minimumFractionDigits: 0,
-        maximumFractionDigits: 0,
-      }).format(amount)
-    }
-
-    const formatNumber = (number) => {
-      return new Intl.NumberFormat('en-AU').format(number)
-    }
-
-    // Cache management functions for statistics
-    const getCachedData = () => {
-      try {
-        const cachedData = localStorage.getItem(CACHE_KEY)
-        const cacheExpiry = localStorage.getItem(CACHE_EXPIRY_KEY)
-
-        if (cachedData && cacheExpiry) {
-          const now = Date.now()
-          const expiryTime = parseInt(cacheExpiry, 10)
-
-          if (now < expiryTime) {
-            console.log(
-              'Using cached data, expires in:',
-              Math.round((expiryTime - now) / (1000 * 60)),
-              'minutes',
-            )
-            return JSON.parse(cachedData)
-          } else {
-            console.log('Cache expired, will fetch fresh data')
-            clearCache()
-          }
-        }
-        return null
-      } catch (error) {
-        console.error('Error reading cache:', error)
-        clearCache()
-        return null
-      }
-    }
-
-    const setCacheData = (data) => {
-      try {
-        const expiryTime = Date.now() + CACHE_DURATION
-        localStorage.setItem(CACHE_KEY, JSON.stringify(data))
-        localStorage.setItem(CACHE_EXPIRY_KEY, expiryTime.toString())
-        console.log('Data cached until:', new Date(expiryTime).toLocaleString())
-      } catch (error) {
-        console.error('Error setting cache:', error)
-      }
-    }
-
-    const clearCache = () => {
-      try {
-        localStorage.removeItem(CACHE_KEY)
-        localStorage.removeItem(CACHE_EXPIRY_KEY)
-        console.log('Cache cleared')
-      } catch (error) {
-        console.error('Error clearing cache:', error)
-      }
-    }
-
-    const fetchScamStatistics = async () => {
-      try {
-        loading.value = true
-        error.value = null
-
-        // First check if we have valid cached data
-        const cachedData = getCachedData()
-        if (cachedData) {
-          scamData.value = cachedData
-          loading.value = false
-          return
-        }
-
-        // If no valid cache, fetch from API
-        console.log('Fetching fresh data from API...')
-        const API_ENDPOINT = import.meta.env.VITE_API_GATEWAY_URL
-        const API_KEY = import.meta.env.VITE_API_KEY
-
-        const fetchOptions = {
-          method: 'GET',
-          mode: 'cors',
-          headers: {
-            Accept: 'application/json',
-            'Content-Type': 'application/json',
-          },
-        }
-
-        // Add API key if available
-        if (API_KEY) {
-          fetchOptions.headers['X-API-Key'] = API_KEY
-        }
-
-        console.log('Fetching from:', API_ENDPOINT)
-        const response = await fetch(API_ENDPOINT, fetchOptions)
-
-        if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`)
-        }
-
-        const data = await response.json()
-        console.log('Received fresh data:', data)
-
-        // Store the data and cache it
-        scamData.value = data
-        setCacheData(data)
-      } catch (err) {
-        console.error('Error fetching scam statistics:', err)
-        error.value = err.message
-      } finally {
-        loading.value = false
-      }
-    }
-
     onMounted(() => {
-      fetchScamStatistics()
       loadProgress()
     })
 
     return {
-      // Statistics
-      scamData,
-      loading,
-      error,
-      totalData,
-      formatCurrency,
-      formatNumber,
-      fetchScamStatistics,
       // Checklist
       steps,
       expandedCard,
@@ -543,11 +486,14 @@ export default {
       toggleCard,
       getStepProgress,
       getStepProgressPercentage,
-      updateProgress, // Added this missing function
+      updateProgress,
       totalItems,
       totalCompletedItems,
       overallProgressPercentage,
       handleLinkClick,
+      // Reset functionality
+      showResetConfirmation,
+      resetProgress,
     }
   },
   data() {
@@ -556,7 +502,7 @@ export default {
       activeFilter: 'all',
       tabs: [
         { id: 'before', label: 'Before You Apply Checklist' },
-        { id: 'reported', label: 'Recently Reported Scams' },
+        // { id: 'reported', label: 'Recently Reported Scams (WIP)' },
         { id: 'statistics', label: 'Australian Scam Statistics' },
         { id: 'news', label: 'Recent Scam News' },
       ],
@@ -634,21 +580,107 @@ export default {
       return this.recentScams.filter((scam) => scam.type === this.activeFilter)
     },
   },
+  mounted() {
+    // Initialize Tableau visualization when statistics tab is active
+    this.$nextTick(() => {
+      if (this.activeTab === 'statistics') {
+        this.initTableauViz()
+      }
+    })
+
+    // Add resize listener
+    window.addEventListener('resize', this.handleResize)
+  },
+  beforeUnmount() {
+    window.removeEventListener('resize', this.handleResize)
+  },
+  watch: {
+    // Add watcher for tab changes
+    activeTab(newTab) {
+      if (newTab === 'statistics') {
+        this.$nextTick(() => {
+          setTimeout(() => {
+            this.initTableauViz()
+          }, 100)
+        })
+      }
+    },
+  },
+  methods: {
+    initTableauViz() {
+      this.$nextTick(() => {
+        setTimeout(() => {
+          this.loadTableauChart()
+        }, 100)
+      })
+    },
+
+    loadTableauChart() {
+      // Use the correct ID from your embed script
+      const divElement = document.getElementById('viz1758451186828')
+      if (!divElement) return
+
+      const vizElement = divElement.getElementsByTagName('object')[0]
+      if (!vizElement) return
+
+      // Clear any existing scripts to prevent conflicts
+      const existingScripts = document.querySelectorAll('script[src*="viz_v1.js"]')
+      existingScripts.forEach((script) => script.remove())
+
+      // Make the viz element visible
+      vizElement.style.display = 'block'
+
+      // Apply the exact same logic as Tableau's embed code
+      if (divElement.offsetWidth > 800) {
+        vizElement.style.width = '100%'
+        vizElement.style.height = divElement.offsetWidth * 0.75 + 'px'
+      } else if (divElement.offsetWidth > 500) {
+        vizElement.style.width = '100%'
+        vizElement.style.height = divElement.offsetWidth * 0.75 + 'px'
+      } else {
+        vizElement.style.width = '100%'
+        vizElement.style.height = '1027px'
+      }
+
+      // Create and insert the script exactly as Tableau does
+      const scriptElement = document.createElement('script')
+      scriptElement.src = 'https://public.tableau.com/javascripts/api/viz_v1.js'
+      scriptElement.onload = () => {
+        console.log('Tableau script loaded')
+      }
+      scriptElement.onerror = (error) => {
+        console.error('Failed to load Tableau script:', error)
+      }
+      vizElement.parentNode.insertBefore(scriptElement, vizElement)
+    },
+
+    // Handle window resize
+    handleResize() {
+      if (this.activeTab === 'statistics') {
+        setTimeout(() => {
+          this.loadTableauChart()
+        }, 200)
+      }
+    },
+  },
 }
 </script>
 
 <style scoped>
+/* Base Hub Container */
 .hub-container {
   min-height: 100vh;
-  background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #334155 100%);
-  color: white;
+  background: #ffffff;
+  color: #0f172a;
 }
 
 /* Hero Section */
 .hero-section {
-  padding: 2rem 2rem;
+  padding: 3rem 2rem 2rem;
   max-width: 1200px;
   margin: 0 auto;
+  background: #f8fafc;
+  border-radius: 0 0 24px 24px;
 }
 
 .hero-content {
@@ -664,81 +696,116 @@ export default {
   font-size: 3rem;
   font-weight: 700;
   margin: 0 0 1rem 0;
-  color: white;
+  color: #0f172a;
+  letter-spacing: -0.02em;
 }
 
 .hero-subtitle {
   font-size: 1.2rem;
-  color: #cbd5e1;
+  color: #64748b;
   margin: 0 0 2rem 0;
   line-height: 1.6;
+  font-weight: 400;
 }
 
 /* Content Sections */
 .content-section {
   max-width: 1200px;
   margin: 0 auto;
-  padding: 2rem 2rem;
+  padding: 3rem 2rem;
 }
 
-/* Checklist Grid Layout */
+/* Section Headers */
+.section-header {
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.section-title {
+  font-size: 2.5rem;
+  font-weight: 700;
+  margin: 0 0 1rem 0;
+  color: #0f172a;
+  letter-spacing: -0.02em;
+}
+
+.section-subtitle {
+  font-size: 1.1rem;
+  color: #64748b;
+  margin: 0;
+  line-height: 1.6;
+  max-width: 600px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* Checklist Grid Layout - Keep existing styles */
 .checklist-grid {
   display: grid;
-  grid-template-columns: 2fr 1fr 1fr 1fr;
+  grid-template-columns: 1fr 1fr 1fr 1fr;
   gap: 1.5rem;
   margin-top: 2rem;
   transition: grid-template-columns 0.3s ease;
 }
 
-/* When card 1 is expanded */
 .checklist-grid.has-expanded-1 {
   grid-template-columns: 2fr 1fr 1fr 1fr;
 }
 
-/* When card 2 is expanded */
 .checklist-grid.has-expanded-2 {
   grid-template-columns: 1fr 2fr 1fr 1fr;
 }
 
-/* When card 3 is expanded */
 .checklist-grid.has-expanded-3 {
   grid-template-columns: 1fr 1fr 2fr 1fr;
 }
 
-/* When card 4 is expanded */
 .checklist-grid.has-expanded-4 {
   grid-template-columns: 1fr 1fr 1fr 2fr;
 }
 
 .checklist-card {
-  background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
-  border-radius: 20px;
+  background: #ffffff;
+  border: 2px solid #e2e8f0;
+  border-radius: 16px;
   padding: 1.5rem;
-  transition: all 0.3s ease;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   position: relative;
   overflow: hidden;
   display: flex;
   flex-direction: column;
-  height: 480px;
-  min-height: 480px;
-  max-height: 480px;
+  height: 540px;
+  min-height: 540px;
+  max-height: 540px;
+  box-shadow:
+    0 1px 3px 0 rgba(0, 0, 0, 0.1),
+    0 1px 2px 0 rgba(0, 0, 0, 0.06);
 }
 
 .checklist-card:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 20px 40px rgba(59, 130, 246, 0.3);
+  transform: translateY(-4px);
+  box-shadow:
+    0 10px 25px -5px rgba(0, 0, 0, 0.1),
+    0 10px 10px -5px rgba(0, 0, 0, 0.04);
+  border-color: #cbd5e1;
 }
 
 .checklist-card.expanded {
-  background: linear-gradient(135deg, #2563eb 0%, #1e40af 100%);
+  background: #f8fafc;
+  border-color: #3b82f6;
+  box-shadow:
+    0 0 0 1px #3b82f6,
+    0 20px 25px -5px rgba(59, 130, 246, 0.1),
+    0 10px 10px -5px rgba(59, 130, 246, 0.04);
 }
 
 .checklist-card.completed {
-  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
-}
-
-.checklist-card.completed:hover {
-  box-shadow: 0 20px 40px rgba(16, 185, 129, 0.3);
+  background: #f0fdf4;
+  border-color: #22c55e;
+  box-shadow:
+    0 0 0 1px #22c55e,
+    0 20px 25px -5px rgba(34, 197, 94, 0.1),
+    0 10px 10px -5px rgba(34, 197, 94, 0.04);
 }
 
 .checklist-header {
@@ -749,34 +816,47 @@ export default {
   margin-bottom: 1rem;
   cursor: pointer;
   position: relative;
-  padding: 0.5rem;
-  border-radius: 10px;
-  transition: background-color 0.2s ease;
+  padding: 0.75rem;
+  border-radius: 12px;
+  transition: all 0.2s ease;
 }
 
 .checklist-header:hover {
-  background: rgba(255, 255, 255, 0.1);
+  background: #f8fafc;
 }
 
 .step-number {
   width: 50px;
   height: 50px;
-  background: rgba(255, 255, 255, 0.2);
+  background: #e2e8f0;
+  color: #475569;
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
   font-weight: 700;
   font-size: 1.5rem;
-  color: white;
   margin-bottom: 1rem;
-  border: 2px solid rgba(255, 255, 255, 0.3);
+  border: 2px solid #cbd5e1;
+  transition: all 0.3s ease;
+}
+
+.checklist-card.expanded .step-number {
+  background: #dbeafe;
+  color: #1d4ed8;
+  border-color: #93c5fd;
+}
+
+.checklist-card.completed .step-number {
+  background: #dcfce7;
+  color: #15803d;
+  border-color: #86efac;
 }
 
 .step-title {
   font-size: 1.3rem;
   font-weight: 600;
-  color: white;
+  color: #1f2937;
   margin: 0;
   line-height: 1.3;
   text-align: center;
@@ -784,9 +864,9 @@ export default {
 
 .expand-icon {
   position: absolute;
-  top: 0.5rem;
-  right: 0.5rem;
-  color: rgba(255, 255, 255, 0.7);
+  top: 0.75rem;
+  right: 0.75rem;
+  color: #9ca3af;
   font-size: 0.9rem;
   transition: all 0.3s ease;
 }
@@ -797,26 +877,42 @@ export default {
 }
 
 .progress-bar {
-  height: 4px;
-  background: rgba(255, 255, 255, 0.2);
-  border-radius: 2px;
+  height: 6px;
+  background: #e5e7eb;
+  border-radius: 3px;
   overflow: hidden;
 }
 
 .progress-fill {
   height: 100%;
-  background: rgba(255, 255, 255, 0.8);
-  border-radius: 2px;
-  transition: width 0.3s ease;
+  background: #9ca3af;
+  border-radius: 3px;
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.checklist-card.expanded .progress-fill {
+  background: #3b82f6;
+}
+
+.checklist-card.completed .progress-fill {
+  background: #22c55e;
 }
 
 .checklist-content {
   margin-top: 1rem;
   padding-top: 1rem;
-  border-top: 1px solid rgba(255, 255, 255, 0.2);
+  border-top: 1px solid #e5e7eb;
   flex: 1;
   overflow-y: auto;
-  max-height: calc(480px - 140px);
+  max-height: calc(540px - 140px);
+}
+
+.checklist-card.expanded .checklist-content {
+  border-top-color: #cbd5e1;
+}
+
+.checklist-card.completed .checklist-content {
+  border-top-color: #d1fae5;
 }
 
 .todo-list {
@@ -830,7 +926,7 @@ export default {
 }
 
 .todo-item.completed {
-  opacity: 0.8;
+  opacity: 0.7;
 }
 
 .todo-checkbox {
@@ -838,16 +934,16 @@ export default {
   align-items: flex-start;
   cursor: pointer;
   font-size: 0.9rem;
-  line-height: 1.4;
+  line-height: 1.5;
   gap: 0.75rem;
-  color: white;
-  padding: 0.25rem;
-  border-radius: 4px;
-  transition: background-color 0.2s ease;
+  color: #374151;
+  padding: 0.5rem;
+  border-radius: 8px;
+  transition: all 0.2s ease;
 }
 
 .todo-checkbox:hover {
-  background: rgba(255, 255, 255, 0.05);
+  background: #f9fafb;
 }
 
 .todo-checkbox input[type='checkbox'] {
@@ -855,31 +951,32 @@ export default {
 }
 
 .checkmark {
-  width: 18px;
-  height: 18px;
-  border: 2px solid rgba(255, 255, 255, 0.6);
-  border-radius: 3px;
+  width: 20px;
+  height: 20px;
+  border: 2px solid #cbd5e1;
+  border-radius: 4px;
   position: relative;
   transition: all 0.2s ease;
   flex-shrink: 0;
   margin-top: 1px;
+  background: #ffffff;
 }
 
 .todo-checkbox:hover .checkmark {
-  border-color: white;
+  border-color: #9ca3af;
 }
 
 .todo-checkbox input[type='checkbox']:checked + .checkmark {
-  background: white;
-  border-color: white;
+  background: #3b82f6;
+  border-color: #3b82f6;
 }
 
 .todo-checkbox input[type='checkbox']:checked + .checkmark::after {
   content: '✓';
   position: absolute;
-  color: #3b82f6;
-  font-size: 12px;
-  font-weight: bold;
+  color: #ffffff;
+  font-size: 14px;
+  font-weight: 700;
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
@@ -893,44 +990,47 @@ export default {
 }
 
 .todo-text {
-  color: rgba(255, 255, 255, 0.95);
+  color: #374151;
+  font-weight: 400;
 }
 
 .todo-item.completed .todo-text {
   text-decoration: line-through;
-  color: rgba(255, 255, 255, 0.7);
+  color: #9ca3af;
 }
 
 .todo-links {
   display: flex;
   flex-wrap: wrap;
-  gap: 0.75rem;
-  margin-top: 0.25rem;
+  gap: 0.5rem;
+  margin-top: 0.5rem;
 }
 
 .todo-link {
   display: inline-flex;
   align-items: center;
   gap: 0.25rem;
-  color: #1e293b;
+  color: #1f2937;
   font-size: 0.8rem;
   text-decoration: none;
   cursor: pointer;
-  padding: 0.25rem 0.5rem;
-  border-radius: 4px;
-  background: rgba(255, 255, 255, 0.9);
-  border: 1px solid rgba(255, 255, 255, 0.3);
+  padding: 0.375rem 0.75rem;
+  border-radius: 6px;
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
   transition: all 0.2s ease;
-  font-weight: 600;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  font-weight: 500;
+  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
 }
 
 .todo-link:hover {
-  background: #fbbf24;
-  border-color: #f59e0b;
-  color: #1e293b;
+  background: #3b82f6;
+  border-color: #2563eb;
+  color: #ffffff;
   transform: translateY(-1px);
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  box-shadow:
+    0 4px 6px -1px rgba(0, 0, 0, 0.1),
+    0 2px 4px -1px rgba(0, 0, 0, 0.06);
 }
 
 .todo-link i {
@@ -938,9 +1038,410 @@ export default {
   opacity: 0.8;
 }
 
-.todo-item.completed .todo-link {
-  opacity: 0.6;
-  pointer-events: none;
+/* Scam Cards - Following checklist card design */
+.scams-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+  gap: 1.5rem;
+  margin-top: 2rem;
+}
+
+.scam-card {
+  background: #ffffff;
+  border: 2px solid #e2e8f0;
+  border-radius: 16px;
+  padding: 1.5rem;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  overflow: hidden;
+  box-shadow:
+    0 1px 3px 0 rgba(0, 0, 0, 0.1),
+    0 1px 2px 0 rgba(0, 0, 0, 0.06);
+}
+
+.scam-card:hover {
+  transform: translateY(-4px);
+  box-shadow:
+    0 10px 25px -5px rgba(0, 0, 0, 0.1),
+    0 10px 10px -5px rgba(0, 0, 0, 0.04);
+  border-color: #cbd5e1;
+}
+
+.scam-header {
+  margin-bottom: 1rem;
+}
+
+.scam-category {
+  display: inline-block;
+  background: #dc2626;
+  color: #ffffff;
+  padding: 0.25rem 0.75rem;
+  border-radius: 6px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  margin-bottom: 0.75rem;
+}
+
+.scam-title {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: #1f2937;
+  margin: 0;
+  line-height: 1.3;
+}
+
+.scam-content {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.scam-description {
+  color: #374151;
+  line-height: 1.6;
+  font-style: italic;
+  background: #f8fafc;
+  padding: 1rem;
+  border-radius: 8px;
+  border-left: 4px solid #3b82f6;
+  margin: 0;
+}
+
+.red-flags-section {
+  background: #fef2f2;
+  padding: 1rem;
+  border-radius: 8px;
+  border-left: 4px solid #dc2626;
+}
+
+.red-flags-title {
+  font-size: 1rem;
+  font-weight: 600;
+  color: #991b1b;
+  margin: 0 0 0.75rem 0;
+}
+
+.red-flags-list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.red-flag-item {
+  color: #7f1d1d;
+  padding: 0.25rem 0;
+  position: relative;
+  padding-left: 1.5rem;
+}
+
+.red-flag-item::before {
+  content: '•';
+  color: #dc2626;
+  font-weight: bold;
+  position: absolute;
+  left: 0.5rem;
+}
+
+/* Stats Card - Following checklist card design */
+.stats-card {
+  background: #ffffff;
+  border: 2px solid #e2e8f0;
+  border-radius: 16px;
+  padding: 3rem 2rem;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  overflow: hidden;
+  text-align: center;
+  margin-top: 2rem;
+  box-shadow:
+    0 1px 3px 0 rgba(0, 0, 0, 0.1),
+    0 1px 2px 0 rgba(0, 0, 0, 0.06);
+}
+
+.stats-card:hover {
+  box-shadow:
+    0 10px 25px -5px rgba(0, 0, 0, 0.1),
+    0 10px 10px -5px rgba(0, 0, 0, 0.04);
+  border-color: #cbd5e1;
+}
+
+.stats-content {
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.stat-intro {
+  font-size: 2.2rem;
+  color: #374151;
+  margin-bottom: 1.5rem;
+  font-weight: 400;
+  line-height: 1.4;
+}
+
+.stat-amount-wrapper {
+  margin-bottom: 2.5rem;
+  position: relative;
+}
+
+.stat-amount {
+  display: block;
+  font-size: 8rem;
+  font-weight: 800;
+  color: #dc2626;
+  line-height: 1;
+  letter-spacing: -0.02em;
+}
+
+.stat-description {
+  font-size: 2rem;
+  color: #4b5563;
+  line-height: 1.5;
+}
+
+/* News Wrapper */
+.news-wrapper {
+  background: #ffffff;
+  border: 2px solid #e2e8f0;
+  border-radius: 16px;
+  padding: 2rem;
+  margin-top: 2rem;
+  box-shadow:
+    0 1px 3px 0 rgba(0, 0, 0, 0.1),
+    0 1px 2px 0 rgba(0, 0, 0, 0.06);
+}
+
+/* Progress Summary Section */
+.progress-summary {
+  margin-top: 2rem;
+  padding: 1.5rem;
+  background: #f8fafc;
+  border-radius: 12px;
+  border: 1px solid #e2e8f0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 2rem;
+}
+
+.progress-info {
+  flex: 1;
+}
+
+.progress-stats {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.progress-text {
+  font-size: 1rem;
+  color: #374151;
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+.overall-progress-bar {
+  flex: 1;
+  height: 8px;
+  background: #e5e7eb;
+  border-radius: 4px;
+  overflow: hidden;
+  min-width: 200px;
+}
+
+.overall-progress-fill {
+  height: 100%;
+  background: #3b82f6;
+  border-radius: 4px;
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.progress-percentage {
+  font-size: 1rem;
+  color: #3b82f6;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.reset-section {
+  flex-shrink: 0;
+}
+
+.reset-button {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1.5rem;
+  background: #ffffff;
+  border: 1px solid #dc2626;
+  color: #dc2626;
+  border-radius: 8px;
+  font-size: 0.9rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.reset-button:hover:not(:disabled) {
+  background: #dc2626;
+  color: #ffffff;
+  transform: translateY(-1px);
+  box-shadow:
+    0 4px 6px -1px rgba(0, 0, 0, 0.1),
+    0 2px 4px -1px rgba(0, 0, 0, 0.06);
+}
+
+.reset-button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.reset-button i {
+  font-size: 0.875rem;
+}
+
+/* Modal Styles */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: 1rem;
+}
+
+.modal-content {
+  background: #ffffff;
+  border-radius: 12px;
+  box-shadow:
+    0 20px 25px -5px rgba(0, 0, 0, 0.1),
+    0 10px 10px -5px rgba(0, 0, 0, 0.04);
+  max-width: 400px;
+  width: 100%;
+  max-height: 90vh;
+  overflow: hidden;
+}
+
+.modal-header {
+  padding: 1.5rem 1.5rem 1rem 1.5rem;
+  border-bottom: 1px solid #e5e7eb;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.modal-title {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: #111827;
+  margin: 0;
+}
+
+.modal-close {
+  background: none;
+  border: none;
+  color: #6b7280;
+  cursor: pointer;
+  padding: 0.25rem;
+  border-radius: 4px;
+  transition: all 0.2s ease;
+}
+
+.modal-close:hover {
+  color: #374151;
+  background: #f3f4f6;
+}
+
+.modal-body {
+  padding: 1.5rem;
+}
+
+.modal-body p {
+  margin: 0 0 1rem 0;
+  color: #374151;
+  line-height: 1.5;
+}
+
+.modal-warning {
+  color: #dc2626;
+  font-weight: 500;
+  font-size: 0.9rem;
+}
+
+.modal-footer {
+  padding: 1rem 1.5rem 1.5rem 1.5rem;
+  display: flex;
+  gap: 0.75rem;
+  justify-content: flex-end;
+}
+
+.modal-button {
+  padding: 0.75rem 1.5rem;
+  border-radius: 8px;
+  font-size: 0.9rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  border: 1px solid transparent;
+}
+
+.modal-button.cancel {
+  background: #ffffff;
+  border-color: #d1d5db;
+  color: #374151;
+}
+
+.modal-button.cancel:hover {
+  background: #f9fafb;
+  border-color: #9ca3af;
+}
+
+.modal-button.confirm {
+  background: #dc2626;
+  color: #ffffff;
+}
+
+.modal-button.confirm:hover {
+  background: #b91c1c;
+  transform: translateY(-1px);
+  box-shadow:
+    0 4px 6px -1px rgba(0, 0, 0, 0.1),
+    0 2px 4px -1px rgba(0, 0, 0, 0.06);
+}
+
+/* CTA Section */
+.cta-section {
+  background: #ffffff;
+  border-top: 1px solid #e5e7eb;
+  padding: 4rem 2rem;
+  text-align: center;
+  margin-top: 4rem;
+}
+
+.cta-content {
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.cta-title {
+  font-size: 2.5rem;
+  font-weight: 700;
+  margin: 0 0 1rem 0;
+  color: #0f172a;
+  letter-spacing: -0.02em;
+}
+
+.cta-subtitle {
+  font-size: 1.2rem;
+  color: #64748b;
+  margin: 0 0 2rem 0;
+  line-height: 1.6;
+  font-weight: 400;
 }
 
 /* Expand transition */
@@ -959,199 +1460,22 @@ export default {
   opacity: 1;
 }
 
-/* Stats Hero Section */
-.stats-hero-section {
-  width: 100%;
-  display: flex;
-  justify-content: center;
-  padding: 3rem 2rem;
-  min-height: 50vh;
-  align-items: center;
-  background: transparent;
-  position: relative;
-  z-index: 1;
-  overflow: hidden;
-  margin-bottom: 2rem;
-}
-
-.stats-hero-section::before {
-  content: '';
-  position: absolute;
-  width: 300px;
-  height: 300px;
-  background: rgba(59, 130, 246, 0.03);
-  border-radius: 50%;
-  top: -150px;
-  left: -50px;
-  filter: blur(40px);
-  z-index: -1;
-}
-
-.stats-hero-section::after {
-  content: '';
-  position: absolute;
-  width: 250px;
-  height: 250px;
-  background: rgba(239, 68, 68, 0.03);
-  border-radius: 50%;
-  bottom: -100px;
-  right: -100px;
-  filter: blur(30px);
-  z-index: -1;
-}
-
-/* Statistics Display Styles */
-.stats-display {
-  max-width: 900px;
-  width: 100%;
-  text-align: center;
-  background: transparent;
-  padding: 2.5rem 2rem 2rem 2rem;
-  border-radius: 24px;
-  backdrop-filter: blur(10px);
-  position: relative;
-  z-index: 2;
-}
-
-.stat-intro-section {
-  font-size: 2.2rem;
-  color: #cbd5e1;
-  margin-bottom: 1.5rem;
-  font-weight: 400;
-  text-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
-}
-
-.stat-amount-section {
-  margin-bottom: 2.5rem;
-  position: relative;
-}
-
-.stat-amount {
-  display: block;
-  font-size: 9rem;
-  font-weight: 800;
-  color: transparent;
-  background: linear-gradient(90deg, #ef4444, #ef4444);
-  -webkit-background-clip: text;
-  background-clip: text;
-  line-height: 1;
-  letter-spacing: -0.02em;
-  text-shadow: 0 4px 20px rgba(239, 68, 68, 0.3);
-  animation: pulse 3s ease-in-out infinite;
-}
-
-@keyframes pulse {
-  0%,
-  100% {
-    opacity: 1;
-    transform: scale(1);
-  }
-  50% {
-    opacity: 1;
-    transform: scale(1.02);
-  }
-}
-
-.stat-description-section {
-  font-size: 2rem;
-  color: #e2e8f0;
-  line-height: 1.5;
-  display: flex;
-  align-items: center;
-  gap: 0;
-  flex-wrap: wrap;
-  justify-content: center;
-  text-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-}
-
-/* Grid Layouts */
-.scams-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
-  gap: 2rem;
-}
-
-/* CTA Section */
-.cta-section {
-  background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
-  padding: 4rem 2rem;
-  text-align: center;
-  margin-top: 4rem;
-}
-
-.cta-title {
-  font-size: 2.5rem;
-  font-weight: 700;
-  margin: 0 0 1rem 0;
-  color: white;
-}
-
-.cta-subtitle {
-  font-size: 1.1rem;
-  color: #cbd5e1;
-  margin: 0 0 2rem 0;
-  max-width: 600px;
-  margin-left: auto;
-  margin-right: auto;
-  margin-bottom: 2rem;
-}
-
-/* Mobile Responsiveness */
-@media (max-width: 1200px) {
-  .checklist-grid,
-  .checklist-grid.has-expanded-1,
-  .checklist-grid.has-expanded-2,
-  .checklist-grid.has-expanded-3,
-  .checklist-grid.has-expanded-4 {
-    grid-template-columns: 1fr 1fr 1fr 1fr;
-  }
-
-  .checklist-card {
-    height: 240px;
-    min-height: 240px;
-    max-height: 240px;
-  }
-
-  .checklist-content {
-    max-height: calc(240px - 140px);
-  }
-
-  .scams-grid {
-    grid-template-columns: 1fr;
-  }
-}
-
+/* Mobile-First Responsive Design */
 @media (max-width: 768px) {
   .hero-title {
     font-size: 2.5rem;
   }
 
-  .content-section {
-    padding: 2rem 1rem;
-  }
-
-  .cta-title {
+  .section-title {
     font-size: 2rem;
   }
 
-  .stats-hero-section {
+  .hero-section {
     padding: 2rem 1rem;
-    min-height: 40vh;
   }
 
-  .stat-amount {
-    font-size: 5rem;
-  }
-
-  .stat-intro-section {
-    font-size: 1.6rem;
-  }
-
-  .stat-description-section {
-    font-size: 1.4rem;
-    flex-direction: column;
-    align-items: center;
-    gap: 0.8rem;
+  .content-section {
+    padding: 1.5rem 1rem;
   }
 
   .checklist-grid,
@@ -1159,59 +1483,478 @@ export default {
   .checklist-grid.has-expanded-2,
   .checklist-grid.has-expanded-3,
   .checklist-grid.has-expanded-4 {
-    grid-template-columns: 1fr 1fr 1fr 1fr;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    margin-top: 1.5rem;
   }
 
   .checklist-card {
-    height: 220px;
-    min-height: 220px;
-    max-height: 220px;
-    padding: 1.5rem;
+    width: 100%;
+    height: auto;
+    min-height: auto;
+    max-height: none;
+    padding: 1.25rem;
+    margin-bottom: 0;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
   }
 
-  .checklist-content {
-    max-height: calc(220px - 130px);
+  .checklist-card.expanded {
+    box-shadow: 0 4px 20px rgba(59, 130, 246, 0.15);
+    border-color: #3b82f6;
+  }
+
+  .checklist-card.completed {
+    box-shadow: 0 4px 20px rgba(34, 197, 94, 0.15);
+    border-color: #22c55e;
+  }
+
+  .checklist-header {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    text-align: left;
+    padding: 1rem;
+    margin-bottom: 0.75rem;
+    background: #f8fafc;
+    border-radius: 12px;
+    cursor: pointer;
+  }
+
+  .checklist-header:hover {
+    background: #f1f5f9;
+  }
+
+  .step-number {
+    width: 48px;
+    height: 48px;
+    font-size: 1.3rem;
+    font-weight: 700;
+    flex-shrink: 0;
+    margin-right: 1rem;
   }
 
   .step-title {
     font-size: 1.1rem;
+    font-weight: 600;
+    line-height: 1.3;
+    flex: 1;
+    text-align: left;
+    margin: 0;
+    color: #1e293b;
   }
 
-  .step-number {
-    width: 40px;
-    height: 40px;
+  .expand-icon {
+    flex-shrink: 0;
+    margin-left: 1rem;
     font-size: 1.2rem;
+    color: #64748b;
+    transition: transform 0.2s ease;
+  }
+
+  .checklist-card.expanded .expand-icon {
+    transform: rotate(180deg);
+  }
+
+  .card-progress {
+    margin: 0.75rem 0;
+  }
+
+  .progress-bar {
+    height: 6px;
+    background: #e2e8f0;
+    border-radius: 3px;
+    overflow: hidden;
+  }
+
+  .progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #3b82f6, #1d4ed8);
+    border-radius: 3px;
+    transition: width 0.3s ease;
+  }
+
+  .checklist-card.completed .progress-fill {
+    background: linear-gradient(90deg, #22c55e, #16a34a);
+  }
+
+  .checklist-content {
+    max-height: none;
+    overflow: visible;
+    padding: 0;
+  }
+
+  .todo-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+
+  .todo-item {
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    padding: 0;
+    margin: 0;
+    overflow: hidden;
+    transition: all 0.2s ease;
+  }
+
+  .todo-item:hover {
+    border-color: #cbd5e1;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  }
+
+  .todo-item.completed {
+    background: #f0fdf4;
+    border-color: #bbf7d0;
+  }
+
+  .todo-checkbox {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.75rem;
+    padding: 1rem;
+    cursor: pointer;
+    min-height: auto;
+  }
+
+  .todo-checkbox input[type='checkbox'] {
+    margin: 0;
+    width: 20px;
+    height: 20px;
+    flex-shrink: 0;
+    margin-top: 2px;
+  }
+
+  .checkmark {
+    width: 20px;
+    height: 20px;
+    flex-shrink: 0;
+    margin-top: 2px;
+  }
+
+  .todo-content {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .todo-text {
+    font-size: 0.95rem;
+    line-height: 1.5;
+    color: #374151;
+    margin: 0 0 0.5rem 0;
+    word-wrap: break-word;
+  }
+
+  .todo-item.completed .todo-text {
+    color: #059669;
+    text-decoration: line-through;
+  }
+
+  .todo-links {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    margin-top: 0.75rem;
+  }
+
+  .todo-link {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    padding: 0.5rem 0.75rem;
+    background: #f1f5f9;
+    color: #3b82f6;
+    text-decoration: none;
+    border-radius: 6px;
+    font-size: 0.85rem;
+    font-weight: 500;
+    transition: all 0.2s ease;
+    min-height: 44px;
+    text-align: center;
+  }
+
+  .todo-link:hover {
+    background: #e2e8f0;
+    color: #1d4ed8;
+  }
+
+  .progress-summary {
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
+    padding: 1.5rem;
+    margin: 1.5rem 0;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .progress-info {
+    width: 100%;
+  }
+
+  .progress-stats {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+    text-align: center;
+  }
+
+  .progress-text {
+    font-size: 1rem;
+    font-weight: 500;
+    color: #374151;
+    order: 1;
+  }
+
+  .overall-progress-bar {
+    width: 100%;
+    height: 8px;
+    background: #e2e8f0;
+    border-radius: 4px;
+    overflow: hidden;
+    order: 2;
+  }
+
+  .overall-progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #3b82f6, #1d4ed8);
+    border-radius: 4px;
+    transition: width 0.3s ease;
+  }
+
+  .progress-percentage {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #3b82f6;
+    order: 3;
+  }
+
+  .reset-section {
+    display: flex;
+    justify-content: center;
+    margin-top: 0.5rem;
+  }
+
+  .reset-button {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.75rem 1.25rem;
+    background: #f1f5f9;
+    color: #374151;
+    border: 1px solid #d1d5db;
+    border-radius: 8px;
+    font-size: 0.9rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    min-height: 44px;
+  }
+
+  .reset-button:hover:not(:disabled) {
+    background: #e2e8f0;
+    border-color: #9ca3af;
+  }
+
+  .reset-button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+
+  .modal-overlay {
+    padding: 1rem;
+  }
+
+  .modal-content {
+    width: 100%;
+    max-width: calc(100vw - 2rem);
+    margin: 0;
+    border-radius: 12px;
+  }
+
+  .modal-header {
+    padding: 1.5rem 1.5rem 1rem;
+  }
+
+  .modal-body {
+    padding: 0 1.5rem 1rem;
+  }
+
+  .modal-footer {
+    padding: 1rem 1.5rem 1.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+
+  .modal-button {
+    width: 100%;
+    padding: 0.875rem;
+    font-size: 1rem;
+    min-height: 50px;
+    border-radius: 8px;
+    font-weight: 600;
+  }
+
+  .modal-button.confirm {
+    order: 1;
+  }
+
+  .modal-button.cancel {
+    order: 2;
+  }
+
+  .stat-amount {
+    font-size: 4rem;
+  }
+
+  .stat-intro {
+    font-size: 1.4rem;
+  }
+
+  .stat-description {
+    font-size: 1.2rem;
+  }
+
+  .cta-title {
+    font-size: 1.8rem;
   }
 }
 
-@media (max-width: 580px) {
+/* Extra small screens */
+@media (max-width: 480px) {
+  .content-section {
+    padding: 1rem 0.75rem;
+  }
+
+  .hero-section {
+    padding: 1.5rem 0.75rem;
+  }
+
+  .hero-title {
+    font-size: 2rem;
+  }
+
+  .section-title {
+    font-size: 1.8rem;
+  }
+
+  .checklist-card {
+    padding: 1rem;
+    border-radius: 12px;
+  }
+
+  .checklist-header {
+    padding: 0.875rem;
+  }
+
+  .step-number {
+    width: 42px;
+    height: 42px;
+    font-size: 1.2rem;
+  }
+
+  .step-title {
+    font-size: 1rem;
+    line-height: 1.2;
+  }
+
+  .todo-checkbox {
+    padding: 0.875rem;
+  }
+
+  .todo-text {
+    font-size: 0.9rem;
+  }
+
+  .progress-summary {
+    padding: 1.25rem;
+    margin: 1rem 0;
+  }
+
+  .progress-text {
+    font-size: 0.95rem;
+  }
+
+  .progress-percentage {
+    font-size: 1.3rem;
+  }
+
+  .stat-amount {
+    font-size: 3rem;
+  }
+
+  .stat-intro {
+    font-size: 1.2rem;
+  }
+
+  .stat-description {
+    font-size: 1rem;
+  }
+}
+
+@media (min-width: 769px) and (max-width: 1024px) {
   .checklist-grid,
   .checklist-grid.has-expanded-1,
   .checklist-grid.has-expanded-2,
   .checklist-grid.has-expanded-3,
   .checklist-grid.has-expanded-4 {
     grid-template-columns: 1fr 1fr;
+    gap: 1rem;
   }
 
   .checklist-card {
-    height: 240px;
-    min-height: 240px;
-    max-height: 240px;
+    height: auto;
+    min-height: 350px;
+    max-height: none;
+  }
+}
+
+/* Tableau Container Styles */
+.tableau-container {
+  margin: 2rem 0;
+  padding: 1.5rem;
+  background: rgba(255, 255, 255, 0.9);
+  border-radius: 16px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  backdrop-filter: blur(10px);
+  width: 100%;
+}
+
+.tableauPlaceholder {
+  width: 100%;
+  min-height: 400px;
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+/* Let Tableau handle its own sizing - minimal CSS interference */
+.tableauViz {
+  border-radius: 8px;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .tableau-container {
+    margin: 1rem 0;
     padding: 1rem;
   }
 
-  .checklist-content {
-    max-height: calc(240px - 140px);
+  .tableauPlaceholder {
+    min-height: 300px;
   }
+}
 
-  .step-number {
-    width: 35px;
-    height: 35px;
-    font-size: 1rem;
-  }
-
-  .step-title {
-    font-size: 1rem;
+@media (max-width: 480px) {
+  .tableau-container {
+    padding: 0.75rem;
   }
 }
 </style>

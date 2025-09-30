@@ -26,10 +26,10 @@ export default {
       required: true,
     },
   },
-  emits: ['tab-change'], // Changed from 'tab-click' to 'tab-change'
+  emits: ['tab-change'],
   methods: {
     handleTabClick(tab) {
-      this.$emit('tab-change', tab.id) // Changed event name and emit tab.id instead of full tab object
+      this.$emit('tab-change', tab.id)
     },
   },
   computed: {
