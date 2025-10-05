@@ -1,3 +1,4 @@
+// Centralised router configuration powering JobDetective navigation
 import { createRouter, createWebHistory } from 'vue-router'
 import HomeView from '../views/HomeView.vue'
 import AnalyzeView from '../views/AnalyzeView.vue'
@@ -5,6 +6,7 @@ import ReportView from '../views/ReportView.vue'
 import HubView from '../views/HubView.vue'
 import AboutView from '../views/AboutView.vue'
 
+// Each route maps to a top-level view and optional props
 const routes = [
   {
     path: '/',
@@ -18,10 +20,11 @@ const routes = [
   },
   {
     path: '/report/:reportData?',
-    name: 'Report',
+    name: 'report',
     component: ReportView,
-    // Make reportData optional - converts URL param JSON string to object if present
-    props: (route) => {
+
+  // Optional reportData param allows direct linking to saved analyses
+  props: (route) => {
       if (route.params.reportData) {
         try {
           return { reportData: JSON.parse(route.params.reportData) }

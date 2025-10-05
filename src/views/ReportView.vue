@@ -1,4 +1,5 @@
 <template>
+  <!-- Displays the latest scam analysis report with follow-up actions -->
   <div class="report-container">
     <div class="report-content">
       <!-- Empty State - No Report Available -->
@@ -6,20 +7,20 @@
         <div class="empty-icon">📋</div>
         <h2 class="empty-title">No Report Available</h2>
         <p class="empty-message">
-          You haven't analyzed any job listings yet. Start by analyzing a job to see your report
+          You haven't analysed any job listings yet. Start by analysing a job to see your report
           here.
         </p>
-        <BaseButton variant="primary" @click="goToAnalyze" size="large"> Analyze a Job </BaseButton>
+        <BaseButton variant="primary" @click="goToAnalyze" size="large"> Analyse a Job </BaseButton>
       </div>
 
       <!-- Report Content - When Report Exists -->
       <template v-else>
         <!-- Header with Back Button, Title, and Report Scam Button -->
         <div class="report-header">
-          <BaseButton variant="back" @click="goBack" size="medium"> ← Back to Analysis </BaseButton>
+          <BaseButton variant="back" @click="goBack" size="medium"> ← Back to Analyse </BaseButton>
           <h1 class="report-title">Job Analysis Report</h1>
           <BaseButton variant="danger" @click="reportScam" size="medium">
-            <span class="button-icon">⚠️</span> Report Scam
+            <span class="button-icon">⚠️</span> Report This Ad
           </BaseButton>
         </div>
 
@@ -192,6 +193,76 @@
       </template>
     </div>
 
+    <!-- Report Scam Modal -->
+    <div v-if="showReportModal" class="modal-overlay" @click="closeReportModal">
+      <div class="report-modal" @click.stop>
+        <div class="report-modal-header">
+          <h3>Report Scam</h3>
+          <button
+            class="modal-close"
+            @click="closeReportModal"
+            :disabled="isSubmittingReport || submissionSuccess"
+          >
+            <i class="fas fa-times"></i>
+          </button>
+        </div>
+        <div class="report-modal-body">
+          <div v-if="submissionInput?.method === 'file'" class="submission-meta">
+            <p class="meta-label">Submission method</p>
+            <p class="meta-value">{{ submissionInput.displayText }}</p>
+          </div>
+          <div v-else-if="submissionInput?.method === 'url'" class="submission-meta">
+            <p class="meta-label">Submission method</p>
+            <p class="meta-value">URL analysis</p>
+          </div>
+          <div v-else-if="submissionInput?.method === 'text'" class="submission-meta">
+            <p class="meta-label">Submission method</p>
+            <p class="meta-value">Text analysis</p>
+          </div>
+          <div v-else class="submission-meta">
+            <p class="meta-label">Submission method</p>
+            <p class="meta-value">Not captured — please provide all available information.</p>
+          </div>
+
+          <label class="modal-field">
+            <span>Job advertisement details (read only)</span>
+            <textarea v-model="reportForm.jobAdTextDisplay" rows="7" readonly></textarea>
+          </label>
+
+          <label class="consent-checkbox">
+            <input type="checkbox" v-model="consentGiven" />
+            <span>
+              I consent to the collection and use of this information for investigation and
+              informative purposes.
+            </span>
+          </label>
+
+          <p v-if="submissionError" class="modal-error">{{ submissionError }}</p>
+          <p v-if="submissionSuccess" class="modal-success">
+            Thank you! Your report has been submitted successfully.
+          </p>
+        </div>
+        <div class="report-modal-footer">
+          <BaseButton
+            variant="outline"
+            @click="closeReportModal"
+            :disabled="isSubmittingReport && !submissionSuccess"
+          >
+            Cancel
+          </BaseButton>
+          <BaseButton
+            variant="primary"
+            @click="submitReport"
+            :disabled="isSubmittingReport || submissionSuccess"
+          >
+            <span v-if="isSubmittingReport">Submitting…</span>
+            <span v-else-if="submissionSuccess">Submitted</span>
+            <span v-else>Submit Report</span>
+          </BaseButton>
+        </div>
+      </div>
+    </div>
+
     <!-- Clear Report Confirmation Modal -->
     <div v-if="showClearConfirmation" class="modal-overlay" @click="showClearConfirmation = false">
       <div class="modal-content" @click.stop>
@@ -215,9 +286,11 @@
 </template>
 
 <script>
+// Manages persisted report data, renders risk insights, and handles follow-up actions
 import BaseButton from '@/components/BaseButton.vue'
 
 const REPORT_STORAGE_KEY = 'jobdetective_latest_report'
+const SUBMISSION_INPUT_STORAGE_KEY = 'jobdetective_latest_submission_input'
 
 export default {
   name: 'ReportView',
@@ -235,6 +308,17 @@ export default {
     return {
       currentReport: null,
       showClearConfirmation: false,
+      submissionInput: null,
+      showReportModal: false,
+      consentGiven: false,
+      reportForm: {
+        jobAdTextDisplay: '',
+        jobAdTextRaw: '',
+        aiReportText: '',
+      },
+      isSubmittingReport: false,
+      submissionError: '',
+      submissionSuccess: false,
     }
   },
   computed: {
@@ -266,6 +350,7 @@ export default {
       // Priority 2: Load from localStorage if no route params
       this.loadReportFromStorage()
     }
+    this.loadSubmissionInput()
   },
   methods: {
     saveReportToStorage(report) {
@@ -290,6 +375,17 @@ export default {
         this.currentReport = null
       }
     },
+    loadSubmissionInput() {
+      try {
+        const storedInput = localStorage.getItem(SUBMISSION_INPUT_STORAGE_KEY)
+        if (storedInput) {
+          this.submissionInput = JSON.parse(storedInput)
+        }
+      } catch (error) {
+        console.error('Failed to load submission input:', error)
+        this.submissionInput = null
+      }
+    },
     goBack() {
       this.$router.push({ name: 'analyse' })
     },
@@ -302,7 +398,9 @@ export default {
     clearReport() {
       try {
         localStorage.removeItem(REPORT_STORAGE_KEY)
+        localStorage.removeItem(SUBMISSION_INPUT_STORAGE_KEY)
         this.currentReport = null
+        this.submissionInput = null
         this.showClearConfirmation = false
         console.log('Report cleared from localStorage')
       } catch (error) {
@@ -365,9 +463,161 @@ export default {
         return '⚠️'
       }
     },
+    resetReportModalState() {
+      this.consentGiven = false
+      this.isSubmittingReport = false
+      this.submissionError = ''
+      this.submissionSuccess = false
+      this.reportForm = {
+        jobAdTextDisplay: '',
+        jobAdTextRaw: '',
+        aiReportText: '',
+      }
+    },
+    closeReportModal() {
+      if (this.isSubmittingReport && !this.submissionSuccess) {
+        return
+      }
+      this.showReportModal = false
+      this.resetReportModalState()
+    },
     reportScam() {
-      // TODO: Implement report scam functionality
-      console.log('Report scam clicked')
+      if (!this.hasReport) {
+        return
+      }
+      this.prepareReportForm()
+      this.showReportModal = true
+    },
+    prepareReportForm() {
+      this.resetReportModalState()
+
+      const rawJobAd = (this.submissionInput?.jobAdTextRaw || '').trim()
+      const displayText = (this.submissionInput?.jobAdTextDisplay || '').trim()
+
+      this.reportForm.jobAdTextRaw = rawJobAd
+
+      if (displayText) {
+        this.reportForm.jobAdTextDisplay = displayText
+      } else if (rawJobAd) {
+        this.reportForm.jobAdTextDisplay = rawJobAd
+      } else if (this.submissionInput?.method === 'file') {
+        this.reportForm.jobAdTextDisplay =
+          'Text could not be extracted from the uploaded file. Please describe the job ad details for investigators.'
+      } else {
+        this.reportForm.jobAdTextDisplay =
+          'Job details were not captured. Please provide the job advertisement text before submitting.'
+      }
+
+      this.reportForm.aiReportText = this.currentReport ? JSON.stringify(this.currentReport) : ''
+    },
+    async submitReport() {
+      if (!this.consentGiven) {
+        this.submissionError = 'You must provide consent before submitting this report.'
+        return
+      }
+
+      if (!this.reportForm.jobAdTextRaw.trim()) {
+        this.submissionError = 'Job advertisement details are required.'
+        return
+      }
+
+      this.isSubmittingReport = true
+      this.submissionError = ''
+
+      try {
+        const endpoint = import.meta.env.VITE_REPORT_SCAM_API_GATEWAY
+        if (!endpoint) {
+          throw new Error('Report API endpoint is not configured.')
+        }
+
+        const payload = {
+          jobAdText: this.reportForm.jobAdTextRaw.trim(),
+          aiReportText:
+            typeof this.reportForm.aiReportText === 'string' ? this.reportForm.aiReportText : '',
+        }
+
+        const response = await fetch(endpoint, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(payload),
+        })
+
+        const responseData = await response.json()
+
+        // Handle different status codes from Lambda
+        switch (response.status) {
+          case 200:
+            // Success
+            this.submissionSuccess = true
+            this.consentGiven = false
+            console.log('Report submitted successfully:', responseData)
+            break
+
+          case 400:
+            // Bad Request - Handle validation errors
+            if (responseData.error === 'jobAdText is required') {
+              this.submissionError = 'Job advertisement text is required to submit a report.'
+            } else if (responseData.error === 'jobAdText exceeds maximum length') {
+              this.submissionError = `Job advertisement text is too long (${responseData.currentLength} characters). Maximum allowed is ${responseData.maxLength} characters.`
+            } else if (responseData.error === 'aiReportText exceeds maximum length') {
+              this.submissionError = `Report data is too large (${responseData.currentLength} characters). Maximum allowed is ${responseData.maxLength} characters.`
+            } else if (responseData.error === 'jobAdText is too short') {
+              this.submissionError = `Job advertisement text is too short (${responseData.currentLength} characters). Minimum required is ${responseData.minLength} characters.`
+            } else if (responseData.error === 'Invalid JSON in request body') {
+              this.submissionError =
+                'There was an error processing your submission. Please try again.'
+            } else {
+              this.submissionError =
+                responseData.error ||
+                'Invalid submission data. Please check your input and try again.'
+            }
+            break
+
+          case 409:
+            // Conflict - Duplicate submission
+            this.submissionError =
+              'This job advertisement has already been reported. Thank you for helping to keep the community safe!'
+            console.log('Duplicate submission detected:', responseData.existing_submission_id)
+            break
+
+          case 500:
+            // Internal Server Error
+            if (responseData.error === 'Database error') {
+              this.submissionError =
+                'We are experiencing technical difficulties with our database. Please try again in a few minutes.'
+            } else {
+              this.submissionError =
+                'We encountered an internal server error. Please try again later or contact support if the problem persists.'
+            }
+            console.error('Server error:', responseData)
+            break
+
+          default:
+            // Unexpected status codes
+            this.submissionError = `Unexpected server response (${response.status}). Please try again later.`
+            console.error('Unexpected status code:', response.status, responseData)
+            break
+        }
+      } catch (error) {
+        // Network errors, JSON parsing errors, etc.
+        console.error('Failed to submit scam report:', error)
+
+        if (error.name === 'TypeError' && error.message.includes('fetch')) {
+          // Network error
+          this.submissionError =
+            'Unable to connect to our servers. Please check your internet connection and try again.'
+        } else if (error.message === 'Report API endpoint is not configured.') {
+          this.submissionError =
+            'Report submission is temporarily unavailable. Please try again later.'
+        } else {
+          this.submissionError =
+            'We could not submit your report right now. Please try again later.'
+        }
+      } finally {
+        this.isSubmittingReport = false
+      }
     },
   },
 }
@@ -813,104 +1063,254 @@ export default {
   padding: 1rem;
 }
 
-.modal-content {
+.report-modal {
   background: #ffffff;
-  border-radius: 12px;
+  border-radius: 16px;
   box-shadow:
     0 20px 25px -5px rgba(0, 0, 0, 0.1),
     0 10px 10px -5px rgba(0, 0, 0, 0.04);
-  max-width: 400px;
+  max-width: 720px;
   width: 100%;
   max-height: 90vh;
+  overflow-y: auto;
+  padding-bottom: 1rem;
+}
+
+.report-modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1.5rem 1.5rem 1rem;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.report-modal-header h3 {
+  margin: 0;
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #1f2937;
+}
+
+.report-modal-body {
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.modal-intro {
+  margin: 0;
+  color: #475569;
+  line-height: 1.6;
+  font-size: 0.95rem;
+}
+
+.submission-meta {
+  background: #f8fafc;
+  border-radius: 12px;
+  padding: 1rem 1.25rem;
+  border: 1px solid #e2e8f0;
+}
+
+.meta-label {
+  margin: 0;
+  font-size: 0.85rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: #64748b;
+}
+
+.meta-value {
+  margin: 0.25rem 0 0;
+  color: #1e293b;
+  font-weight: 500;
+  word-break: break-word;
+}
+
+.modal-field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.modal-field span {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: #1f2937;
+}
+
+.modal-field textarea {
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  padding: 1rem;
+  font-size: 0.95rem;
+  line-height: 1.5;
+  color: #1f2937;
+  background: #ffffff;
+  resize: vertical;
+  min-height: 150px;
+}
+
+.modal-field textarea:read-only {
+  background: #f8fafc;
+  color: #475569;
+}
+
+.modal-field textarea:focus {
+  outline: none;
+  border-color: #3b82f6;
+  box-shadow:
+    0 0 0 3px rgba(59, 130, 246, 0.1),
+    0 6px 12px -2px rgba(59, 130, 246, 0.15);
+}
+
+.consent-checkbox {
+  display: flex;
+  gap: 0.75rem;
+  align-items: flex-start;
+  font-size: 0.9rem;
+  line-height: 1.5;
+  color: #475569;
+}
+
+.consent-checkbox input {
+  margin-top: 0.25rem;
+}
+
+.modal-error {
+  color: #dc2626;
+  font-weight: 600;
+  font-size: 0.9rem;
+  margin: 0;
+}
+
+.modal-success {
+  color: #16a34a;
+  font-weight: 600;
+  font-size: 0.9rem;
+  margin: 0;
+}
+
+.report-modal-footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.75rem;
+  padding: 1rem 1.5rem 1.5rem;
+  border-top: 1px solid #e2e8f0;
+}
+
+.report-modal-footer .base-button {
+  min-width: 140px;
+}
+
+/* Clear Report Modal */
+.modal-content {
+  background: #ffffff;
+  border-radius: 16px;
+  max-width: 420px;
+  width: 100%;
+  box-shadow:
+    0 20px 25px -5px rgba(0, 0, 0, 0.1),
+    0 10px 10px -5px rgba(0, 0, 0, 0.04);
   overflow: hidden;
 }
 
 .modal-header {
-  padding: 1.5rem 1.5rem 1rem 1.5rem;
-  border-bottom: 1px solid #e5e7eb;
   display: flex;
   align-items: center;
   justify-content: space-between;
+  padding: 1.25rem 1.5rem;
+  border-bottom: 1px solid #e2e8f0;
 }
 
 .modal-title {
-  font-size: 1.25rem;
-  font-weight: 600;
-  color: #111827;
   margin: 0;
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: #1f2937;
 }
 
 .modal-close {
-  background: none;
   border: none;
-  color: #6b7280;
+  background: transparent;
   cursor: pointer;
-  padding: 0.25rem;
-  border-radius: 4px;
-  transition: all 0.2s ease;
-  font-size: 1.25rem;
+  font-size: 1.1rem;
+  color: #64748b;
+  transition: color 0.2s ease;
 }
 
 .modal-close:hover {
-  color: #374151;
-  background: #f3f4f6;
+  color: #1f2937;
 }
 
 .modal-body {
   padding: 1.5rem;
-}
-
-.modal-body p {
-  margin: 0 0 1rem 0;
-  color: #374151;
-  line-height: 1.5;
+  color: #475569;
+  line-height: 1.6;
 }
 
 .modal-warning {
   color: #dc2626;
-  font-weight: 500;
-  font-size: 0.9rem;
+  font-weight: 600;
+  margin-top: 0.75rem;
 }
 
 .modal-footer {
-  padding: 1rem 1.5rem 1.5rem 1.5rem;
   display: flex;
-  gap: 0.75rem;
   justify-content: flex-end;
+  gap: 0.75rem;
+  padding: 1rem 1.5rem 1.5rem;
+  background: #f8fafc;
+  border-top: 1px solid #e2e8f0;
 }
 
 .modal-button {
+  border: none;
+  border-radius: 10px;
   padding: 0.75rem 1.5rem;
-  border-radius: 8px;
-  font-size: 0.9rem;
-  font-weight: 500;
+  font-weight: 600;
+  font-size: 0.95rem;
   cursor: pointer;
-  transition: all 0.2s ease;
-  border: 1px solid transparent;
+  transition:
+    transform 0.15s ease,
+    box-shadow 0.15s ease,
+    background 0.15s ease;
 }
 
 .modal-button.cancel {
-  background: #ffffff;
-  border-color: #d1d5db;
-  color: #374151;
+  background: #e2e8f0;
+  color: #475569;
 }
 
 .modal-button.cancel:hover {
-  background: #f9fafb;
-  border-color: #9ca3af;
+  background: #d9e2ec;
+  transform: translateY(-1px);
 }
 
 .modal-button.confirm {
-  background: #dc2626;
+  background: #ef4444;
   color: #ffffff;
 }
 
 .modal-button.confirm:hover {
-  background: #b91c1c;
+  background: #dc2626;
   transform: translateY(-1px);
-  box-shadow:
-    0 4px 6px -1px rgba(0, 0, 0, 0.1),
-    0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  box-shadow: 0 6px 12px -4px rgba(220, 38, 38, 0.4);
+}
+
+@media (max-width: 640px) {
+  .report-modal {
+    max-width: 95%;
+  }
+
+  .report-modal-footer {
+    flex-direction: column;
+  }
+
+  .report-modal-footer .base-button {
+    width: 100%;
+  }
 }
 
 /* Empty State Styles */

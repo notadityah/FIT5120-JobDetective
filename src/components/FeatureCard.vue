@@ -1,4 +1,5 @@
 <template>
+  <!-- Versatile card layout for features, steps, scam highlights, and news items -->
   <div class="feature-card" :class="cardType">
     <div v-if="icon || number" class="card-header">
       <div v-if="number" class="step-number" :class="{ 'main-step': isMainStep }">
@@ -40,6 +41,7 @@
 </template>
 
 <script>
+// Exposes props/emits for reusable feature card variations across the app
 export default {
   name: 'FeatureCard',
   props: {

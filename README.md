@@ -120,6 +120,12 @@ fit5120-jobdetective/
 │   │   │   ├── IconEcosystem.vue     # Ecosystem icon
 │   │   │   ├── IconSupport.vue       # Support icon
 │   │   │   └── IconTooling.vue       # Tooling icon
+│   │   ├── hub/                      # Awareness hub section modules
+│   │   │   ├── CallToActionSection.vue # Analyse CTA panel
+│   │   │   ├── ChecklistSection.vue  # Interactive safety checklist
+│   │   │   ├── NewsSection.vue       # News carousel wrapper
+│   │   │   ├── ScamReportsSection.vue # Recent scam submissions feed
+│   │   │   └── StatisticsSection.vue # Tableau statistics wrapper
 │   │   ├── BaseButton.vue            # Multi-variant button component
 │   │   ├── ErrorDisplay.vue          # Error handling component
 │   │   ├── FeatureCard.vue           # Feature showcase cards

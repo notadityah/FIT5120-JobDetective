@@ -1,4 +1,5 @@
 <template>
+  <!-- Reusable button component with styling variants and loading state -->
   <button :class="buttonClasses" :disabled="disabled || loading" @click="handleClick">
     <div v-if="loading" class="spinner-small"></div>
     <slot v-else></slot>
@@ -6,6 +7,7 @@
 </template>
 
 <script setup>
+// Provides configurable button styles and emits click events when enabled
 import { computed } from 'vue'
 
 const props = defineProps({

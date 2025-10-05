@@ -1,4 +1,5 @@
 <template>
+  <!-- Shared heading block for major page sections -->
   <div class="section-header">
     <h2 class="section-title">{{ title }}</h2>
     <p v-if="subtitle" class="section-subtitle">{{ subtitle }}</p>
@@ -6,6 +7,7 @@
 </template>
 
 <script>
+// Simple props-driven wrapper for displaying titles with optional subtitles
 export default {
   name: 'SectionHeader',
   props: {

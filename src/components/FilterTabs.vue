@@ -1,4 +1,5 @@
 <template>
+  <!-- Horizontal button group used to switch filtered content views -->
   <div class="filter-tabs">
     <button
       v-for="filter in filters"
@@ -13,6 +14,7 @@
 </template>
 
 <script>
+// Emits filter-change events for whichever tab the user selects
 export default {
   name: 'FilterTabs',
   props: {

@@ -1,4 +1,5 @@
 <template>
+  <!-- Sitewide footer with navigation links and attribution -->
   <footer class="app-footer">
     <div class="footer-container">
       <!-- Main Footer Content -->
@@ -103,6 +104,7 @@
 </template>
 
 <script>
+// Basic footer wrapper exposing only a named component for layout use
 export default {
   name: 'AppFooter',
 }

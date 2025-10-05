@@ -1,4 +1,5 @@
 <template>
+  <!-- Carousel that fetches, caches, and displays the latest scam-related news articles -->
   <div class="news-carousel">
     <div class="carousel-header">
       <div class="header-content">
@@ -134,6 +135,7 @@
 </template>
 
 <script>
+// Manages news fetching, caching, and carousel navigation with responsive behaviour
 import { ref, onMounted, onUnmounted, computed, watch } from 'vue'
 
 export default {

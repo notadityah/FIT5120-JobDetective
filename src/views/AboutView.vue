@@ -1,4 +1,5 @@
 <template>
+  <!-- Static about page detailing JobDetective's mission and team -->
   <div class="about-container">
     <h1>About JobDetective</h1>
 
@@ -39,6 +40,7 @@
 </template>
 
 <script>
+// Identifies the about view for routing and layout integration
 export default {
   name: 'AboutView',
 }
