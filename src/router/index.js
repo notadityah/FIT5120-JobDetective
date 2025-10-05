@@ -23,8 +23,8 @@ const routes = [
     name: 'report',
     component: ReportView,
 
-  // Optional reportData param allows direct linking to saved analyses
-  props: (route) => {
+    // Optional reportData param allows direct linking to saved analyses
+    props: (route) => {
       if (route.params.reportData) {
         try {
           return { reportData: JSON.parse(route.params.reportData) }
