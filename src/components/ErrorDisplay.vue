@@ -1,4 +1,5 @@
 <template>
+  <!-- Unified error presentation block with optional retry control -->
   <div class="error-container" :class="containerClasses">
     <div v-if="showIcon" class="error-icon">{{ icon }}</div>
     <div class="error-text">{{ message }}</div>
@@ -10,6 +11,7 @@
 </template>
 
 <script setup>
+// Maps prop-driven variants to formatted error content and retry handling
 import { computed } from 'vue'
 import BaseButton from './BaseButton.vue'
 

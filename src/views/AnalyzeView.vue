@@ -1,4 +1,5 @@
 <template>
+  <!-- Interactive analysis workflow for uploading files, URLs, or text -->
   <div class="analyze-container">
     <div class="analyze-section">
       <div class="content-wrapper">
@@ -248,9 +249,13 @@
 </template>
 
 <script>
+// Coordinates input methods, validations, and API calls for scam analysis
 import TabNavigation from '@/components/TabNavigation.vue'
 import BaseButton from '@/components/BaseButton.vue'
 import LoadingSpinner from '@/components/LoadingSpinner.vue'
+
+const REPORT_STORAGE_KEY = 'jobdetective_latest_report'
+const SUBMISSION_INPUT_STORAGE_KEY = 'jobdetective_latest_submission_input'
 
 export default {
   name: 'AnalyzeView',
@@ -377,6 +382,34 @@ export default {
         reader.readAsDataURL(file)
       })
     },
+    // Save report to localStorage
+    saveReportToStorage(report) {
+      try {
+        const reportWithTimestamp = {
+          ...report,
+          timestamp: new Date().toISOString(),
+        }
+        localStorage.setItem(REPORT_STORAGE_KEY, JSON.stringify(reportWithTimestamp))
+      } catch (error) {
+        console.error('Failed to save report to localStorage:', error)
+      }
+    },
+    // Store submission input in localStorage
+    storeSubmissionInput(input) {
+      try {
+        const payload = {
+          method: input.method,
+          displayText: input.displayText || '',
+          jobAdTextRaw: input.jobAdTextRaw || '',
+          jobAdTextDisplay: input.jobAdTextDisplay || '',
+          metadata: input.metadata || null,
+          timestamp: new Date().toISOString(),
+        }
+        localStorage.setItem(SUBMISSION_INPUT_STORAGE_KEY, JSON.stringify(payload))
+      } catch (error) {
+        console.error('Failed to save submission input to localStorage:', error)
+      }
+    },
     // Analyze uploaded file
     async analyzeFile() {
       if (!this.selectedFile) {
@@ -423,11 +456,29 @@ export default {
 
         // Check if analysis was successful
         if (result.analysis && !result.analysis.error) {
-          // Navigate to report page with analysis results
-          this.$router.push({
-            name: 'Report',
-            params: { reportData: JSON.stringify(result.analysis) },
+          const extractedText = (result.extractedText || '').trim()
+          const displayPreview =
+            extractedText ||
+            'We could not extract text from this image automatically. Please add details when reporting.'
+
+          this.storeSubmissionInput({
+            method: 'file',
+            displayText: `File uploaded: ${this.selectedFile.name} (${this.selectedFile.type || 'unknown'}, ${(
+              this.selectedFile.size / 1024
+            ).toFixed(1)} KB)`,
+            jobAdTextRaw: extractedText,
+            jobAdTextDisplay: displayPreview,
+            metadata: {
+              fileName: this.selectedFile.name,
+              fileType: this.selectedFile.type,
+              fileSize: this.selectedFile.size,
+            },
           })
+          // Save to localStorage
+          this.saveReportToStorage(result.analysis)
+
+          // Navigate to report page - ReportView will load from localStorage
+          this.$router.push({ name: 'report' })
         } else {
           // Handle analysis errors
           throw new Error(result.analysis?.error || 'Analysis failed')
@@ -499,10 +550,25 @@ export default {
         }
 
         if (result.analysis && !result.analysis.error) {
-          this.$router.push({
-            name: 'Report',
-            params: { reportData: JSON.stringify(result.analysis) },
+          const jobData = result.data || {}
+          const extractedContent = (jobData.content || result.extractedContent || '').trim()
+          const combinedDisplay = [jobData.title, jobData.description, extractedContent]
+            .filter(Boolean)
+            .join('\n\n')
+            .trim()
+
+          this.storeSubmissionInput({
+            method: 'url',
+            displayText: jobData.title || this.urlInput.trim(),
+            jobAdTextRaw: extractedContent || jobData.description || this.urlInput.trim(),
+            jobAdTextDisplay:
+              combinedDisplay ||
+              'No job details were extracted from this link. Please summarise the job advertisement before reporting.',
           })
+          // Save to localStorage
+          this.saveReportToStorage(result.analysis)
+
+          this.$router.push({ name: 'report' })
         } else {
           throw new Error(result.analysis?.error || 'Unable to analyse the provided URL')
         }
@@ -552,11 +618,18 @@ export default {
 
         // Check if analysis was successful
         if (result.analysis && !result.analysis.error) {
-          // Navigate to report page with analysis results
-          this.$router.push({
-            name: 'Report',
-            params: { reportData: JSON.stringify(result.analysis) },
+          const cleanedText = this.textInput.trim()
+          this.storeSubmissionInput({
+            method: 'text',
+            displayText: cleanedText,
+            jobAdTextRaw: cleanedText,
+            jobAdTextDisplay: cleanedText,
           })
+          // Save to localStorage
+          this.saveReportToStorage(result.analysis)
+
+          // Navigate to report page - ReportView will load from localStorage
+          this.$router.push({ name: 'report' })
         } else {
           // Handle analysis errors
           throw new Error(result.analysis?.error || 'Unable to analyse the provided text')

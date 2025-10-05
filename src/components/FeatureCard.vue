@@ -1,4 +1,5 @@
 <template>
+  <!-- Versatile card layout for features, steps, scam highlights, and news items -->
   <div class="feature-card" :class="cardType">
     <div v-if="icon || number" class="card-header">
       <div v-if="number" class="step-number" :class="{ 'main-step': isMainStep }">
@@ -40,6 +41,7 @@
 </template>
 
 <script>
+// Exposes props/emits for reusable feature card variations across the app
 export default {
   name: 'FeatureCard',
   props: {
@@ -106,17 +108,8 @@ export default {
   box-shadow:
     0 8px 25px rgba(0, 0, 0, 0.1),
     0 4px 12px rgba(0, 0, 0, 0.05);
-  transition: all 0.3s ease;
   position: relative;
   color: #1a1a1a;
-}
-
-.feature-card:hover {
-  transform: translateY(-8px) scale(1.02);
-  box-shadow:
-    0 15px 35px rgba(0, 0, 0, 0.15),
-    0 8px 20px rgba(0, 0, 0, 0.1);
-  border-color: #3b82f6;
 }
 
 /* Card type variants with distinct styling */
@@ -128,10 +121,6 @@ export default {
 .feature-card.news {
   background: #f8fafc;
   border-color: #cbd5e1;
-}
-
-.feature-card.news:hover {
-  border-color: #64748b;
 }
 
 .feature-card.step {
@@ -302,28 +291,6 @@ export default {
   border-color: #2563eb;
   transform: translateY(-1px);
   box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
-}
-
-/* Dynamic nth-child hover effects for visual variety */
-.feature-card:nth-child(1):hover {
-  border-color: #3b82f6;
-  box-shadow:
-    0 15px 35px rgba(59, 130, 246, 0.15),
-    0 8px 20px rgba(59, 130, 246, 0.1);
-}
-
-.feature-card:nth-child(2):hover {
-  border-color: #f59e0b;
-  box-shadow:
-    0 15px 35px rgba(245, 158, 11, 0.15),
-    0 8px 20px rgba(245, 158, 11, 0.1);
-}
-
-.feature-card:nth-child(3):hover {
-  border-color: #8b5cf6;
-  box-shadow:
-    0 15px 35px rgba(139, 92, 246, 0.15),
-    0 8px 20px rgba(139, 92, 246, 0.1);
 }
 
 /* Responsive design breakpoints */

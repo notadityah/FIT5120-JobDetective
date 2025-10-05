@@ -1,4 +1,5 @@
 <template>
+  <!-- Landing page introducing JobDetective features and live scam statistics -->
   <div class="home-cyber-container">
     <section class="cyber-hero-main">
       <div class="cyber-hero-illustration-col">
@@ -44,7 +45,7 @@
         />
         <FeatureCard
           icon="🛡️"
-          title="Smart Decisions, Your Way"
+          title="Make Smarter Decisions"
           description="Learn how to verify jobs, protect your identity, and make informed choices - no matter your tech skills or background."
         />
       </div>
@@ -113,6 +114,7 @@
 </template>
 
 <script setup>
+// Fetches scam statistics and orchestrates hero + feature sections on the homepage
 import { ref, onMounted, computed } from 'vue'
 import FeatureCard from '@/components/FeatureCard.vue'
 import BaseButton from '@/components/BaseButton.vue'

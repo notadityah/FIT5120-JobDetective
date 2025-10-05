@@ -1,4 +1,5 @@
 <template>
+  <!-- Reusable loading state display with configurable messaging -->
   <div class="loading-container" :class="containerClasses">
     <div v-if="showSpinner" class="spinner" :class="spinnerSize"></div>
     <div class="loading-text">{{ message }}</div>
@@ -7,6 +8,7 @@
 </template>
 
 <script setup>
+// Derives variant-specific classes and spinner sizing based on props
 import { computed } from 'vue'
 
 const props = defineProps({

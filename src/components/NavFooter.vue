@@ -1,4 +1,5 @@
 <template>
+  <!-- Sitewide footer with navigation links and attribution -->
   <footer class="app-footer">
     <div class="footer-container">
       <!-- Main Footer Content -->
@@ -17,6 +18,7 @@
             <ul class="section-links">
               <li><router-link to="/" class="footer-link">Home</router-link></li>
               <li><router-link to="/analyse" class="footer-link">Analyse Job</router-link></li>
+              <li><router-link to="/report" class="footer-link">My Report</router-link></li>
               <li><router-link to="/hub" class="footer-link">Awareness Hub</router-link></li>
             </ul>
           </div>
@@ -102,6 +104,7 @@
 </template>
 
 <script>
+// Basic footer wrapper exposing only a named component for layout use
 export default {
   name: 'AppFooter',
 }

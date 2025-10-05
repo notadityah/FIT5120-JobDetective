@@ -1,4 +1,5 @@
 <template>
+  <!-- Animated tab bar for switching between awareness hub sections -->
   <div class="tab-navigation">
     <button
       v-for="tab in tabs"
@@ -14,6 +15,7 @@
 </template>
 
 <script>
+// Emits tab-change events and animates underline to track active tab
 export default {
   name: 'TabNavigation',
   props: {
