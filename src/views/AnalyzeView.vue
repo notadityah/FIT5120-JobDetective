@@ -252,6 +252,8 @@ import TabNavigation from '@/components/TabNavigation.vue'
 import BaseButton from '@/components/BaseButton.vue'
 import LoadingSpinner from '@/components/LoadingSpinner.vue'
 
+const REPORT_STORAGE_KEY = 'jobdetective_latest_report'
+
 export default {
   name: 'AnalyzeView',
   components: {
@@ -377,6 +379,18 @@ export default {
         reader.readAsDataURL(file)
       })
     },
+    // Save report to localStorage
+    saveReportToStorage(report) {
+      try {
+        const reportWithTimestamp = {
+          ...report,
+          timestamp: new Date().toISOString(),
+        }
+        localStorage.setItem(REPORT_STORAGE_KEY, JSON.stringify(reportWithTimestamp))
+      } catch (error) {
+        console.error('Failed to save report to localStorage:', error)
+      }
+    },
     // Analyze uploaded file
     async analyzeFile() {
       if (!this.selectedFile) {
@@ -423,11 +437,11 @@ export default {
 
         // Check if analysis was successful
         if (result.analysis && !result.analysis.error) {
-          // Navigate to report page with analysis results
-          this.$router.push({
-            name: 'Report',
-            params: { reportData: JSON.stringify(result.analysis) },
-          })
+          // Save to localStorage
+          this.saveReportToStorage(result.analysis)
+
+          // Navigate to report page - ReportView will load from localStorage
+          this.$router.push({ name: 'Report' })
         } else {
           // Handle analysis errors
           throw new Error(result.analysis?.error || 'Analysis failed')
@@ -499,10 +513,11 @@ export default {
         }
 
         if (result.analysis && !result.analysis.error) {
-          this.$router.push({
-            name: 'Report',
-            params: { reportData: JSON.stringify(result.analysis) },
-          })
+          // Save to localStorage
+          this.saveReportToStorage(result.analysis)
+
+          // Navigate to report page - ReportView will load from localStorage
+          this.$router.push({ name: 'Report' })
         } else {
           throw new Error(result.analysis?.error || 'Unable to analyse the provided URL')
         }
@@ -552,11 +567,11 @@ export default {
 
         // Check if analysis was successful
         if (result.analysis && !result.analysis.error) {
-          // Navigate to report page with analysis results
-          this.$router.push({
-            name: 'Report',
-            params: { reportData: JSON.stringify(result.analysis) },
-          })
+          // Save to localStorage
+          this.saveReportToStorage(result.analysis)
+
+          // Navigate to report page - ReportView will load from localStorage
+          this.$router.push({ name: 'Report' })
         } else {
           // Handle analysis errors
           throw new Error(result.analysis?.error || 'Unable to analyse the provided text')

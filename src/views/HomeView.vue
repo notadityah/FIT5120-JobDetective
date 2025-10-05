@@ -44,7 +44,7 @@
         />
         <FeatureCard
           icon="🛡️"
-          title="Smart Decisions, Your Way"
+          title="Make Smarter Decisions"
           description="Learn how to verify jobs, protect your identity, and make informed choices - no matter your tech skills or background."
         />
       </div>

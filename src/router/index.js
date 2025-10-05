@@ -17,11 +17,21 @@ const routes = [
     component: AnalyzeView,
   },
   {
-    path: '/report/:reportData',
+    path: '/report/:reportData?',
     name: 'Report',
     component: ReportView,
-    // Complex prop parsing: converts URL param JSON string to object
-    props: (route) => ({ reportData: JSON.parse(route.params.reportData) }),
+    // Make reportData optional - converts URL param JSON string to object if present
+    props: (route) => {
+      if (route.params.reportData) {
+        try {
+          return { reportData: JSON.parse(route.params.reportData) }
+        } catch (error) {
+          console.error('Failed to parse reportData:', error)
+          return { reportData: null }
+        }
+      }
+      return { reportData: null }
+    },
   },
   {
     path: '/hub',

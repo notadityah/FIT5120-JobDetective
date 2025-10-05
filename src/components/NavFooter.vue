@@ -17,6 +17,7 @@
             <ul class="section-links">
               <li><router-link to="/" class="footer-link">Home</router-link></li>
               <li><router-link to="/analyse" class="footer-link">Analyse Job</router-link></li>
+              <li><router-link to="/report" class="footer-link">My Report</router-link></li>
               <li><router-link to="/hub" class="footer-link">Awareness Hub</router-link></li>
             </ul>
           </div>
