@@ -5,6 +5,7 @@ import AnalyzeView from '../views/AnalyzeView.vue'
 import ReportView from '../views/ReportView.vue'
 import HubView from '../views/HubView.vue'
 import AboutView from '../views/AboutView.vue'
+import SimView from '../views/SimView.vue'
 
 // Each route maps to a top-level view and optional props
 const routes = [
@@ -45,6 +46,11 @@ const routes = [
     path: '/aboutus',
     name: 'aboutus',
     component: AboutView,
+  },
+  {
+    path: '/simulation',
+    name: 'simulation',
+    component: SimView,
   },
 ]
 

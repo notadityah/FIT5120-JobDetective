@@ -33,6 +33,9 @@
           <li class="nav-item">
             <router-link class="nav-link" to="/hub">Awareness Hub</router-link>
           </li>
+          <li class="nav-item">
+            <router-link class="nav-link" to="/simulation">Scam Simulation</router-link>
+          </li>
         </ul>
       </div>
     </div>

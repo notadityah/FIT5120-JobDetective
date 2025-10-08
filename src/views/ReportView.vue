@@ -648,15 +648,11 @@ export default {
 
 .report-title {
   font-size: 3rem;
-  font-family: 'Bangers', 'Fredoka One', 'Arial Black', sans-serif;
-  font-weight: 900;
-  letter-spacing: 0.03em;
-  color: #2d3748;
-  line-height: 1.05;
-  text-shadow:
-    2px 2px 0 #fff,
-    4px 4px 0 #3b82f6,
-    0 0 12px rgba(59, 130, 246, 0.3);
+  font-weight: 700;
+  line-height: 1.1;
+  margin-bottom: 1.5rem;
+  letter-spacing: -0.02em;
+  color: #0f172a;
   margin: 0;
   flex: 1;
   text-align: center;
