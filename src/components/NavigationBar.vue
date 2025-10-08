@@ -1,5 +1,4 @@
 <template>
-  <!-- Primary navigation bar linking to core application pages -->
   <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
     <div class="container">
       <router-link class="navbar-brand" to="/">
@@ -43,7 +42,6 @@
 </template>
 
 <script>
-// Stateless wrapper exposing the navigation markup for layout inclusion
 export default {
   name: 'NavigationBar',
 }

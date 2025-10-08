@@ -1,116 +1,42 @@
 <template>
   <div class="scenario-container">
     <!-- Hero Section -->
-    <section class="hero-section">
-      <div class="hero-content">
-        <div class="hero-text">
-          <h1 class="hero-title">{{ scenarioData.title }}</h1>
-          <p class="hero-subtitle">{{ scenarioData.intro }}</p>
-
-          <!-- Back Button -->
-          <div class="hero-actions">
-            <button class="btn btn-outline-secondary" @click="goBack">
-              <i class="fas fa-arrow-left me-2"></i>Back to Simulations
-            </button>
-          </div>
-        </div>
-      </div>
-    </section>
+    <ScenarioHero :title="scenarioData.title" :intro="scenarioData.intro" @go-back="goBack" />
 
     <!-- Job Posting Section -->
     <section class="job-posting-section" v-if="scenarioData.jobPosting">
       <div class="container">
-        <!-- Instructions Alert -->
-        <div class="alert alert-info mb-4">
-          <i class="fas fa-info-circle me-2"></i>
-          Look for suspicious text and click on it to learn about red flags. Hover over text to see
-          clickable areas.
-        </div>
+        <!-- Enhanced Instructions Section -->
+        <ScenarioInstructions />
+
+        <!-- Progress Indicator -->
+        <ScenarioProgress
+          :discovered-count="discoveredCount"
+          :total-red-flags="totalRedFlags"
+          :progress-percentage="progressPercentage"
+        />
 
         <!-- Job Posting Mock-up -->
-        <div class="job-posting">
-          <div class="job-header">
-            <div class="job-title-section">
-              <h4>{{ scenarioData.jobPosting.title }}</h4>
-              <p class="company-name">{{ scenarioData.jobPosting.company }}</p>
-            </div>
-            <span class="remote-badge">{{ scenarioData.jobPosting.location }}</span>
-          </div>
-
-          <div class="job-details">
-            <div
-              class="job-description"
-              v-html="processedDescription"
-              @click="handleHighlightClick"
-            ></div>
-
-            <div class="job-requirements" v-if="scenarioData.jobPosting.requirements">
-              <h5>Requirements:</h5>
-              <ul>
-                <li
-                  v-for="req in scenarioData.jobPosting.requirements"
-                  :key="req"
-                  v-html="addClickableHighlights(req)"
-                  @click="handleHighlightClick"
-                ></li>
-              </ul>
-            </div>
-
-            <div class="job-responsibilities" v-if="scenarioData.jobPosting.responsibilities">
-              <h5>Responsibilities:</h5>
-              <ul>
-                <li
-                  v-for="resp in scenarioData.jobPosting.responsibilities"
-                  :key="resp"
-                  v-html="addClickableHighlights(resp)"
-                  @click="handleHighlightClick"
-                ></li>
-              </ul>
-            </div>
-
-            <div class="application-section">
-              <h5>How to Apply:</h5>
-              <p v-html="processedApplication" @click="handleHighlightClick"></p>
-            </div>
-          </div>
-        </div>
+        <JobPosting
+          :job-posting="scenarioData.jobPosting"
+          :processed-description="processedDescription"
+          :processed-application="processedApplication"
+          :add-clickable-highlights="addClickableHighlights"
+          @highlight-click="handleHighlightClick"
+        />
 
         <!-- Action Buttons -->
-        <div class="scenario-actions">
-          <div class="action-buttons">
-            <button
-              class="btn btn-primary btn-lg"
-              @click="revealRedFlags"
-              :disabled="redFlagsRevealed"
-            >
-              <i class="fas fa-flag me-2"></i>
-              {{ redFlagsRevealed ? 'Red Flags Revealed' : 'Reveal Red Flags' }}
-            </button>
-
-            <button class="btn btn-outline-primary btn-lg" @click="goBack">
-              <i class="fas fa-arrow-left me-2"></i>Try Another Scenario
-            </button>
-          </div>
-        </div>
+        <ScenarioActions
+          :red-flags-revealed="redFlagsRevealed"
+          @reveal-red-flags="revealRedFlags"
+          @go-back="goBack"
+        />
 
         <!-- Red Flags Explanation (shown after reveal) -->
-        <div v-if="redFlagsRevealed" class="red-flags-explanation">
-          <h3 class="explanation-title">
-            <i class="fas fa-exclamation-triangle me-2"></i>
-            Red Flags Identified
-          </h3>
-
-          <div class="red-flag-cards">
-            <div class="red-flag-card" v-for="flag in redFlagExplanations" :key="flag.type">
-              <div class="flag-header">
-                <i class="fas fa-flag flag-icon"></i>
-                <h5>{{ flag.title }}</h5>
-              </div>
-              <p class="flag-description">{{ flag.description }}</p>
-              <div class="flag-tip"><strong>Tip:</strong> {{ flag.tip }}</div>
-            </div>
-          </div>
-        </div>
+        <RedFlagsExplanation
+          :red-flags-revealed="redFlagsRevealed"
+          :red-flag-explanations="redFlagExplanations"
+        />
       </div>
     </section>
 
@@ -129,42 +55,53 @@
     </section>
 
     <!-- Red Flag Detail Modal -->
-    <div v-if="showRedFlagModal" class="modal-overlay" @click="closeRedFlagModal">
-      <div class="red-flag-modal" @click.stop>
-        <div class="modal-header">
-          <h4>🚩 {{ selectedRedFlag.title }}</h4>
-          <button class="modal-close" @click="closeRedFlagModal">
-            <i class="fas fa-times"></i>
-          </button>
-        </div>
-        <div class="modal-body">
-          <div class="flag-explanation">
-            <div class="explanation-section">
-              <h5>Why This Is a Red Flag:</h5>
-              <p>{{ selectedRedFlag.description }}</p>
-            </div>
-            <div class="tip-section">
-              <h5>💡 What to Look For Instead:</h5>
-              <p>{{ selectedRedFlag.tip }}</p>
-            </div>
-          </div>
-        </div>
-        <div class="modal-footer">
-          <button class="btn btn-primary" @click="closeRedFlagModal">Got It!</button>
-        </div>
-      </div>
-    </div>
+    <RedFlagModal
+      :show="showRedFlagModal"
+      :current-red-flag="selectedRedFlag"
+      @close="closeRedFlagModal"
+    />
+
+    <!-- Simplified Congratulations Modal -->
+    <CongratulationsModal
+      :show="showCongratulationsModal"
+      :total-red-flags="totalRedFlags"
+      :completion-skills="completionSkills"
+      @close="closeCongratulationsModal"
+      @try-another="tryAnotherScenario"
+      @go-back="goBackToSimulations"
+    />
   </div>
 </template>
 
 <script>
+import ScenarioHero from '@/components/scenario/ScenarioHero.vue'
+import ScenarioInstructions from '@/components/scenario/ScenarioInstructions.vue'
+import ScenarioProgress from '@/components/scenario/ScenarioProgress.vue'
+import JobPosting from '@/components/scenario/JobPosting.vue'
+import ScenarioActions from '@/components/scenario/ScenarioActions.vue'
+import RedFlagsExplanation from '@/components/scenario/RedFlagsExplanation.vue'
+import RedFlagModal from '@/components/scenario/RedFlagModal.vue'
+import CongratulationsModal from '@/components/scenario/CongratulationsModal.vue'
+
 export default {
   name: 'ScenarioView',
+  components: {
+    ScenarioHero,
+    ScenarioInstructions,
+    ScenarioProgress,
+    JobPosting,
+    ScenarioActions,
+    RedFlagsExplanation,
+    RedFlagModal,
+    CongratulationsModal,
+  },
   data() {
     return {
       redFlagsRevealed: false,
       showRedFlagModal: false,
+      showCongratulationsModal: false,
       selectedRedFlag: {},
+      discoveredFlags: new Set(),
       redFlagDefinitions: {
         'emotional-manipulation': {
           title: 'Emotional Manipulation',
@@ -357,7 +294,7 @@ export default {
               'Experience with CRM',
               '<span class="red-flag-text" data-flag="generic-soft-skills">High energy, self starter</span>',
             ],
-            application: `To Apply: <span class="red-flag-text" data-flag="incomplete-contact">E-mail resume and cover letter with salary requirements to .</span>`,
+            application: `To Apply: <span class="red-flag-text" data-flag="incomplete-contact">E-mail resume and cover letter with salary requirements.</span>`,
           },
         },
       },
@@ -379,9 +316,64 @@ export default {
       if (!this.scenarioData.jobPosting?.application) return ''
       return this.addClickableHighlights(this.scenarioData.jobPosting.application)
     },
+    totalRedFlags() {
+      // Count all unique red flags in the current scenario by checking the HTML content
+      if (!this.scenarioData.jobPosting) return 0
+
+      const allContent = [
+        this.scenarioData.jobPosting.description || '',
+        this.scenarioData.jobPosting.application || '',
+        ...(this.scenarioData.jobPosting.requirements || []),
+        ...(this.scenarioData.jobPosting.responsibilities || []),
+      ].join(' ')
+
+      const flagMatches = allContent.match(/data-flag="([^"]+)"/g) || []
+      const uniqueFlags = new Set(flagMatches.map((match) => match.match(/data-flag="([^"]+)"/)[1]))
+
+      return uniqueFlags.size
+    },
+    discoveredCount() {
+      return this.discoveredFlags.size
+    },
+    progressPercentage() {
+      if (this.totalRedFlags === 0) return 0
+      return Math.round((this.discoveredCount / this.totalRedFlags) * 100)
+    },
+    completionSkills() {
+      if (this.scenarioId === 'engineering-manager') {
+        return [
+          'Identifying emotional manipulation tactics',
+          'Recognizing unrealistic empowerment claims',
+          'Spotting vague career promises',
+          'Detecting incomplete application processes',
+        ]
+      } else if (this.scenarioId === 'healthcare-manager') {
+        return [
+          'Identifying vague application instructions',
+          'Recognizing generic company claims',
+          'Spotting excessive buzzwords',
+          'Detecting missing contact information',
+        ]
+      } else if (this.scenarioId === 'skynet-sales') {
+        return [
+          'Identifying unverifiable company claims',
+          'Recognizing promotional manipulation language',
+          'Spotting incomplete contact information',
+          'Detecting exaggerated business scope claims',
+        ]
+      }
+      return []
+    },
   },
   mounted() {
     this.setupRedFlagExplanations()
+
+    // Add keyboard accessibility
+    document.addEventListener('keydown', this.handleKeydown)
+  },
+  beforeUnmount() {
+    // Clean up event listener
+    document.removeEventListener('keydown', this.handleKeydown)
   },
   methods: {
     goBack() {
@@ -399,20 +391,41 @@ export default {
       }, 100)
     },
     addClickableHighlights(html) {
-      // Make red flag text clickable by adding cursor pointer
+      // Make red flag text clickable and keyboard accessible
       return html.replace(
         /<span class="red-flag-text" data-flag="([^"]+)">([^<]+)<\/span>/g,
-        '<span class="red-flag-text clickable-red-flag" data-flag="$1" style="cursor: pointer;">$2</span>',
+        '<span class="red-flag-text clickable-red-flag" data-flag="$1" style="cursor: pointer;" tabindex="0" role="button" aria-label="Click to learn about this red flag">$2</span>',
       )
     },
     handleHighlightClick(event) {
       if (event.target.classList.contains('red-flag-text')) {
         const flagType = event.target.getAttribute('data-flag')
         if (flagType && this.redFlagDefinitions[flagType]) {
-          this.selectedRedFlag = this.redFlagDefinitions[flagType]
+          const redFlagDef = this.redFlagDefinitions[flagType]
+          this.selectedRedFlag = {
+            text: event.target.textContent,
+            explanation: redFlagDef.description,
+            tip: redFlagDef.tip,
+            severity: 'high',
+          }
           this.showRedFlagModal = true
 
-          // Add visual feedback when clicked
+          // Track discovered flags
+          this.discoveredFlags.add(flagType)
+
+          // Add permanent red highlight when clicked - with debugging
+          console.log('Adding discovered class to:', event.target)
+          event.target.classList.add('discovered')
+
+          // Force a style update
+          event.target.style.background = 'linear-gradient(120deg, #ef4444 0%, #dc2626 100%)'
+          event.target.style.color = 'white'
+          event.target.style.padding = '3px 6px'
+          event.target.style.borderRadius = '4px'
+          event.target.style.fontWeight = '600'
+          event.target.style.boxShadow = '0 2px 4px rgba(239, 68, 68, 0.3)'
+
+          // Add temporary click feedback
           event.target.classList.add('clicked')
           setTimeout(() => {
             event.target.classList.remove('clicked')
@@ -423,6 +436,68 @@ export default {
     closeRedFlagModal() {
       this.showRedFlagModal = false
       this.selectedRedFlag = {}
+    },
+    closeCongratulationsModal() {
+      this.showCongratulationsModal = false
+    },
+    tryAnotherScenario() {
+      this.showCongratulationsModal = false
+
+      // Reset progress state
+      this.resetScenarioState()
+
+      // Get available scenarios excluding the current one
+      const allScenarios = Object.keys(this.scenarios)
+      const otherScenarios = allScenarios.filter((id) => id !== this.scenarioId)
+
+      if (otherScenarios.length > 0) {
+        // Navigate to a random other scenario
+        const randomScenario = otherScenarios[Math.floor(Math.random() * otherScenarios.length)]
+        this.$router.push(`/simulation/scenario/${randomScenario}`)
+      } else {
+        // If no other scenarios, go back to simulations
+        this.goBackToSimulations()
+      }
+    },
+    resetScenarioState() {
+      // Reset all progress-related state
+      this.redFlagsRevealed = false
+      this.showRedFlagModal = false
+      this.showCongratulationsModal = false
+      this.selectedRedFlag = {}
+      this.discoveredFlags = new Set()
+
+      // Remove any visual red flag highlights from previous scenario
+      setTimeout(() => {
+        const redFlags = document.querySelectorAll('.red-flag-text')
+        redFlags.forEach((el) => {
+          el.classList.remove('revealed', 'discovered', 'clicked')
+          el.style.background = ''
+          el.style.color = ''
+          el.style.padding = ''
+          el.style.borderRadius = ''
+          el.style.fontWeight = ''
+          el.style.boxShadow = ''
+        })
+      }, 100)
+    },
+    goBackToSimulations() {
+      this.$router.push('/simulation')
+    },
+    handleKeydown(event) {
+      // Close modal with Escape key
+      if (event.key === 'Escape' && this.showRedFlagModal) {
+        this.closeRedFlagModal()
+      }
+
+      // Handle Enter and Space for red flag text elements
+      if (
+        (event.key === 'Enter' || event.key === ' ') &&
+        event.target.classList.contains('red-flag-text')
+      ) {
+        event.preventDefault()
+        this.handleHighlightClick(event)
+      }
     },
     setupRedFlagExplanations() {
       if (this.scenarioId === 'engineering-manager') {
@@ -555,6 +630,22 @@ export default {
       }
     },
   },
+  watch: {
+    // Reset state when switching scenarios
+    scenarioId() {
+      this.resetScenarioState()
+      this.setupRedFlagExplanations()
+    },
+    // Add a watcher to check if all flags are discovered
+    discoveredCount(newCount) {
+      if (newCount === this.totalRedFlags && newCount > 0) {
+        // Show congratulations modal after a short delay
+        setTimeout(() => {
+          this.showCongratulationsModal = true
+        }, 1000) // 1 second delay for better UX
+      }
+    },
+  },
 }
 </script>
 
@@ -565,272 +656,10 @@ export default {
   color: #0f172a;
 }
 
-.hero-section {
-  padding: 3rem 2rem 2rem;
-  max-width: 1200px;
-  margin: 0 auto;
-  background: #f8fafc;
-  border-radius: 0 0 24px 24px;
-}
-
-.hero-content {
-  text-align: center;
-}
-
-.hero-text {
-  max-width: 800px;
-  margin: 0 auto;
-}
-
-.hero-title {
-  font-size: 2.5rem;
-  font-weight: 700;
-  margin: 0 0 1rem 0;
-  color: #0f172a;
-  letter-spacing: -0.02em;
-}
-
-.hero-subtitle {
-  font-size: 1.2rem;
-  color: #64748b;
-  margin: 0 0 2rem 0;
-  line-height: 1.6;
-  font-weight: 400;
-}
-
-.hero-actions {
-  margin-top: 1.5rem;
-}
-
 .job-posting-section {
   padding: 3rem 2rem;
   max-width: 1200px;
   margin: 0 auto;
-}
-
-.job-posting {
-  background: #f7fafc;
-  border: 1px solid #e2e8f0;
-  border-radius: 12px;
-  padding: 2rem;
-  margin-bottom: 2rem;
-}
-
-.job-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  margin-bottom: 2rem;
-}
-
-.job-title-section h4 {
-  color: #2d3748;
-  font-size: 1.75rem;
-  font-weight: 700;
-  margin: 0 0 0.5rem 0;
-}
-
-.company-name {
-  color: #4a5568;
-  font-size: 1.1rem;
-  margin: 0;
-}
-
-.remote-badge {
-  background: #edf2f7;
-  color: #2d3748;
-  padding: 0.5rem 1rem;
-  border-radius: 6px;
-  font-size: 0.875rem;
-  font-weight: 500;
-}
-
-.job-details h5 {
-  color: #2d3748;
-  font-size: 1.25rem;
-  font-weight: 600;
-  margin: 2rem 0 1rem 0;
-}
-
-.job-description {
-  margin-bottom: 2rem;
-  line-height: 1.6;
-  font-size: 1rem;
-}
-
-.job-requirements,
-.job-responsibilities {
-  background: #f1f5f9;
-  padding: 1.5rem;
-  border-radius: 8px;
-  margin: 1.5rem 0;
-}
-
-.job-requirements ul,
-.job-responsibilities ul {
-  margin: 0.5rem 0 0 0;
-  padding-left: 1.5rem;
-}
-
-.job-requirements li,
-.job-responsibilities li {
-  margin-bottom: 0.75rem;
-  color: #2d3748;
-  line-height: 1.5;
-}
-
-.application-section {
-  margin-top: 2rem;
-  padding: 1.5rem;
-  background: #f1f5f9;
-  border-radius: 0 8px 8px 0;
-}
-
-.red-flag-text {
-  position: relative;
-  transition: all 0.3s ease;
-}
-
-.red-flag-text:hover {
-  background: rgba(99, 102, 241, 0.1);
-  border-radius: 3px;
-  padding: 2px 4px;
-  margin: -2px -4px;
-  cursor: pointer;
-}
-
-.red-flag-text.revealed {
-  background: linear-gradient(120deg, #ff7675 0%, #d63031 100%);
-  color: white;
-  padding: 3px 6px;
-  border-radius: 4px;
-  font-weight: 600;
-  animation: pulse 2s infinite;
-}
-
-.red-flag-text.clicked {
-  background: rgba(59, 130, 246, 0.2);
-  border-radius: 3px;
-  padding: 2px 4px;
-  margin: -2px -4px;
-  transform: scale(1.02);
-}
-
-.clickable-red-flag {
-  cursor: pointer !important;
-  position: relative;
-}
-
-.clickable-red-flag:hover {
-  background: rgba(99, 102, 241, 0.15) !important;
-  border-radius: 3px;
-  padding: 2px 4px;
-  margin: -2px -4px;
-}
-
-@keyframes pulse {
-  0% {
-    box-shadow: 0 0 0 0 rgba(255, 118, 117, 0.7);
-  }
-  70% {
-    box-shadow: 0 0 0 10px rgba(255, 118, 117, 0);
-  }
-  100% {
-    box-shadow: 0 0 0 0 rgba(255, 118, 117, 0);
-  }
-}
-
-.scenario-actions {
-  margin: 2rem 0;
-}
-
-.action-buttons {
-  display: flex;
-  gap: 1rem;
-  justify-content: center;
-  margin-top: 1rem;
-}
-
-.alert {
-  background-color: #dbeafe;
-  border: 1px solid #93c5fd;
-  border-radius: 8px;
-  padding: 1rem;
-  margin-bottom: 1rem;
-  text-align: center;
-}
-
-.alert-info {
-  color: #1e40af;
-}
-
-.red-flags-explanation {
-  margin-top: 3rem;
-  padding: 2rem;
-  background: #fef2f2;
-  border-radius: 12px;
-  border-left: 4px solid #dc2626;
-}
-
-.explanation-title {
-  color: #dc2626;
-  font-size: 1.5rem;
-  font-weight: 700;
-  margin-bottom: 1.5rem;
-  text-align: center;
-}
-
-.red-flag-cards {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-  gap: 1.5rem;
-}
-
-.red-flag-card {
-  background: #ffffff;
-  border: 1px solid #fecaca;
-  border-radius: 8px;
-  padding: 1.5rem;
-  transition: transform 0.2s ease;
-}
-
-.red-flag-card:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(220, 38, 38, 0.15);
-}
-
-.flag-header {
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
-  margin-bottom: 1rem;
-}
-
-.flag-icon {
-  color: #dc2626;
-  font-size: 1.25rem;
-}
-
-.flag-header h5 {
-  color: #1f2937;
-  font-size: 1.1rem;
-  font-weight: 600;
-  margin: 0;
-}
-
-.flag-description {
-  color: #4b5563;
-  line-height: 1.6;
-  margin-bottom: 1rem;
-}
-
-.flag-tip {
-  background: #f3f4f6;
-  padding: 0.75rem;
-  border-radius: 6px;
-  border-left: 3px solid #10b981;
-  font-size: 0.9rem;
-  color: #374151;
 }
 
 .not-found-section {
@@ -845,206 +674,18 @@ export default {
 
 .not-found-icon {
   font-size: 4rem;
-  color: #6b7280;
+  color: #64748b;
   margin-bottom: 1rem;
-}
-
-/* Modal Styles */
-.modal-overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: rgba(0, 0, 0, 0.8);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 1050;
-  animation: fadeIn 0.3s ease;
-}
-
-.red-flag-modal {
-  background: #ffffff;
-  border-radius: 16px;
-  width: 90%;
-  max-width: 600px;
-  max-height: 80vh;
-  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
-  overflow: hidden;
-  animation: slideUp 0.3s ease;
-}
-
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-  }
-  to {
-    opacity: 1;
-  }
-}
-
-@keyframes slideUp {
-  from {
-    opacity: 0;
-    transform: translateY(30px) scale(0.95);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0) scale(1);
-  }
-}
-
-.red-flag-modal .modal-header {
-  background: linear-gradient(135deg, #ff6b6b 0%, #ee5a24 100%);
-  color: white;
-  padding: 1.5rem;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-.red-flag-modal .modal-header h4 {
-  margin: 0;
-  font-size: 1.25rem;
-  font-weight: 600;
-}
-
-.red-flag-modal .modal-close {
-  background: none;
-  border: none;
-  color: white;
-  font-size: 1.5rem;
-  cursor: pointer;
-  padding: 0.25rem;
-  border-radius: 4px;
-  transition: background-color 0.2s ease;
-}
-
-.red-flag-modal .modal-close:hover {
-  background: rgba(255, 255, 255, 0.2);
-}
-
-.red-flag-modal .modal-body {
-  padding: 2rem;
-}
-
-.flag-explanation {
-  display: flex;
-  flex-direction: column;
-  gap: 1.5rem;
-}
-
-.explanation-section,
-.tip-section {
-  padding: 1rem;
-  border-radius: 8px;
-}
-
-.explanation-section {
-  background: #fef2f2;
-  border-left: 4px solid #ef4444;
-}
-
-.tip-section {
-  background: #f0f9ff;
-  border-left: 4px solid #3b82f6;
-}
-
-.explanation-section h5,
-.tip-section h5 {
-  margin: 0 0 0.75rem 0;
-  font-size: 1rem;
-  font-weight: 600;
-  color: #1f2937;
-}
-
-.explanation-section p,
-.tip-section p {
-  margin: 0;
-  line-height: 1.6;
-  color: #4b5563;
-}
-
-.red-flag-modal .modal-footer {
-  background: #f9fafb;
-  padding: 1rem 2rem;
-  display: flex;
-  justify-content: flex-end;
-  border-top: 1px solid #e5e7eb;
-}
-
-.red-flag-modal .btn {
-  background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
-  color: white;
-  border: none;
-  padding: 0.75rem 2rem;
-  border-radius: 8px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.2s ease;
-}
-
-.red-flag-modal .btn:hover {
-  background: linear-gradient(135deg, #1d4ed8 0%, #1e40af 100%);
-  transform: translateY(-1px);
 }
 
 /* Responsive adjustments */
 @media (max-width: 768px) {
-  .hero-section {
-    padding: 2.5rem 1.5rem 1.5rem;
-  }
-
-  .hero-title {
-    font-size: 2rem;
-  }
-
   .job-posting-section {
     padding: 2rem 1.5rem;
-  }
-
-  .job-posting {
-    padding: 1.5rem;
-  }
-
-  .job-header {
-    flex-direction: column;
-    gap: 1rem;
-  }
-
-  .action-buttons {
-    flex-direction: column;
-    align-items: center;
-  }
-
-  .red-flag-cards {
-    grid-template-columns: 1fr;
-  }
-
-  .red-flag-modal {
-    width: 95%;
-    margin: 1rem;
-  }
-
-  .red-flag-modal .modal-body {
-    padding: 1.5rem;
-  }
-
-  .flag-explanation {
-    gap: 1rem;
   }
 }
 
 @media (max-width: 480px) {
-  .hero-section {
-    padding: 2rem 1rem 1rem;
-  }
-
-  .hero-title {
-    font-size: 1.75rem;
-  }
-
   .job-posting-section {
     padding: 1.5rem 1rem;
   }

@@ -8,7 +8,6 @@ import AboutView from '../views/AboutView.vue'
 import SimView from '../views/SimView.vue'
 import ScenarioView from '../views/ScenarioView.vue'
 
-// Each route maps to a top-level view and optional props
 const routes = [
   {
     path: '/',
@@ -25,7 +24,6 @@ const routes = [
     name: 'report',
     component: ReportView,
 
-    // Optional reportData param allows direct linking to saved analyses
     props: (route) => {
       if (route.params.reportData) {
         try {
@@ -44,8 +42,8 @@ const routes = [
     component: HubView,
   },
   {
-    path: '/aboutus',
-    name: 'aboutus',
+    path: '/about-us',
+    name: 'about-us',
     component: AboutView,
   },
   {
