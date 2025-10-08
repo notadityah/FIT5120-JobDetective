@@ -855,7 +855,7 @@ watch(totalCompletedItems, (newValue) => {
   .checklist-grid.has-expanded-2,
   .checklist-grid.has-expanded-3,
   .checklist-grid.has-expanded-4 {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
+    grid-template-columns: 1fr 1fr;
   }
 
   .checklist-card {
@@ -892,6 +892,14 @@ watch(totalCompletedItems, (newValue) => {
 
   .checklist-grid {
     grid-template-columns: repeat(1, minmax(0, 1fr));
+  }
+
+  /* Remove expansion behavior on mobile - single column layout */
+  .checklist-grid.has-expanded-1,
+  .checklist-grid.has-expanded-2,
+  .checklist-grid.has-expanded-3,
+  .checklist-grid.has-expanded-4 {
+    grid-template-columns: 1fr;
   }
 }
 
