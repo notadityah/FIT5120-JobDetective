@@ -186,8 +186,11 @@
               size="medium"
               class="full-width"
             >
-              <span class="button-icon">🗑️</span> Clear Report
+              <span class="button-icon">🗑️</span> Clear All Local Data
             </BaseButton>
+            <p class="clear-report-note">
+              This will remove all analysis reports and cached data from your browser
+            </p>
           </div>
         </div>
       </template>
@@ -241,6 +244,14 @@
           <p v-if="submissionSuccess" class="modal-success">
             Thank you! Your report has been submitted successfully.
           </p>
+
+          <p class="privacy-reminder">
+            <i class="fas fa-info-circle"></i>
+            <strong>Privacy Reminder:</strong> Submitting this report will store the job
+            advertisement and AI analysis in our database to help protect other users. This data
+            cannot be deleted after submission to maintain the integrity of our community safety
+            records.
+          </p>
         </div>
         <div class="report-modal-footer">
           <BaseButton
@@ -267,18 +278,26 @@
     <div v-if="showClearConfirmation" class="modal-overlay" @click="showClearConfirmation = false">
       <div class="modal-content" @click.stop>
         <div class="modal-header">
-          <h3 class="modal-title">Clear Report</h3>
+          <h3 class="modal-title">Clear All Local Data</h3>
           <button class="modal-close" @click="showClearConfirmation = false">
             <i class="fas fa-times"></i>
           </button>
         </div>
         <div class="modal-body">
-          <p>Are you sure you want to clear this report?</p>
-          <p class="modal-warning">This action cannot be undone.</p>
+          <p>Are you sure you want to clear all locally stored data? This will remove:</p>
+          <ul class="clear-data-list">
+            <li>All analysis reports</li>
+            <li>Submission history</li>
+            <li>All cached data from this browser</li>
+          </ul>
+          <p class="modal-warning">
+            This action cannot be undone. Scam reports you've submitted to our database will not be
+            affected.
+          </p>
         </div>
         <div class="modal-footer">
           <button class="modal-button cancel" @click="showClearConfirmation = false">Cancel</button>
-          <button class="modal-button confirm" @click="clearReport">Clear Report</button>
+          <button class="modal-button confirm" @click="clearReport">Clear All Data</button>
         </div>
       </div>
     </div>
@@ -397,14 +416,57 @@ export default {
     },
     clearReport() {
       try {
+        // Clear all JobDetective-related localStorage data
         localStorage.removeItem(REPORT_STORAGE_KEY)
         localStorage.removeItem(SUBMISSION_INPUT_STORAGE_KEY)
+        localStorage.removeItem('jobdetective_recent_submissions')
+
+        // Clear any other potential cached data
+        const keysToRemove = []
+        for (let i = 0; i < localStorage.length; i++) {
+          const key = localStorage.key(i)
+          if (key && key.startsWith('jobdetective_')) {
+            keysToRemove.push(key)
+          }
+        }
+
+        // Remove all JobDetective keys
+        keysToRemove.forEach((key) => localStorage.removeItem(key))
+
+        // Reset component state
         this.currentReport = null
         this.submissionInput = null
         this.showClearConfirmation = false
-        console.log('Report cleared from localStorage')
+
+        console.log('All local data cleared from localStorage')
       } catch (error) {
         console.error('Failed to clear report:', error)
+      }
+    },
+    clearAllLocalData() {
+      try {
+        // Clear all specific JobDetective keys
+        localStorage.removeItem('jobdetective_latest_report')
+        localStorage.removeItem('jobdetective_latest_submission_input')
+        localStorage.removeItem('jobdetective_recent_submissions')
+
+        // Clear any other potential cached data
+        const keysToRemove = []
+        for (let i = 0; i < localStorage.length; i++) {
+          const key = localStorage.key(i)
+          if (key && key.startsWith('jobdetective_')) {
+            keysToRemove.push(key)
+          }
+        }
+
+        // Remove all JobDetective keys
+        keysToRemove.forEach((key) => localStorage.removeItem(key))
+
+        alert('All local data has been cleared from your browser.')
+        this.$router.push({ name: 'home' })
+      } catch (error) {
+        console.error('Failed to clear all local data:', error)
+        alert('There was an error clearing your data. Please try again.')
       }
     },
     getRiskTitle(riskLevel) {
@@ -1039,6 +1101,15 @@ export default {
   font-weight: 500;
 }
 
+.clear-report-note {
+  color: #94a3b8;
+  font-size: 0.8rem;
+  margin: 0.75rem 0 0 0;
+  font-style: italic;
+  text-align: center;
+  line-height: 1.4;
+}
+
 .full-width {
   width: 100%;
   justify-content: center;
@@ -1244,6 +1315,31 @@ export default {
   padding: 1.5rem;
   color: #475569;
   line-height: 1.6;
+}
+
+.clear-data-list {
+  list-style: none;
+  padding: 0;
+  margin: 1rem 0;
+  background: #f8fafc;
+  border-radius: 8px;
+  padding: 1rem 1.5rem;
+  border-left: 3px solid #3b82f6;
+}
+
+.clear-data-list li {
+  padding: 0.4rem 0;
+  color: #475569;
+  position: relative;
+  padding-left: 1.5rem;
+}
+
+.clear-data-list li::before {
+  content: '•';
+  position: absolute;
+  left: 0;
+  color: #3b82f6;
+  font-weight: bold;
 }
 
 .modal-warning {
