@@ -62,8 +62,7 @@
               </ul>
 
               <p class="privacy-text privacy-compliance">
-                We adhere to the
-                <strong>Australian Privacy Act 1988</strong> and the
+                We adhere to the <strong>Australian Privacy Act 1988</strong> and the
                 <strong>Australian Privacy Principles (APPs)</strong>.
               </p>
             </div>
@@ -426,8 +425,7 @@ export default {
 
 .privacy-list-main li strong {
   color: #1e40af;
-  display: block;
-  margin-bottom: 0.25rem;
+  font-weight: 700;
 }
 
 .privacy-consent-text {
