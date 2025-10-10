@@ -8,12 +8,13 @@
       </div>
       <div class="cyber-hero-desc-col">
         <div class="cyber-hero-title">
-          <h1>DETECT JOB SCAMS</h1>
+          <h1>SAFE JOBS, STRONG FUTURES</h1>
         </div>
         <div class="cyber-hero-desc">
           <div class="cyber-hero-subtitle">
-            Our AI - powered job detection tool helps young job seekers spot fake jobs and scams -
-            <b>empowering safer & smarter choices online.</b>
+            Empowering young Australians with digital citizenship skills to detect job scams,
+            protect their rights, and make
+            <b>informed decisions for a safer digital future.</b>
           </div>
 
           <BaseButton
@@ -22,7 +23,7 @@
             class="cyber-cta-btn"
             @click="$router.push('/analyse')"
           >
-            Analyse Job Now
+            Analyse Jobs Now
           </BaseButton>
         </div>
       </div>
@@ -63,38 +64,21 @@
             <h1>Job Scam Awareness</h1>
           </div>
           <div class="stats-card">
-            <div v-if="!loading && !error && scamData" class="stats-content">
+            <div class="stats-content">
               <div class="stat-intro">
                 In 2025, young job seekers across Australia aged 18-24 lost a total of
               </div>
 
               <div class="stat-amount-wrapper">
-                <span class="stat-amount" v-if="totalData">
-                  {{ formatCurrency(totalData.total_amount_lost) }}
+                <span class="stat-amount">
+                  {{ formatCurrency(1108089) }}
                 </span>
-                <span class="stat-amount" v-else>No data available</span>
               </div>
 
               <div class="stat-description">
-                to job and employment scams in
-                {{ totalData ? formatNumber(totalData.total_reports) : '0' }} reported cases.
+                to job and employment scams in {{ formatNumber(348) }} reported cases.
               </div>
             </div>
-
-            <LoadingSpinner
-              v-else-if="loading"
-              variant="stats"
-              message="Loading statistics..."
-              size="large"
-            />
-
-            <ErrorDisplay
-              v-else-if="error"
-              variant="stats"
-              message="Unable to load current statistics"
-              :show-retry="true"
-              @retry="fetchScamStatistics"
-            />
           </div>
 
           <div class="stats-button-wrapper">
@@ -110,29 +94,78 @@
         </div>
       </div>
     </section>
+
+    <section class="mission-section">
+      <div class="mission-container">
+        <div class="mission-icon">🛡️</div>
+        <div class="mission-content">
+          <h2 class="mission-title">Our Mission</h2>
+          <p class="mission-text">
+            Empowering young Australians for safer work and digital rights - aligning with
+            <strong>UN Sustainable Development Goal 16</strong> for peace, justice, and strong
+            institutions.
+          </p>
+        </div>
+        <BaseButton
+          variant="secondary"
+          size="medium"
+          class="mission-btn"
+          @click="$router.push({ path: '/about-us' })"
+        >
+          Learn More
+        </BaseButton>
+      </div>
+    </section>
+
+    <section class="cyber-simulation-section">
+      <div class="simulation-main-container">
+        <div class="simulation-illustration-col">
+          <div class="simulation-anime-lines"></div>
+          <img :src="ilus5" alt="Simulation Illustration" class="simulation-illustration" />
+        </div>
+
+        <div class="simulation-content-col">
+          <div class="cyber-hero-title">
+            <h1>Practice Makes Perfect</h1>
+          </div>
+          <div class="simulation-card">
+            <div class="simulation-content">
+              <div class="simulation-intro">
+                Think you can spot a scam? Test your skills with our interactive job scam
+                simulations.
+              </div>
+
+              <div class="simulation-description">
+                Practice identifying red flags in realistic fake job postings across
+                <strong>3 different scenarios</strong>. Learn what to look for before you encounter
+                a real scam.
+              </div>
+            </div>
+          </div>
+
+          <div class="simulation-button-wrapper">
+            <BaseButton
+              class="simulation-cta-btn"
+              variant="primary"
+              size="medium"
+              @click="$router.push({ path: '/simulation' })"
+            >
+              Try Interactive Simulation
+            </BaseButton>
+          </div>
+        </div>
+      </div>
+    </section>
   </div>
 </template>
 
 <script setup>
-// Fetches scam statistics and orchestrates hero + feature sections on the homepage
-import { ref, onMounted, computed } from 'vue'
+// Orchestrates hero + feature sections on the homepage with static statistics
 import FeatureCard from '@/components/FeatureCard.vue'
 import BaseButton from '@/components/BaseButton.vue'
-import LoadingSpinner from '@/components/LoadingSpinner.vue'
-import ErrorDisplay from '@/components/ErrorDisplay.vue'
 import illustration from '@/assets/images/ilus3.svg'
 import ilus4 from '@/assets/images/ilus4.svg'
-
-const scamData = ref(null)
-const loading = ref(true)
-const error = ref(null)
-
-// 24-hour cache for statistics data
-const CACHE_KEY = 'jobdetective_scam_stats'
-const CACHE_EXPIRY_KEY = 'jobdetective_scam_stats_expiry'
-const CACHE_DURATION = 24 * 60 * 60 * 1000 // 24 hours
-
-const totalData = computed(() => scamData.value || null)
+import ilus5 from '@/assets/images/ilus5.png'
 
 const formatCurrency = (amount) => {
   return new Intl.NumberFormat('en-AU', {
@@ -146,97 +179,6 @@ const formatCurrency = (amount) => {
 const formatNumber = (number) => {
   return new Intl.NumberFormat('en-AU').format(number)
 }
-
-const getCachedData = () => {
-  try {
-    const cachedData = localStorage.getItem(CACHE_KEY)
-    const cacheExpiry = localStorage.getItem(CACHE_EXPIRY_KEY)
-
-    if (cachedData && cacheExpiry) {
-      const now = Date.now()
-      const expiryTime = parseInt(cacheExpiry, 10)
-
-      if (now < expiryTime) {
-        return JSON.parse(cachedData)
-      } else {
-        clearCache()
-      }
-    }
-    return null
-  } catch (error) {
-    console.error('Error reading cache:', error)
-    clearCache()
-    return null
-  }
-}
-
-const setCacheData = (data) => {
-  try {
-    const expiryTime = Date.now() + CACHE_DURATION
-    localStorage.setItem(CACHE_KEY, JSON.stringify(data))
-    localStorage.setItem(CACHE_EXPIRY_KEY, expiryTime.toString())
-  } catch (error) {
-    console.error('Error setting cache:', error)
-  }
-}
-
-const clearCache = () => {
-  try {
-    localStorage.removeItem(CACHE_KEY)
-    localStorage.removeItem(CACHE_EXPIRY_KEY)
-  } catch (error) {
-    console.error('Error clearing cache:', error)
-  }
-}
-
-const fetchScamStatistics = async () => {
-  try {
-    loading.value = true
-    error.value = null
-
-    const cachedData = getCachedData()
-    if (cachedData) {
-      scamData.value = cachedData
-      loading.value = false
-      return
-    }
-
-    const API_ENDPOINT = import.meta.env.VITE_API_GATEWAY_URL
-    const API_KEY = import.meta.env.VITE_API_KEY
-
-    const fetchOptions = {
-      method: 'GET',
-      mode: 'cors',
-      headers: {
-        Accept: 'application/json',
-        'Content-Type': 'application/json',
-      },
-    }
-
-    if (API_KEY) {
-      fetchOptions.headers['X-API-Key'] = API_KEY
-    }
-
-    const response = await fetch(API_ENDPOINT, fetchOptions)
-
-    if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`)
-    }
-
-    const data = await response.json()
-    scamData.value = data
-    setCacheData(data)
-  } catch (err) {
-    console.error('Error fetching scam statistics:', err)
-    error.value = err.message
-  } finally {
-    loading.value = false
-  }
-}
-
-onMounted(() => {
-  fetchScamStatistics()
-})
 </script>
 
 <style scoped>
@@ -652,6 +594,211 @@ onMounted(() => {
   }
 }
 
+/* Mission Section */
+.mission-section {
+  padding: 3rem 0;
+  background: linear-gradient(135deg, #3b82f6 0%, #1e40af 50%, #1d4ed8 100%);
+  position: relative;
+  z-index: 1;
+}
+
+.mission-container {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 2rem;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2rem 3rem;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 16px;
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.mission-icon {
+  font-size: 3.5rem;
+  flex-shrink: 0;
+}
+
+.mission-content {
+  flex: 1;
+  color: #ffffff;
+}
+
+.mission-title {
+  font-size: 2rem;
+  font-family: 'Nunito', sans-serif;
+  font-weight: 700;
+  margin: 0 0 0.5rem 0;
+  color: #ffffff;
+}
+
+.mission-text {
+  font-size: 1.1rem;
+  line-height: 1.6;
+  margin: 0;
+  color: rgba(255, 255, 255, 0.95);
+}
+
+.mission-btn {
+  flex-shrink: 0;
+  font-size: 1.1rem;
+  font-family: 'Nunito', sans-serif;
+  font-weight: 700;
+  padding: 1rem 2rem;
+  border-radius: 12px;
+  background: #ffffff !important;
+  color: #1e40af !important;
+  border: 2px solid transparent;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  text-transform: none;
+  letter-spacing: 0.01em;
+}
+
+.mission-btn:hover {
+  background: #f8fafc !important;
+  color: #1d4ed8 !important;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+}
+
+/* Simulation Section with Illustration */
+.cyber-simulation-section {
+  padding: 4rem 0 6rem 0;
+  background: linear-gradient(180deg, #f8fafc 0%, transparent 100%);
+  position: relative;
+  z-index: 1;
+}
+
+.simulation-main-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 3rem;
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 0 2rem;
+  min-height: 500px;
+}
+
+.simulation-content-col {
+  flex: 4;
+  display: flex;
+  min-width: 720px;
+  max-width: 720px;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.simulation-illustration-col {
+  flex: 7;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  min-width: 350px;
+  max-width: 650px;
+}
+
+.simulation-illustration {
+  width: 100%;
+  max-width: 650px;
+  height: auto;
+  filter: drop-shadow(0 8px 32px rgba(79, 124, 255, 0.2));
+  z-index: 1;
+  position: relative;
+  border-radius: 20px;
+}
+
+.simulation-anime-lines {
+  position: absolute;
+  left: -1rem;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 110%;
+  height: 80%;
+  pointer-events: none;
+  z-index: 0;
+  background:
+    repeating-linear-gradient(45deg, #4f7cff 0 2px, transparent 2px 20px),
+    repeating-linear-gradient(-45deg, #3b5aa0 0 1px, transparent 1px 25px);
+  opacity: 0.08;
+  border-radius: 50%;
+  filter: blur(1px);
+}
+
+.simulation-card {
+  background: transparent;
+  border: none;
+  border-radius: 0;
+  position: relative;
+  overflow: hidden;
+  text-align: center;
+  max-width: 100%;
+  box-shadow: none;
+}
+
+.simulation-content {
+  margin: 0 auto;
+  max-width: 500px;
+  margin-top: 1rem;
+}
+
+.simulation-intro {
+  font-size: 1.8rem;
+  color: #4b5563;
+  line-height: 1.6;
+  font-family: 'Nunito', sans-serif;
+  font-weight: 500;
+  margin-bottom: 1.5rem;
+  text-align: center;
+}
+
+.simulation-description {
+  font-size: 1.5rem;
+  color: #4b5563;
+  line-height: 1.6;
+  font-family: 'Nunito', sans-serif;
+  font-weight: 400;
+  margin: 0 auto;
+  text-align: center;
+}
+
+.simulation-button-wrapper {
+  text-align: center;
+  margin-top: 2rem;
+}
+
+.simulation-cta-btn {
+  font-size: 1.2rem;
+  font-family: 'Nunito', 'Comic Neue', Arial, sans-serif;
+  font-weight: 700;
+  padding: 1.2rem 2.5rem;
+  border-radius: 18px;
+  background: linear-gradient(135deg, #4f7cff 0%, #3b5aa0 100%);
+  color: #fff;
+  border: 2px solid transparent;
+  box-shadow:
+    0 6px 20px rgba(79, 124, 255, 0.25),
+    0 2px 8px rgba(79, 124, 255, 0.15);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  position: relative;
+  overflow: hidden;
+}
+
+.simulation-cta-btn:hover {
+  background: linear-gradient(135deg, #3b5aa0 0%, #2d4373 100%);
+  transform: translateY(-2px);
+  box-shadow:
+    0 8px 25px rgba(79, 124, 255, 0.4),
+    0 4px 12px rgba(79, 124, 255, 0.2);
+}
+
 /* Responsive breakpoints */
 @media (max-width: 1100px) {
   .cyber-features-grid {
@@ -679,6 +826,22 @@ onMounted(() => {
   .stat-amount {
     font-size: 6rem;
   }
+
+  .simulation-main-container {
+    flex-direction: column;
+    gap: 2rem;
+    text-align: center;
+  }
+
+  .simulation-illustration-col,
+  .simulation-content-col {
+    max-width: 100%;
+    min-width: auto;
+  }
+
+  .simulation-illustration {
+    max-width: 400px;
+  }
 }
 
 @media (max-width: 900px) {
@@ -701,6 +864,24 @@ onMounted(() => {
   .cyber-hero-desc {
     align-items: center;
   }
+
+  .mission-container {
+    flex-direction: column;
+    text-align: center;
+    padding: 2rem;
+  }
+
+  .mission-icon {
+    font-size: 3rem;
+  }
+
+  .mission-title {
+    font-size: 1.8rem;
+  }
+
+  .mission-text {
+    font-size: 1rem;
+  }
 }
 
 @media (max-width: 768px) {
@@ -708,6 +889,31 @@ onMounted(() => {
     min-width: auto;
     max-width: 100%;
     padding: 0 1rem;
+  }
+
+  .mission-section {
+    padding: 2rem 1rem;
+  }
+
+  .mission-container {
+    padding: 1.5rem;
+    gap: 1.5rem;
+  }
+
+  .mission-icon {
+    font-size: 2.5rem;
+  }
+
+  .mission-title {
+    font-size: 1.5rem;
+  }
+
+  .mission-text {
+    font-size: 0.95rem;
+  }
+
+  .mission-btn {
+    width: 100%;
   }
 
   .stats-content-col {
@@ -755,6 +961,48 @@ onMounted(() => {
   .stat-amount {
     font-size: 4.5rem;
     padding: 0.5rem;
+  }
+
+  .simulation-content-col {
+    min-width: auto !important;
+    max-width: 100% !important;
+    order: 2 !important;
+    flex: none !important;
+  }
+
+  .simulation-illustration-col {
+    min-width: auto !important;
+    max-width: 100% !important;
+    flex: none !important;
+    order: 1 !important;
+    margin-bottom: 2rem !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+  }
+
+  .simulation-main-container {
+    padding: 0 1rem !important;
+    flex-direction: column !important;
+    min-height: auto !important;
+    display: flex !important;
+  }
+
+  .simulation-illustration {
+    max-width: 280px !important;
+    width: 90% !important;
+    display: block !important;
+    margin: 0 auto !important;
+    opacity: 1 !important;
+    visibility: visible !important;
+    position: relative !important;
+    z-index: 1 !important;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  }
+
+  .simulation-anime-lines {
+    display: none !important;
   }
 }
 

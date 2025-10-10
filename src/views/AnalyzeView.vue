@@ -23,6 +23,17 @@
               <div class="feature-text">Verify legitimacy of job offers</div>
             </div>
           </div>
+
+          <div class="disclaimer-box">
+            <p class="disclaimer-text">
+              <strong>Disclaimer:</strong> We use OpenAI models for text analysis. Results may vary,
+              and independent verification is recommended for all job offers.
+              <router-link to="/hub" class="checklist-link">
+                View our Before You Apply Checklist
+              </router-link>
+              for best practices.
+            </p>
+          </div>
         </div>
 
         <div class="upload-section">
@@ -937,6 +948,52 @@ export default {
   font-weight: 500;
 }
 
+/* Disclaimer box */
+.disclaimer-box {
+  margin-top: 2rem;
+  padding: 1.25rem 1.5rem;
+  background: rgba(59, 130, 246, 0.08);
+  border-left: 4px solid #3b82f6;
+  border-radius: 12px;
+  display: flex;
+  gap: 1rem;
+  align-items: flex-start;
+  box-shadow: 0 2px 8px rgba(59, 130, 246, 0.1);
+}
+
+.disclaimer-icon {
+  font-size: 1.5rem;
+  flex-shrink: 0;
+  line-height: 1;
+}
+
+.disclaimer-text {
+  font-size: 0.95rem;
+  line-height: 1.6;
+  color: #475569;
+  margin: 0;
+  font-weight: 400;
+}
+
+.disclaimer-text strong {
+  color: #1e40af;
+  font-weight: 700;
+}
+
+.checklist-link {
+  color: #3b82f6;
+  font-weight: 600;
+  text-decoration: underline;
+  transition: color 0.2s ease;
+  display: inline-block;
+  margin: 0 0.25rem;
+}
+
+.checklist-link:hover {
+  color: #1d4ed8;
+  text-decoration: underline;
+}
+
 /* Upload section - Light theme */
 .upload-section {
   background: rgba(255, 255, 255, 0.9);
@@ -1298,6 +1355,10 @@ export default {
   .analyze-subtitle {
     max-width: 100%;
   }
+
+  .disclaimer-box {
+    text-align: left;
+  }
 }
 
 @media (max-width: 768px) {
@@ -1319,6 +1380,22 @@ export default {
 
   .analyze-subtitle {
     font-size: 1.1rem;
+  }
+
+  .disclaimer-box {
+    padding: 1rem 1.25rem;
+    flex-direction: column;
+    gap: 0.75rem;
+    align-items: center;
+    text-align: center;
+  }
+
+  .disclaimer-icon {
+    font-size: 1.3rem;
+  }
+
+  .disclaimer-text {
+    font-size: 0.9rem;
   }
 
   .file-upload-area .analyze-btn,
