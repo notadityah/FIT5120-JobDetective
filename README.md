@@ -43,18 +43,46 @@ Comprehensive educational platform with:
 
 - **📋 Interactive Checklist**: "Before You Apply" with progress tracking
   - 4-step verification process
-  - Persistent progress storage
-  - External resource links (LinkedIn, Seek, Glassdoor, etc.)
-  - Reset functionality with confirmation
+  - Persistent progress storage (localStorage)
+  - External resource links (LinkedIn, Seek, Glassdoor, Trustpilot, etc.)
+  - Reset functionality with confirmation modal
+  - Auto-expand to next step on completion
 
 - **📈 Live Statistics**: Embedded Tableau dashboard
-  - Australian scam trends
-  - Interactive visualizations
-  - Real-time data updates
+  - Australian scam trends (2020-Present)
+  - Interactive visualizations with filters
+  - Mobile-responsive with horizontal scrolling
+  - Real-time data updates from Scamwatch
 
-- **📰 News Carousel**: Latest scam alerts and warnings
-  - Responsive design
+- **📰 News Section**: Latest scam alerts and warnings
+  - Responsive carousel design
   - External news sources
+  - Recent job scam articles
+
+- **📊 Scam Reports**: Community-reported scam statistics
+  - Real-time submission tracking
+  - Recent scam examples
+
+- **🎯 Call to Action**: Direct link to job analysis tool
+
+### 🎮 **Interactive Scenarios** (`/sim`)
+
+Simulative learning experience:
+
+- **Scenario-Based Training**: Practice identifying scam job postings
+  - Multiple realistic job posting scenarios
+  - Interactive decision-making
+  - Instant feedback on choices
+
+- **Red Flag Detection**: Learn to spot warning signs
+  - Detailed explanations of red flags
+  - Educational modals
+  - Progress tracking
+
+- **Gamification Elements**:
+  - Progress indicators
+  - Congratulations on completion
+  - Shareable achievements
 
 ### 🔧 **Additional Features**
 
@@ -68,11 +96,19 @@ Comprehensive educational platform with:
 
 ### **Frontend**
 
-- **Framework**: Vue 3 (Composition API + Options API)
+- **Framework**: Vue 3 (Composition API with `<script setup>`)
 - **Build Tool**: Vite 7.0.6
-- **Routing**: Vue Router 4.5.1 with custom scroll behavior
-- **Styling**: Bootstrap 5.3.8 + Custom CSS with modern gradients
-- **Components**: Modular component architecture
+- **Routing**: Vue Router 4.5.1 with:
+  - Custom scroll behavior
+  - Route-based view transitions
+  - Navigation guards
+- **Styling**: Custom CSS with:
+  - Modern gradients and animations
+  - Mobile-first responsive design
+  - CSS Grid and Flexbox layouts
+- **Components**: Modular component architecture with composition patterns
+- **State Management**: Reactive refs and computed properties
+- **Data Persistence**: LocalStorage for user progress and caching
 
 ### **Backend & APIs**
 
@@ -83,9 +119,11 @@ Comprehensive educational platform with:
 
 ### **External Integrations**
 
-- **Statistics**: ScamWatch Australian data
-- **Visualization**: Tableau Public dashboards
-- **News**: NewsAPI.org API integration
+- **Statistics**: ScamWatch Australia official data
+- **Visualization**: Tableau Public dashboards (embedded)
+- **News**: NewsAPI.org for latest scam alerts
+- **Job Portals**: Integration links to Seek, Indeed, LinkedIn
+- **Review Sites**: Trustpilot, Glassdoor, RobertHalf integration
 
 ### **Development Tools**
 
@@ -120,12 +158,24 @@ fit5120-jobdetective/
 │   │   │   ├── IconEcosystem.vue     # Ecosystem icon
 │   │   │   ├── IconSupport.vue       # Support icon
 │   │   │   └── IconTooling.vue       # Tooling icon
+│   │   │
 │   │   ├── hub/                      # Awareness hub section modules
 │   │   │   ├── CallToActionSection.vue # Analyse CTA panel
 │   │   │   ├── ChecklistSection.vue  # Interactive safety checklist
 │   │   │   ├── NewsSection.vue       # News carousel wrapper
 │   │   │   ├── ScamReportsSection.vue # Recent scam submissions feed
-│   │   │   └── StatisticsSection.vue # Tableau statistics wrapper
+│   │   │   └── StatisticsSection.vue # Tableau statistics embed
+│   │   │
+│   │   ├── scenario/                 # Interactive scenario components
+│   │   │   ├── CongratulationsModal.vue # Success completion modal
+│   │   │   ├── JobPosting.vue        # Scenario job posting card
+│   │   │   ├── RedFlagModal.vue      # Red flag explanation modal
+│   │   │   ├── RedFlagsExplanation.vue # Educational red flag details
+│   │   │   ├── ScenarioActions.vue   # User action buttons
+│   │   │   ├── ScenarioHero.vue      # Scenario page hero
+│   │   │   ├── ScenarioInstructions.vue # Simulation instructions
+│   │   │   └── ScenarioProgress.vue  # Progress tracker
+│   │   │
 │   │   ├── BaseButton.vue            # Multi-variant button component
 │   │   ├── ErrorDisplay.vue          # Error handling component
 │   │   ├── FeatureCard.vue           # Feature showcase cards
@@ -134,6 +184,7 @@ fit5120-jobdetective/
 │   │   ├── NavFooter.vue             # Footer navigation
 │   │   ├── NavigationBar.vue         # Main navigation header
 │   │   ├── NewsCarousel.vue          # News slider component
+│   │   ├── PrivacyConsentModal.vue   # Cookie/privacy consent
 │   │   ├── SectionHeader.vue         # Section title component
 │   │   └── TabNavigation.vue         # Tab switching interface
 │   │
@@ -145,7 +196,9 @@ fit5120-jobdetective/
 │   │   ├── AnalyzeView.vue           # Job analysis interface
 │   │   ├── HomeView.vue              # Landing page with statistics
 │   │   ├── HubView.vue               # Educational awareness hub
-│   │   └── ReportView.vue            # Analysis results display
+│   │   ├── ReportView.vue            # Analysis results display
+│   │   ├── ScenarioView.vue          # Interactive scenario selection
+│   │   └── SimView.vue               # Scenario simulation gameplay
 │   │
 │   ├── App.vue                       # Root application component
 │   └── main.js                       # Application entry point
@@ -153,6 +206,7 @@ fit5120-jobdetective/
 ├── dist/                             # Production build output
 ├── node_modules/                     # Dependencies
 ├── eslint.config.js                  # ESLint configuration
+├── index.html                        # HTML entry point
 ├── jsconfig.json                     # JavaScript project config
 ├── package.json                      # Project dependencies and scripts
 ├── package-lock.json                 # Dependency lock file
