@@ -107,8 +107,17 @@ const loadTableauChart = () => {
   existingScripts.forEach((script) => script.remove())
 
   vizElement.style.display = 'block'
-  vizElement.style.width = '100%'
-  vizElement.style.height = `${divElement.offsetWidth * 1.1}px`
+
+  const containerWidth = divElement.offsetWidth
+  const minWidth = 1400
+
+  if (containerWidth < minWidth) {
+    vizElement.style.width = `${minWidth}px`
+    vizElement.style.height = `${minWidth * 1.1}px`
+  } else {
+    vizElement.style.width = '100%'
+    vizElement.style.height = `${containerWidth * 1.1}px`
+  }
 
   const scriptElement = document.createElement('script')
   scriptElement.src = 'https://public.tableau.com/javascripts/api/viz_v1.js'
@@ -173,12 +182,46 @@ onBeforeUnmount(() => {
   width: 100%;
   background: #ffffff;
   border-radius: 16px;
-  overflow: hidden;
+  overflow-x: auto;
+  overflow-y: hidden;
   box-shadow:
     0 1px 3px 0 rgba(0, 0, 0, 0.1),
     0 1px 2px 0 rgba(0, 0, 0, 0.06);
   padding: 1.5rem;
   background: #f8fafc;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* Ensure the placeholder div can expand beyond container */
+.tableauPlaceholder {
+  min-width: min-content;
+}
+
+@media (max-width: 1400px) {
+  .tableau-container {
+    padding: 1rem;
+  }
+
+  /* Add a subtle hint that content is scrollable */
+  .tableau-container::after {
+    content: '← Scroll to view full dashboard →';
+    display: block;
+    text-align: center;
+    padding: 0.75rem;
+    margin-top: 1rem;
+    color: #64748b;
+    font-size: 0.9rem;
+    font-style: italic;
+    background: #f1f5f9;
+    border-radius: 8px;
+  }
+}
+
+@media (max-width: 480px) {
+  .tableau-container {
+    padding: 0.5rem;
+    border-radius: 8px;
+  }
 }
 
 .intro-text {
@@ -284,6 +327,14 @@ onBeforeUnmount(() => {
     padding: 2.5rem 1.5rem;
   }
 
+  .section-title {
+    font-size: 2rem;
+  }
+
+  .section-subtitle {
+    font-size: 1rem;
+  }
+
   .intro-text,
   .key-takeaways {
     padding: 1.5rem;
@@ -292,11 +343,46 @@ onBeforeUnmount(() => {
   .how-to-use {
     padding: 1.25rem;
   }
+
+  .takeaways-title {
+    font-size: 1.3rem;
+  }
+
+  .takeaways-list li {
+    font-size: 1rem;
+  }
 }
 
 @media (max-width: 480px) {
   .content-section {
     padding: 2rem 1rem;
+  }
+
+  .section-title {
+    font-size: 1.75rem;
+  }
+
+  .section-subtitle {
+    font-size: 0.95rem;
+  }
+
+  .intro-text,
+  .key-takeaways {
+    padding: 1.25rem;
+  }
+
+  .how-to-use {
+    padding: 1rem;
+  }
+
+  .intro-paragraph,
+  .takeaways-list li {
+    font-size: 0.95rem;
+  }
+
+  .how-to-title,
+  .takeaways-title {
+    font-size: 1.2rem;
   }
 }
 </style>

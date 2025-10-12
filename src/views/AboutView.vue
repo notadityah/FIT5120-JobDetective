@@ -477,8 +477,6 @@ import sdgLogo from '@/assets/images/E_WEB_16.png'
 </script>
 
 <style scoped>
-@import url('https://fonts.googleapis.com/css2?family=Bangers&family=Fredoka+One&family=Nunito:wght@400;500;700;800&display=swap');
-
 .about-container {
   min-height: 100vh;
   background: linear-gradient(135deg, #fefefe 0%, #f1f5f9 100%);
@@ -492,17 +490,11 @@ import sdgLogo from '@/assets/images/E_WEB_16.png'
 }
 
 .about-title {
-  font-size: 4rem;
-  font-family: 'Bangers', 'Fredoka One', 'Arial Black', sans-serif;
-  font-weight: 900;
-  letter-spacing: 0.03em;
-  color: #2d3748;
-  line-height: 1.05;
-  text-shadow:
-    2px 2px 0 #fff,
-    4px 4px 0 #3b82f6,
-    0 0 12px rgba(59, 130, 246, 0.3);
+  font-size: 3rem;
+  font-weight: 700;
   margin: 0 0 1rem 0;
+  color: #0f172a;
+  letter-spacing: -0.02em;
 }
 
 .about-subtitle {
@@ -546,7 +538,6 @@ import sdgLogo from '@/assets/images/E_WEB_16.png'
 
 .section-heading {
   font-size: 2.5rem;
-  font-family: 'Nunito', sans-serif;
   font-weight: 800;
   color: #2d3748;
   margin: 0 0 1.5rem 0;
@@ -558,7 +549,6 @@ import sdgLogo from '@/assets/images/E_WEB_16.png'
   font-size: 1.15rem;
   line-height: 1.8;
   color: #4b5563;
-  font-family: 'Nunito', sans-serif;
   font-weight: 400;
   margin-bottom: 1.5rem;
   text-align: left;
@@ -583,7 +573,6 @@ import sdgLogo from '@/assets/images/E_WEB_16.png'
   font-size: 1.15rem;
   line-height: 1.8;
   color: #4b5563;
-  font-family: 'Nunito', sans-serif;
   font-weight: 400;
   margin-bottom: 1rem;
   padding-left: 2rem;
@@ -612,7 +601,6 @@ import sdgLogo from '@/assets/images/E_WEB_16.png'
 .sdg-learn-more-btn {
   display: inline-block;
   font-size: 1.1rem;
-  font-family: 'Nunito', sans-serif;
   font-weight: 700;
   padding: 1rem 2.5rem;
   border-radius: 12px;
