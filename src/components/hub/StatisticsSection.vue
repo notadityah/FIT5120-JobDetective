@@ -21,7 +21,7 @@
             data by year, quarter, or month.
           </li>
           <li>
-            Each chart is interactive — click on states, age groups, or contact methods to reveal
+            Each chart is interactive - click on states, age groups, or contact methods to reveal
             related trends and insights.
           </li>
         </ul>
@@ -82,7 +82,7 @@
         <li>
           If you suspect a job scam, report it to Scamwatch or your local authorities immediately.
           You can also use our
-          <router-link to="/analyze" class="inline-link">job analysis tool</router-link> to check if
+          <router-link to="/analyse" class="inline-link">job analysis tool</router-link> to check if
           a job posting might be suspicious.
         </li>
       </ul>
