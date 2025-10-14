@@ -23,6 +23,21 @@
               <div class="feature-text">Verify legitimacy of job offers</div>
             </div>
           </div>
+
+          <div class="disclaimer-box">
+            <p class="disclaimer-text">
+              <strong>Disclaimer:</strong> We use OpenAI models for text analysis. Results may vary,
+              and independent verification is recommended for all job offers. View our
+              <router-link to="/hub" class="checklist-link">
+                Before You Apply Checklist
+              </router-link>
+              for best practices.
+              <br /><br />
+              Read our
+              <router-link to="/about-us#faq" class="checklist-link">FAQ</router-link> section for
+              more information.
+            </p>
+          </div>
         </div>
 
         <div class="upload-section">
@@ -161,11 +176,11 @@
                   placeholder="Paste job listing URL here..."
                   class="url-input"
                   v-model="urlInput"
-                  @keypress.enter="analyzeUrl"
+                  @keypress.enter="showPrivacyForUrl"
                 />
                 <BaseButton
                   variant="primary"
-                  @click="analyzeUrl"
+                  @click="showPrivacyForUrl"
                   :disabled="!isValidUrl(urlInput)"
                   class="analyze-btn"
                 >
@@ -196,7 +211,7 @@
                 ></textarea>
                 <BaseButton
                   variant="primary"
-                  @click="analyzeText"
+                  @click="showPrivacyForText"
                   :disabled="!textInput.trim()"
                   class="analyze-btn"
                 >
@@ -244,6 +259,13 @@
           </div>
         </div>
       </div>
+
+      <!-- Privacy Consent Modal - New component -->
+      <PrivacyConsentModal
+        :is-visible="showPrivacyModal"
+        @cancel="handlePrivacyCancel"
+        @continue="handlePrivacyContinue"
+      />
     </div>
   </div>
 </template>
@@ -253,6 +275,7 @@
 import TabNavigation from '@/components/TabNavigation.vue'
 import BaseButton from '@/components/BaseButton.vue'
 import LoadingSpinner from '@/components/LoadingSpinner.vue'
+import PrivacyConsentModal from '@/components/PrivacyConsentModal.vue'
 
 const REPORT_STORAGE_KEY = 'jobdetective_latest_report'
 const SUBMISSION_INPUT_STORAGE_KEY = 'jobdetective_latest_submission_input'
@@ -263,6 +286,7 @@ export default {
     TabNavigation,
     BaseButton,
     LoadingSpinner,
+    PrivacyConsentModal,
   },
   data() {
     return {
@@ -278,6 +302,8 @@ export default {
       showUrlErrorModal: false,
       urlErrorMessage: '',
       errorSource: '', // Track which input method failed
+      showPrivacyModal: false, // Privacy consent modal - initially hidden
+      pendingAction: null, // Track pending action for privacy consent
       tabs: [
         { id: 'file', label: 'FILE', disabled: false },
         { id: 'url', label: 'URL', disabled: false },
@@ -367,7 +393,8 @@ export default {
     },
     // Trigger file input click
     triggerFileSelect() {
-      this.$refs.fileInput.click()
+      this.pendingAction = 'file'
+      this.showPrivacyModal = true
     },
     // Convert file to base64
     convertToBase64(file) {
@@ -463,9 +490,9 @@ export default {
 
           this.storeSubmissionInput({
             method: 'file',
-            displayText: `File uploaded: ${this.selectedFile.name} (${this.selectedFile.type || 'unknown'}, ${(
-              this.selectedFile.size / 1024
-            ).toFixed(1)} KB)`,
+            displayText: `File uploaded: ${this.selectedFile.name} (${this.selectedFile.type || 'unknown'}, ${
+              this.selectedFile.size / (1024).toFixed(1)
+            } KB)`,
             jobAdTextRaw: extractedText,
             jobAdTextDisplay: displayPreview,
             metadata: {
@@ -516,8 +543,27 @@ export default {
       this.showUrlErrorModal = false
       this.urlErrorMessage = ''
     },
-    // URL analysis function
-    async analyzeUrl() {
+    // Show privacy modal for URL analysis
+    showPrivacyForUrl() {
+      if (!this.isValidUrl(this.urlInput)) {
+        this.urlErrorMessage = 'Please enter a valid URL (e.g., https://example.com/job-posting)'
+        this.errorSource = 'url'
+        this.showUrlErrorModal = true
+        return
+      }
+      this.pendingAction = 'url'
+      this.showPrivacyModal = true
+    },
+    // Show privacy modal for text analysis
+    showPrivacyForText() {
+      if (!this.textInput.trim()) {
+        return
+      }
+      this.pendingAction = 'text'
+      this.showPrivacyModal = true
+    },
+    // Execute URL analysis (called after privacy consent)
+    async executeUrlAnalysis() {
       if (!this.isValidUrl(this.urlInput)) {
         this.urlErrorMessage = 'Please enter a valid URL (e.g., https://example.com/job-posting)'
         this.errorSource = 'url'
@@ -585,7 +631,7 @@ export default {
       }
     },
     // Updated text analysis function using AWS Lambda
-    async analyzeText() {
+    async executeTextAnalysis() {
       if (!this.textInput.trim()) {
         return
       }
@@ -645,6 +691,35 @@ export default {
       } finally {
         this.isAnalyzing = false
       }
+    },
+    // Handle privacy modal close
+    handlePrivacyModalClose() {
+      this.showPrivacyModal = false
+    },
+    // Handle privacy policy accept
+    handlePrivacyAccept() {
+      this.showPrivacyModal = false
+      // Optionally, trigger file selection or other actions
+      this.triggerFileSelect()
+    },
+    // Handle consent cancellation
+    handlePrivacyCancel() {
+      this.showPrivacyModal = false
+      this.pendingAction = null
+    },
+    // Handle consent acceptance
+    handlePrivacyContinue() {
+      this.showPrivacyModal = false
+
+      if (this.pendingAction === 'file') {
+        this.$refs.fileInput.click()
+      } else if (this.pendingAction === 'url') {
+        this.executeUrlAnalysis() // Renamed from analyzeUrl
+      } else if (this.pendingAction === 'text') {
+        this.executeTextAnalysis() // Renamed from analyzeText
+      }
+
+      this.pendingAction = null
     },
   },
 }
@@ -935,6 +1010,51 @@ export default {
   font-size: 1.1rem;
   color: #475569;
   font-weight: 500;
+}
+
+/* Disclaimer box */
+.disclaimer-box {
+  margin-top: 2rem;
+  padding: 1.25rem 1.5rem;
+  background: rgba(59, 130, 246, 0.08);
+  border-left: 4px solid #3b82f6;
+  border-radius: 12px;
+  display: flex;
+  gap: 1rem;
+  align-items: flex-start;
+  box-shadow: 0 2px 8px rgba(59, 130, 246, 0.1);
+}
+
+.disclaimer-icon {
+  font-size: 1.5rem;
+  flex-shrink: 0;
+  line-height: 1;
+}
+
+.disclaimer-text {
+  font-size: 0.95rem;
+  line-height: 1.6;
+  color: #475569;
+  margin: 0;
+  font-weight: 400;
+}
+
+.disclaimer-text strong {
+  color: #1e40af;
+  font-weight: 700;
+}
+
+.checklist-link {
+  color: #3b82f6;
+  font-weight: 600;
+  text-decoration: underline;
+  transition: color 0.2s ease;
+  display: inline-block;
+}
+
+.checklist-link:hover {
+  color: #1d4ed8;
+  text-decoration: underline;
 }
 
 /* Upload section - Light theme */
@@ -1298,6 +1418,10 @@ export default {
   .analyze-subtitle {
     max-width: 100%;
   }
+
+  .disclaimer-box {
+    text-align: left;
+  }
 }
 
 @media (max-width: 768px) {
@@ -1319,6 +1443,22 @@ export default {
 
   .analyze-subtitle {
     font-size: 1.1rem;
+  }
+
+  .disclaimer-box {
+    padding: 1rem 1.25rem;
+    flex-direction: column;
+    gap: 0.75rem;
+    align-items: center;
+    text-align: center;
+  }
+
+  .disclaimer-icon {
+    font-size: 1.3rem;
+  }
+
+  .disclaimer-text {
+    font-size: 0.9rem;
   }
 
   .file-upload-area .analyze-btn,

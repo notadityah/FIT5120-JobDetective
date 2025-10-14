@@ -210,7 +210,7 @@ const processSubmission = (submission) => {
 
   const jobAdText = submission.job_ad_text || ''
   const lines = jobAdText.split('\n').filter((line) => line.trim())
-  let title = 'Suspicious Job Posting'
+  let title = ''
 
   for (let i = 0; i < Math.min(3, lines.length); i += 1) {
     const line = lines[i].trim()
@@ -492,7 +492,6 @@ onMounted(() => {
   border: 2px solid #e2e8f0;
   border-radius: 16px;
   padding: 1.5rem;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   position: relative;
   overflow: hidden;
   box-shadow:
@@ -501,14 +500,6 @@ onMounted(() => {
   display: flex;
   flex-direction: column;
   min-height: 180px;
-}
-
-.scam-card:hover {
-  transform: translateY(-4px);
-  box-shadow:
-    0 10px 25px -5px rgba(0, 0, 0, 0.1),
-    0 10px 10px -5px rgba(0, 0, 0, 0.04);
-  border-color: #cbd5e1;
 }
 
 .scam-header {

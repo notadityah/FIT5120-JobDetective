@@ -1,5 +1,4 @@
 <template>
-  <!-- Primary navigation bar linking to core application pages -->
   <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
     <div class="container">
       <router-link class="navbar-brand" to="/">
@@ -33,6 +32,12 @@
           <li class="nav-item">
             <router-link class="nav-link" to="/hub">Awareness Hub</router-link>
           </li>
+          <li class="nav-item">
+            <router-link class="nav-link" to="/simulation">Scam Simulation</router-link>
+          </li>
+          <li class="nav-item">
+            <router-link class="nav-link" to="/about-us">About</router-link>
+          </li>
         </ul>
       </div>
     </div>
@@ -40,7 +45,6 @@
 </template>
 
 <script>
-// Stateless wrapper exposing the navigation markup for layout inclusion
 export default {
   name: 'NavigationBar',
 }
