@@ -33,12 +33,12 @@
     </div>
 
     <div class="tableau-container">
-      <div class="tableauPlaceholder" id="viz1760253982196" style="position: relative">
+      <div class="tableauPlaceholder" id="viz1760409402179" style="position: relative">
         <noscript>
           <a href="#">
             <img
               alt="Dashboard 3"
-              src="https://public.tableau.com/static/images/51/5120v3_17602539562560/Dashboard3/1_rss.png"
+              src="https://public.tableau.com/static/images/51/5120v4_17604093720250/Dashboard3/1_rss.png"
               style="border: none"
             />
           </a>
@@ -47,12 +47,12 @@
           <param name="host_url" value="https%3A%2F%2Fpublic.tableau.com%2F" />
           <param name="embed_code_version" value="3" />
           <param name="site_root" value="" />
-          <param name="name" value="5120v3_17602539562560&#47;Dashboard3" />
+          <param name="name" value="5120v4_17604093720250&#47;Dashboard3" />
           <param name="tabs" value="no" />
           <param name="toolbar" value="yes" />
           <param
             name="static_image"
-            value="https://public.tableau.com/static/images/51/5120v3_17602539562560/Dashboard3/1.png"
+            value="https://public.tableau.com/static/images/51/5120v4_17604093720250/Dashboard3/1.png"
           />
           <param name="animate_transition" value="yes" />
           <param name="display_static_image" value="yes" />
@@ -67,7 +67,6 @@
 
     <div class="key-takeaways">
       <h3 class="takeaways-title">Key Takeaways & Protection Tips</h3>
-
       <ul class="takeaways-list">
         <li>Job scams are increasing in both frequency and financial impact across Australia.</li>
         <li>
@@ -86,65 +85,52 @@
           a job posting might be suspicious.
         </li>
       </ul>
-
       <p class="data-source">📊 Data Source: Scamwatch Australia (2020 – Present)</p>
     </div>
   </section>
 </template>
 
 <script setup>
-// Loads Tableau visualisation and resizes it responsively on the hub page
-import { onBeforeUnmount, onMounted } from 'vue'
+import { onMounted } from 'vue'
 
-const loadTableauChart = () => {
-  const divElement = document.getElementById('viz1760253982196')
+function setTableauSize() {
+  const divElement = document.getElementById('viz1760409402179')
   if (!divElement) return
-
   const vizElement = divElement.getElementsByTagName('object')[0]
   if (!vizElement) return
 
-  const existingScripts = document.querySelectorAll('script[src*="viz_v1.js"]')
-  existingScripts.forEach((script) => script.remove())
-
-  vizElement.style.display = 'block'
-
-  const containerWidth = divElement.offsetWidth
-  const minWidth = 1400
-
-  if (containerWidth < minWidth) {
-    vizElement.style.width = `${minWidth}px`
-    vizElement.style.height = `${minWidth * 1.1}px`
+  if (divElement.offsetWidth > 800) {
+    vizElement.style.width = '100%'
+    vizElement.style.height = divElement.offsetWidth * 0.75 + 'px'
+  } else if (divElement.offsetWidth > 500) {
+    vizElement.style.width = '100%'
+    vizElement.style.height = divElement.offsetWidth * 0.75 + 'px'
   } else {
     vizElement.style.width = '100%'
-    vizElement.style.height = `${containerWidth * 1.1}px`
+    vizElement.style.height = '1527px'
   }
-
-  const scriptElement = document.createElement('script')
-  scriptElement.src = 'https://public.tableau.com/javascripts/api/viz_v1.js'
-  scriptElement.onload = () => {
-    // Tableau script loaded
-  }
-  scriptElement.onerror = (error) => {
-    console.error('Failed to load Tableau script:', error)
-  }
-  vizElement.parentNode.insertBefore(scriptElement, vizElement)
-}
-
-const handleResize = () => {
-  setTimeout(() => {
-    loadTableauChart()
-  }, 200)
 }
 
 onMounted(() => {
-  setTimeout(() => {
-    loadTableauChart()
-  }, 100)
-  window.addEventListener('resize', handleResize)
-})
+  const divElement = document.getElementById('viz1760409402179')
+  if (!divElement) return
 
-onBeforeUnmount(() => {
-  window.removeEventListener('resize', handleResize)
+  // Remove any previously loaded Tableau scripts
+  const existingScripts = document.querySelectorAll('script[src*="viz_v1.js"]')
+  existingScripts.forEach((script) => script.remove())
+
+  const vizElement = divElement.getElementsByTagName('object')[0]
+  if (vizElement) vizElement.style.display = 'block'
+
+  setTableauSize()
+
+  // Load Tableau script
+  const scriptElement = document.createElement('script')
+  scriptElement.src = 'https://public.tableau.com/javascripts/api/viz_v1.js'
+  vizElement.parentNode.insertBefore(scriptElement, vizElement)
+
+  // Update size on window resize
+  window.addEventListener('resize', setTableauSize)
 })
 </script>
 
@@ -192,7 +178,6 @@ onBeforeUnmount(() => {
   -webkit-overflow-scrolling: touch;
 }
 
-/* Ensure the placeholder div can expand beyond container */
 .tableauPlaceholder {
   min-width: min-content;
 }
@@ -200,20 +185,6 @@ onBeforeUnmount(() => {
 @media (max-width: 1400px) {
   .tableau-container {
     padding: 1rem;
-  }
-
-  /* Add a subtle hint that content is scrollable */
-  .tableau-container::after {
-    content: '← Scroll to view full dashboard →';
-    display: block;
-    text-align: center;
-    padding: 0.75rem;
-    margin-top: 1rem;
-    color: #64748b;
-    font-size: 0.9rem;
-    font-style: italic;
-    background: #f1f5f9;
-    border-radius: 8px;
   }
 }
 

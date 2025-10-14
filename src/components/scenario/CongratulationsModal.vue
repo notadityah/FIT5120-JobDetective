@@ -101,8 +101,9 @@ export default {
   border-radius: 12px;
   width: 90%;
   max-width: 550px;
-  max-height: 85vh;
-  overflow: hidden;
+  max-height: 90vh;
+  overflow-y: auto;
+  overflow-x: hidden;
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
   border: 2px solid #e2e8f0;
   animation: modalSlideUp 0.3s ease;
@@ -264,8 +265,9 @@ export default {
 /* Responsive styles */
 @media (max-width: 768px) {
   .congratulations-modal {
-    width: 95%;
-    margin: 1rem;
+    width: 98%;
+    margin: 1rem 0;
+    max-height: 95vh;
   }
 
   .congrats-header {
