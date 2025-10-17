@@ -2,7 +2,7 @@
   <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
     <div class="container">
       <router-link class="navbar-brand" to="/">
-        <span class="brand-icon">🕵️</span>
+        <img :src="logo" alt="JobDetective" class="brand-icon" />
         JobDetective
       </router-link>
 
@@ -45,8 +45,12 @@
 </template>
 
 <script>
+import logo from '@/assets/images/newlogo.png'
 export default {
   name: 'NavigationBar',
+  data() {
+    return { logo }
+  }
 }
 </script>
 
@@ -70,7 +74,21 @@ export default {
 
 .brand-icon {
   margin-right: 0.5rem;
-  font-size: 1.6rem;
+  width: 56px;
+  height: 56px;
+  object-fit: contain;
+  display: inline-block;
+  vertical-align: middle;
+  transform: translateY(-4px);
+}
+
+
+@media (max-width: 600px) {
+  .brand-icon {
+    width: 44px;
+    height: 44px;
+    transform: translateY(-2px);
+  }
 }
 
 .nav-link {
@@ -105,7 +123,6 @@ export default {
   border-radius: 1px;
 }
 
-/* Animated underline for non-active links */
 .nav-link:not(.router-link-active)::after {
   content: '';
   position: absolute;

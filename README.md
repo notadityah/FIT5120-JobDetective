@@ -147,7 +147,7 @@ fit5120-jobdetective/
 │   │   │   ├── ilus4.svg             # Statistics section
 │   │   │   ├── newman.png            # Profile images
 │   │   │   └── screen.png            # Screenshots
-│   │   ├── logo.svg                  # App logo
+│   │   ├── logo.png                  # App logo
 │   │   ├── base.css                  # CSS reset and base styles
 │   │   └── main.css                  # Global styles and utilities
 │   │

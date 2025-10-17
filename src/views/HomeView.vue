@@ -1,7 +1,7 @@
 <template>
   <!-- Landing page introducing JobDetective features and live scam statistics -->
   <div class="home-cyber-container">
-    <section class="cyber-hero-main">
+    <section class="cyber-hero-main reveal-on-scroll">
       <div class="cyber-hero-illustration-col">
         <div class="anime-lines"></div>
         <img :src="illustration" alt="Cyber Illustration" class="cyber-hero-illustration" />
@@ -29,7 +29,7 @@
       </div>
     </section>
 
-    <section class="cyber-features-section">
+    <section class="cyber-features-section reveal-on-scroll">
       <div class="section-header">
         <h2 class="section-title">Why JobDetective?</h2>
       </div>
@@ -52,7 +52,7 @@
       </div>
     </section>
 
-    <section class="cyber-stats-section">
+    <section class="cyber-stats-section reveal-on-scroll">
       <div class="stats-main-container">
         <div class="stats-illustration-col">
           <div class="stats-anime-lines"></div>
@@ -70,8 +70,8 @@
               </div>
 
               <div class="stat-amount-wrapper">
-                <span class="stat-amount">
-                  {{ formatCurrency(1108089) }}
+                <span class="stat-amount" :class="{ animate: statsInView }">
+                  {{ formatCurrency(scamAmount) }}
                 </span>
               </div>
 
@@ -95,7 +95,7 @@
       </div>
     </section>
 
-    <section class="mission-section">
+    <section class="mission-section reveal-on-scroll">
       <div class="mission-container">
         <div class="mission-icon">🛡️</div>
         <div class="mission-content">
@@ -117,7 +117,7 @@
       </div>
     </section>
 
-    <section class="cyber-simulation-section">
+    <section class="cyber-simulation-section reveal-on-scroll">
       <div class="simulation-main-container">
         <div class="simulation-illustration-col">
           <div class="simulation-anime-lines"></div>
@@ -126,19 +126,15 @@
 
         <div class="simulation-content-col">
           <div class="cyber-hero-title">
-            <h1>Practice Makes Perfect</h1>
+            <h1 class="typing">Practice Makes Perfect</h1>
           </div>
           <div class="simulation-card">
             <div class="simulation-content">
               <div class="simulation-intro">
-                Think you can spot a scam? Test your skills with our interactive job scam
-                simulations.
+                <strong>Think you can spot a scam? </strong>
               </div>
-
-              <div class="simulation-description">
-                Practice identifying red flags in realistic fake job postings across
-                <strong>3 different scenarios</strong>. Learn what to look for before you encounter
-                a real scam.
+               <div class="simulation-description">
+                Test your skills with interactive simulations across 3 realistic fake job scenarios.
               </div>
             </div>
           </div>
@@ -161,6 +157,7 @@
 
 <script setup>
 // Orchestrates hero + feature sections on the homepage with static statistics
+import { ref, onMounted, onBeforeUnmount } from 'vue'
 import FeatureCard from '@/components/FeatureCard.vue'
 import BaseButton from '@/components/BaseButton.vue'
 import illustration from '@/assets/images/ilus3.svg'
@@ -179,6 +176,56 @@ const formatCurrency = (amount) => {
 const formatNumber = (number) => {
   return new Intl.NumberFormat('en-AU').format(number)
 }
+
+/* Added: count-up + reveal-on-scroll trigger */
+const scamAmount = ref(0)                 // displayed value (animated)
+const targetScamAmount = 1108089         // current static source (replace with API later)
+const statsInView = ref(false)
+let rafId = null
+let observer = null
+
+const countUp = (start, end, duration = 1600) => {
+  const startTime = performance.now()
+  const step = (now) => {
+    const progress = Math.min((now - startTime) / duration, 1)
+    const eased = 1 - Math.pow(1 - progress, 3) // ease-out cubic
+    scamAmount.value = Math.round(start + (end - start) * eased)
+    if (progress < 1) {
+      rafId = requestAnimationFrame(step)
+    } else {
+      scamAmount.value = end
+      rafId = null
+    }
+  }
+  rafId = requestAnimationFrame(step)
+}
+
+onMounted(() => {
+  const options = { threshold: 0.15 }
+  observer = new IntersectionObserver((entries) => {
+    entries.forEach((entry) => {
+      const el = entry.target
+      if (entry.isIntersecting) {
+        el.classList.add('in-view')
+        if (el.classList.contains('cyber-stats-section') && !statsInView.value) {
+          statsInView.value = true
+          // start count-up when stats section becomes visible
+          countUp(0, targetScamAmount)
+        }
+      }
+    })
+  }, options)
+
+  document.querySelectorAll('.reveal-on-scroll').forEach((el) => observer.observe(el))
+})
+
+onBeforeUnmount(() => {
+  if (observer) {
+    observer.disconnect()
+    observer = null
+  }
+  if (rafId) cancelAnimationFrame(rafId)
+})
 </script>
 
 <style scoped>
@@ -193,7 +240,7 @@ const formatNumber = (number) => {
 }
 
 .cyber-hero-title {
-  font-size: 4.5rem;
+  font-size: 10rem;
   font-family: 'Bangers', 'Fredoka One', 'Arial Black', sans-serif;
   font-weight: 900;
   letter-spacing: 0.03em;
@@ -213,7 +260,7 @@ const formatNumber = (number) => {
 }
 
 .section-title {
-  font-size: 3.5rem;
+  font-size: 2.5rem;
   font-family: 'Bangers', 'Fredoka One', 'Arial Black', sans-serif;
   font-weight: 900;
   letter-spacing: 0.03em;
@@ -467,8 +514,8 @@ const formatNumber = (number) => {
 .stats-content-col {
   flex: 4;
   display: flex;
-  min-width: 720px;
-  max-width: 720px;
+  min-width: auto;        /* allow it to shrink on small screens */
+  max-width: 820px;       /* increase container so title不会被裁切 */
   flex-direction: column;
   align-items: center;
   justify-content: center;
@@ -686,8 +733,8 @@ const formatNumber = (number) => {
 .simulation-content-col {
   flex: 4;
   display: flex;
-  min-width: 720px;
-  max-width: 720px;
+  min-width: auto;        /* allow it to shrink on small screens */
+  max-width: 820px;       /* increase container so title不会被裁切 */
   flex-direction: column;
   align-items: center;
   justify-content: center;
@@ -799,6 +846,111 @@ const formatNumber = (number) => {
     0 4px 12px rgba(79, 124, 255, 0.2);
 }
 
+.reveal-on-scroll {
+  opacity: 0;
+  transform: translateY(18px);
+  transition: opacity 600ms cubic-bezier(.2,.9,.2,1), transform 600ms cubic-bezier(.2,.9,.2,1);
+  will-change: opacity, transform;
+}
+.reveal-on-scroll.in-view {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* illustration gentle floating */
+/* keep hero's original `anime-pop` animation; only stats illustration floats */
+.stats-illustration {
+  transition: transform 0.6s ease, box-shadow 0.6s ease;
+  transform-origin: center;
+  animation: float-small 6s ease-in-out infinite;
+}
+
+.simulation-illustration {
+  transition: transform 0.6s ease, box-shadow 0.6s ease;
+  transform-origin: center;
+  /* use the same entrance animation as cyber-hero-illustration */
+  animation: anime-pop 1.2s cubic-bezier(0.68, -0.55, 0.27, 1.55);
+}
+
+@keyframes float-small {
+  0% { transform: translateY(0) rotate(-0.25deg); }
+  50% { transform: translateY(-8px) rotate(0.25deg); }
+  100% { transform: translateY(0) rotate(-0.25deg); }
+}
+
+/* stat count pop */
+.stat-amount.animate {
+  animation: stats-pop 900ms cubic-bezier(.2,.9,.2,1);
+  color: #dc2626;
+  text-shadow: 0 6px 20px rgba(220,38,38,0.12);
+}
+@keyframes stats-pop {
+  0% { transform: scale(0.92); opacity: 0; }
+  60% { transform: scale(1.06); opacity: 1; }
+  100% { transform: scale(1); opacity: 1; }
+}
+
+/* typing effect for simulation title (works like a typewriter) */
+.typing {
+  display: inline-block;
+  overflow: hidden;
+  white-space: nowrap;
+  box-sizing: border-box;
+  border-right: 0.12em solid rgba(45,55,72,0.9); /* caret */
+  width: 0;
+  animation: none;
+  font-family: inherit;
+  /* override huge global hero size so the simulation title fits */
+  font-size: 3.2rem;
+  line-height: 1.05;
+  text-shadow:
+    2px 2px 0 #fff,
+    4px 4px 0 #3b82f6,
+    0 0 12px rgba(59, 130, 246, 0.18);
+}
+
+/* start typing only when the simulation section becomes visible (observer adds .in-view) */
+.cyber-simulation-section.in-view .typing {
+  animation:
+    typing 2.4s steps(22, end) 0.45s forwards,
+    blink-caret 0.75s step-end infinite 2.85s;
+}
+
+/* adapt typing length on very small screens so it doesn't overflow */
+@media (max-width: 600px) {
+  .typing {
+    font-size: 1.8rem;
+    animation-duration: 2.2s;
+  }
+}
+
+@keyframes typing {
+  from { width: 0; }
+  to { width: 22ch; } /* "Practice Makes Perfect" ≈ 22 characters */
+}
+
+@keyframes blink-caret {
+  0%, 100% { border-color: transparent; }
+  50% { border-color: rgba(45,55,72,0.9); }
+}
+
+/* small CTA micro interaction when hero in view */
+.cyber-hero-main.in-view .cyber-cta-btn {
+  transform: translateY(-2px) scale(1.02);
+  box-shadow: 0 10px 30px rgba(59,130,246,0.22);
+}
+
+/* reduce motion preference */
+@media (prefers-reduced-motion: reduce) {
+  .cyber-hero-illustration,
+  .stats-illustration,
+  .simulation-illustration,
+  .reveal-on-scroll {
+    animation: none !important;
+    transition: none !important;
+  }
+}
+
 /* Responsive breakpoints */
 @media (max-width: 1100px) {
   .cyber-features-grid {
@@ -852,7 +1004,7 @@ const formatNumber = (number) => {
     padding: 0 1rem;
   }
 
-  .cyber-hero-illustration-col,
+  .cyber-hero-illustration
   .cyber-hero-desc-col {
     max-width: 100%;
     margin-left: 0;
