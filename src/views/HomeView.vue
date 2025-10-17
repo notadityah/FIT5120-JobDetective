@@ -133,7 +133,7 @@
               <div class="simulation-intro">
                 <strong>Think you can spot a scam? </strong>
               </div>
-               <div class="simulation-description">
+              <div class="simulation-description">
                 Test your skills with interactive simulations across 3 realistic fake job scenarios.
               </div>
             </div>
@@ -156,7 +156,6 @@
 </template>
 
 <script setup>
-// Orchestrates hero + feature sections on the homepage with static statistics
 import { ref, onMounted, onBeforeUnmount } from 'vue'
 import FeatureCard from '@/components/FeatureCard.vue'
 import BaseButton from '@/components/BaseButton.vue'
@@ -177,9 +176,8 @@ const formatNumber = (number) => {
   return new Intl.NumberFormat('en-AU').format(number)
 }
 
-/* Added: count-up + reveal-on-scroll trigger */
-const scamAmount = ref(0)                 // displayed value (animated)
-const targetScamAmount = 1108089         // current static source (replace with API later)
+const scamAmount = ref(0)
+const targetScamAmount = 1108089
 const statsInView = ref(false)
 let rafId = null
 let observer = null
@@ -514,8 +512,8 @@ onBeforeUnmount(() => {
 .stats-content-col {
   flex: 4;
   display: flex;
-  min-width: auto;        /* allow it to shrink on small screens */
-  max-width: 820px;       /* increase container so title不会被裁切 */
+  min-width: auto; /* allow it to shrink on small screens */
+  max-width: 820px; /* increase container so title不会被裁切 */
   flex-direction: column;
   align-items: center;
   justify-content: center;
@@ -733,8 +731,8 @@ onBeforeUnmount(() => {
 .simulation-content-col {
   flex: 4;
   display: flex;
-  min-width: auto;        /* allow it to shrink on small screens */
-  max-width: 820px;       /* increase container so title不会被裁切 */
+  min-width: auto;
+  max-width: 820px;
   flex-direction: column;
   align-items: center;
   justify-content: center;
@@ -849,7 +847,9 @@ onBeforeUnmount(() => {
 .reveal-on-scroll {
   opacity: 0;
   transform: translateY(18px);
-  transition: opacity 600ms cubic-bezier(.2,.9,.2,1), transform 600ms cubic-bezier(.2,.9,.2,1);
+  transition:
+    opacity 600ms cubic-bezier(0.2, 0.9, 0.2, 1),
+    transform 600ms cubic-bezier(0.2, 0.9, 0.2, 1);
   will-change: opacity, transform;
 }
 .reveal-on-scroll.in-view {
@@ -857,51 +857,65 @@ onBeforeUnmount(() => {
   transform: translateY(0);
 }
 
-/* illustration gentle floating */
-/* keep hero's original `anime-pop` animation; only stats illustration floats */
 .stats-illustration {
-  transition: transform 0.6s ease, box-shadow 0.6s ease;
+  transition:
+    transform 0.6s ease,
+    box-shadow 0.6s ease;
   transform-origin: center;
   animation: float-small 6s ease-in-out infinite;
 }
 
 .simulation-illustration {
-  transition: transform 0.6s ease, box-shadow 0.6s ease;
+  transition:
+    transform 0.6s ease,
+    box-shadow 0.6s ease;
   transform-origin: center;
-  /* use the same entrance animation as cyber-hero-illustration */
+
   animation: anime-pop 1.2s cubic-bezier(0.68, -0.55, 0.27, 1.55);
 }
 
 @keyframes float-small {
-  0% { transform: translateY(0) rotate(-0.25deg); }
-  50% { transform: translateY(-8px) rotate(0.25deg); }
-  100% { transform: translateY(0) rotate(-0.25deg); }
+  0% {
+    transform: translateY(0) rotate(-0.25deg);
+  }
+  50% {
+    transform: translateY(-8px) rotate(0.25deg);
+  }
+  100% {
+    transform: translateY(0) rotate(-0.25deg);
+  }
 }
 
-/* stat count pop */
 .stat-amount.animate {
-  animation: stats-pop 900ms cubic-bezier(.2,.9,.2,1);
+  animation: stats-pop 900ms cubic-bezier(0.2, 0.9, 0.2, 1);
   color: #dc2626;
-  text-shadow: 0 6px 20px rgba(220,38,38,0.12);
+  text-shadow: 0 6px 20px rgba(220, 38, 38, 0.12);
 }
 @keyframes stats-pop {
-  0% { transform: scale(0.92); opacity: 0; }
-  60% { transform: scale(1.06); opacity: 1; }
-  100% { transform: scale(1); opacity: 1; }
+  0% {
+    transform: scale(0.92);
+    opacity: 0;
+  }
+  60% {
+    transform: scale(1.06);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
 }
 
-/* typing effect for simulation title (works like a typewriter) */
 .typing {
   display: inline-block;
   overflow: hidden;
   white-space: nowrap;
   box-sizing: border-box;
-  border-right: 0.12em solid rgba(45,55,72,0.9); /* caret */
+  border-right: 0.12em solid rgba(45, 55, 72, 0.9);
   width: 0;
   animation: none;
   font-family: inherit;
-  /* override huge global hero size so the simulation title fits */
-  font-size: 3.2rem;
+  font-size: 3.5rem;
   line-height: 1.05;
   text-shadow:
     2px 2px 0 #fff,
@@ -909,14 +923,12 @@ onBeforeUnmount(() => {
     0 0 12px rgba(59, 130, 246, 0.18);
 }
 
-/* start typing only when the simulation section becomes visible (observer adds .in-view) */
 .cyber-simulation-section.in-view .typing {
   animation:
     typing 2.4s steps(22, end) 0.45s forwards,
     blink-caret 0.75s step-end infinite 2.85s;
 }
 
-/* adapt typing length on very small screens so it doesn't overflow */
 @media (max-width: 600px) {
   .typing {
     font-size: 1.8rem;
@@ -925,22 +937,29 @@ onBeforeUnmount(() => {
 }
 
 @keyframes typing {
-  from { width: 0; }
-  to { width: 22ch; } /* "Practice Makes Perfect" ≈ 22 characters */
+  from {
+    width: 0;
+  }
+  to {
+    width: 22ch;
+  }
 }
 
 @keyframes blink-caret {
-  0%, 100% { border-color: transparent; }
-  50% { border-color: rgba(45,55,72,0.9); }
+  0%,
+  100% {
+    border-color: transparent;
+  }
+  50% {
+    border-color: rgba(45, 55, 72, 0.9);
+  }
 }
 
-/* small CTA micro interaction when hero in view */
 .cyber-hero-main.in-view .cyber-cta-btn {
   transform: translateY(-2px) scale(1.02);
-  box-shadow: 0 10px 30px rgba(59,130,246,0.22);
+  box-shadow: 0 10px 30px rgba(59, 130, 246, 0.22);
 }
 
-/* reduce motion preference */
 @media (prefers-reduced-motion: reduce) {
   .cyber-hero-illustration,
   .stats-illustration,
@@ -951,7 +970,6 @@ onBeforeUnmount(() => {
   }
 }
 
-/* Responsive breakpoints */
 @media (max-width: 1100px) {
   .cyber-features-grid {
     grid-template-columns: repeat(2, 1fr);
@@ -1004,8 +1022,7 @@ onBeforeUnmount(() => {
     padding: 0 1rem;
   }
 
-  .cyber-hero-illustration
-  .cyber-hero-desc-col {
+  .cyber-hero-illustration .cyber-hero-desc-col {
     max-width: 100%;
     margin-left: 0;
     justify-content: center;
